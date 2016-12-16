@@ -1,1 +1,10 @@
-{"plugins": ["transform-flow-strip-types"]}
+{
+  "presets": [
+    {
+      "plugins": [
+        "transform-flow-strip-types"
+        ]
+      },
+    "react-native"
+  ],
+}

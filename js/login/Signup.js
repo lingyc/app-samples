@@ -11,7 +11,7 @@ class Signup extends Component {
       return (
         <View style={styles.container}>
           <Text style={styles.instructions}>
-            signup view
+            in signup view
           </Text>
         </View>
       )

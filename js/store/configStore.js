@@ -13,7 +13,7 @@ const logger = createLogger({
 });
 
 function configStore(onComplete: ?() => void) {
-  const store = createStore(rootReducer, applyMiddleware(thunk, promise,logger));
+  const store = createStore(rootReducer, applyMiddleware(thunk, promise, logger));
   if (isDebuggingInChrome) {
     window.store = store;
   }

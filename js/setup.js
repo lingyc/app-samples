@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import configStore from './store/configStore';
-import FitlyApp from './FitlyApp'
+import FitlyApp from './FitlyApp.js'
 
 const store = configStore();
 

@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import * as firebase from 'firebase';
+import Firestack from 'react-native-firestack'
 
 class Welcome extends Component {
   render() {

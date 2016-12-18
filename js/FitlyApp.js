@@ -4,15 +4,13 @@
 
 import React, { Component } from 'react';
 import { Navigator } from 'react-native';
-//put all routes here for now, need to seperate it into own module later
-import * as firebase from 'firebase';
-import firebaseConfig from '../config/env'
+import Firestack from 'react-native-firestack'
+import firebaseConfig from '../credentials/firebaseConfig'
 
-firebase.initializeApp(firebaseConfig);
-//show loading screen while checking to see if user has signin
-//if not direct to login
-//if yes direct to profile
-//remember to setup navigator
+const firestack = new Firestack({
+  debug: __DEV__ && !!window.navigator.userAgent,
+  ...firebaseConfig
+});
 
 import Welcome from './login/Welcome.js';
 import Signup from './login/Signup.js';
@@ -23,12 +21,12 @@ const ROUTES = {
 };
 
 class FitlyApp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoggin: firebase.auth().currentUser
-    }
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     isLoggin: firebase.auth().currentUser
+  //   }
+  // }
 
   renderScene(route, navigator) {
     let Component = ROUTES[route.name];
@@ -38,7 +36,7 @@ class FitlyApp extends Component {
   render() {
     return (
       <Navigator
-        initialRoute= {(this.state.isLoggin) ? { name: 'Signup' } : { name: 'Welcome' }}
+        initialRoute= {{ name: 'Welcome' }}
         renderScene={this.renderScene}
         configureScene={(route, routeStack) => Navigator.SceneConfigs.SwipeFromLeft}/>
     )

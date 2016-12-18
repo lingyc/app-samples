@@ -42,4 +42,5 @@ android/app/libs
 *.keystore
 
 # Config Keys
-config/env.js
+credentials/firebaseConfig.js
+ios/GoogleService-Info.plist

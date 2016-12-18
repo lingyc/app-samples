@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>356069342993-megogq783oeuc0598kl34dehvh2551h5.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.356069342993-megogq783oeuc0598kl34dehvh2551h5</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDZSdqSbLK21LegOg2Xqu5K3Iy_SCiV2hM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>356069342993</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.Fitly</string>
+	<key>PROJECT_ID</key>
+	<string>fitly-625bd</string>
+	<key>STORAGE_BUCKET</key>
+	<string>fitly-625bd.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<true/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:356069342993:ios:d45e804f1f41cabd</string>
+	<key>DATABASE_URL</key>
+	<string>https://fitly-625bd.firebaseio.com</string>
+</dict>
+</plist>

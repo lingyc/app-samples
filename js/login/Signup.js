@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View } from 'react-native';
-import { FBLogin, FBLoginManager } from 'react-native-facebook-login';
+import { FBLogin } from 'react-native-facebook-login';
 
 class Signup extends Component {
   constructor(props) {
@@ -14,7 +14,8 @@ class Signup extends Component {
       firstName: '',
       lastName: '',
       email: '',
-      password: ''
+      password: '',
+      error: ''
     }
   }
 
@@ -28,6 +29,7 @@ class Signup extends Component {
           JOIN US
         </Text>
         <FBLogin
+          permissions={["email", "user_friends", 'user_location']}
           onLogin={(data) => {
             console.log("Logged in!");
             console.log(data);
@@ -35,7 +37,13 @@ class Signup extends Component {
             this.props.firestack.auth.signInWithProvider('facebook', token, '') // facebook need only access token.
             .then((user)=>{
               console.log(user)
+              this.props.navigator.resetTo({ name: 'Profile' });
             })
+          }}
+          onLogout={() => {
+            this.props.firestack.auth.signOut()
+            .then(res => console.log('You have been signed out'))
+            .catch(err => console.error('Uh oh... something weird happened'))
           }}
         />
         {/* <TouchableHighlight style={styles.loginButton} onPress={() => this._goToLogin()}>

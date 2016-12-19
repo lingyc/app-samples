@@ -4,24 +4,17 @@
 
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import {FBLogin, FBLoginManager} from 'react-native-facebook-login';
 
 class Signin extends Component {
 
   render() {
-    return (
-      <FBLogin
-        onLogin={function(data){
-          console.log("Logged in!");
-          console.log(data);
-          let token = data.credentials.token
-          firestack.signInWithProvider('facebook', token, '') // facebook need only access token.
-            .then((user)=>{
-              console.log(user)
-            })
-        }}
-      />
-    );
+      return (
+        <View style={styles.container}>
+          <Text style={styles.instructions}>
+            in login view
+          </Text>
+        </View>
+      )
    }
  };
 

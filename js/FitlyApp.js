@@ -28,7 +28,7 @@ class FitlyApp extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // check if user has login
     firestack.auth.getCurrentUser()
     .then(user => {
@@ -47,7 +47,7 @@ class FitlyApp extends Component {
 
   renderScene(route, navigator) {
     let Component = ROUTES[route.name];
-    return (<Component route={route} navigator={navigator}/>);
+    return (<Component route={route} navigator={navigator} firestack={firestack}/>);
   }
 
   render() {

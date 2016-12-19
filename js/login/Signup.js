@@ -4,6 +4,7 @@
 
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View } from 'react-native';
+import { FBLogin, FBLoginManager } from 'react-native-facebook-login';
 
 class Signup extends Component {
   constructor(props) {
@@ -26,11 +27,22 @@ class Signup extends Component {
         <Text style={styles.mainHeader}>
           JOIN US
         </Text>
-        <TouchableHighlight style={styles.loginButton} onPress={() => this._goToLogin()}>
+        <FBLogin
+          onLogin={(data) => {
+            console.log("Logged in!");
+            console.log(data);
+            let token = data.credentials.token
+            this.props.firestack.auth.signInWithProvider('facebook', token, '') // facebook need only access token.
+            .then((user)=>{
+              console.log(user)
+            })
+          }}
+        />
+        {/* <TouchableHighlight style={styles.loginButton} onPress={() => this._goToLogin()}>
           <Text style={styles.buttonText}>
             Join with Facebook
           </Text>
-        </TouchableHighlight>
+        </TouchableHighlight> */}
         <Text style={styles.disclamerText}>
           or
         </Text>

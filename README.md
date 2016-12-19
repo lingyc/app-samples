@@ -4,3 +4,5 @@
 npm install
 add firebase api config to /credentials/firebaseConfig
 download the firebase iOS config GoogleService-Info.plist from the Firebase console into iOS folder
+
+Setup the Facebook SDK for iOS

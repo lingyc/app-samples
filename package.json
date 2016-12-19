@@ -9,6 +9,7 @@
   "dependencies": {
     "react": "15.4.1",
     "react-native": "0.39.2",
+    "react-native-facebook-login": "^1.4.0",
     "react-native-firestack": "^2.3.5",
     "react-redux": "^4.4.6",
     "redux": "^3.6.0",

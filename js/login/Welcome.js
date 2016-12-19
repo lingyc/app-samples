@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import { StatusBar, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
+import { StatusBar, TouchableHighlight, StyleSheet, Text, View } from 'react-native';
 
 class Welcome extends Component {
 
@@ -38,16 +38,16 @@ class Welcome extends Component {
             Meet work out partnes and programs just for you.
           </Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.actionButton} onPress={() => this._goToSignUp()}>
+            <TouchableHighlight style={styles.actionButton} onPress={() => this._goToSignUp()}>
               <Text style={styles.buttonText}>
                 JOIN US
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton} onPress={() => this._goToLogin()}>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.actionButton} onPress={() => this._goToLogin()}>
               <Text style={styles.buttonText}>
                 SIGN IN
               </Text>
-            </TouchableOpacity>
+            </TouchableHighlight>
           </View>
         </View>
       </View>

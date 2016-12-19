@@ -5,16 +5,15 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-class Signin extends Component {
-
+class Profile extends Component {
   render() {
-      return (
-        <View style={styles.container}>
-          <Text style={styles.instructions}>
-            in login view
-          </Text>
-        </View>
-      )
+    return (
+      <View style={styles.container}>
+        <Text style={styles.instructions}>
+          in profile view
+        </Text>
+      </View>
+    )
    }
  };
 
@@ -37,4 +36,4 @@ class Signin extends Component {
    },
  });
 
-export default Signin;
+export default Profile;

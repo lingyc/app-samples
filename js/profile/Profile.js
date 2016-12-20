@@ -4,10 +4,11 @@
 
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
-import { FBLoginManager } from 'react-native-facebook-login';
+import { asyncFBLogout } from '../library/asyncFBLogin.js';
 import { logout, printAuthError } from '../actions/auth.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 
 class Profile extends Component {
   constructor(props) {
@@ -16,39 +17,19 @@ class Profile extends Component {
 
   //refactor out later into a service or a logout btn component
   _logout() {
-    if (this.props.signInMethod === 'Facebook') {
-      //refactor FBLoginManager.logout with promises?
-      FBLoginManager.logout((error, data) => {
-        if (!error) {
-          this.props.firestack.auth.signOut()
-          .then(res => {
-            console.log('facebook logout', data);
-            console.log('firebase logout', res);
-            this.props.action.logout();
-            this.props.navigator.push({name: 'Welcome'});
-          })
-          .catch(err => {
-            this.props.action.printAuthError(err);
-            console.log('Uh oh... something weird happened', err)
-          })
-        } else {
-          this.props.action.printAuthError(error);
-          console.log(error, data);
+    (async () => {
+      try {
+        if (this.props.signInMethod === 'Facebook') {
+          await asyncFBLogout();
         }
-      });
-    } else {
-      this.props.firestack.auth.signOut()
-      .then(res => {
-        console.log('firebase logout', res);
-        this.props.action.logout();
-        this.props.navigator.push({name: 'Welcome'});
-      })
-      .catch(err => {
+          await this.props.firestack.auth.signOut()
+          this.props.action.logout();
+          this.props.navigator.resetTo({name: 'Welcome'});
+      } catch(err) {
         this.props.action.printAuthError(err);
         console.log('Uh oh... something weird happened', err)
-      })
-    }
-
+      }
+    })();
   }
 
   render() {

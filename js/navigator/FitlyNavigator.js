@@ -6,9 +6,8 @@ class FitlyNavigator extends Component {
   constructor(props) {
     super(props);
   }
-  
+
   renderScene(route, navigator) {
-    console.log(this.props)
     let Component = ROUTES[route.name];
     return (<Component route={route} navigator={navigator} firestack={this.props.firestack}/>);
   }

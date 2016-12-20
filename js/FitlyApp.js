@@ -22,14 +22,14 @@ class FitlyApp extends Component {
   _checkAuth() {
     firestack.auth.getCurrentUser()
     .then(user => {
-      console.log('The currently logged in user', user);
+      console.log('initial authentication check from firebase: ', user);
       this.setState({
         loading: false,
         isLoggin: true
       })
     })
     .catch(err => {
-      console.log('user not login ', err)
+      console.log('initial authentication check - user has not signin', err)
       this.setState({
         loading: false,
         isLoggin: false

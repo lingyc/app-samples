@@ -4,12 +4,15 @@
 
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View } from 'react-native';
-import { FBLogin } from 'react-native-facebook-login';
+import { FBLoginManager } from 'react-native-facebook-login';
+import { setSignUpMedthod, printAuthError } from '../actions/auth.js';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 class Signup extends Component {
   constructor(props) {
     super(props);
-    //refact to redux later, must validate input
+    //refactor to redux later, must validate input
     this.state = {
       firstName: '',
       lastName: '',
@@ -17,6 +20,51 @@ class Signup extends Component {
       password: '',
       error: ''
     }
+  }
+
+  //refactor into seperate login button component
+  _handleFBLogin() {
+    FBLoginManager.loginWithPermissions(["email","user_friends","user_location"], (error, data) => {
+      if (!error) {
+        let token = data.credentials.token
+        this.props.firestack.auth.signInWithProvider('facebook', token, '') // facebook need only access token.
+        .then((user)=>{
+          //if user record doesn't exists
+            //ask for more info
+            //create user record
+            //show slides
+            //redirect to profile
+
+          //if user record exists then redirect to profile
+          console.log('facebook auth', data)
+          console.log('firebase auth', user)
+          this.props.action.setSignUpMedthod('Facebook');
+          this.props.navigator.resetTo({ name: 'Profile' });
+        })
+      } else {
+        this.props.action.printAuthError(err);
+        console.log("Error: ", error);
+      }
+    })
+  }
+
+  _handleEmailSignup() {
+    //validate the email, password and names before sending it out
+    firestack.auth.createUserWithEmail(this.state.email, this.state.password)
+    .then((user) => {
+      //ask for more info
+      //create user record
+      //show slides
+      //redirect to profile
+      console.log('firebase: user created with email', user)
+      this.props.action.setSignUpMedthod('Email');
+      this.props.navigator.resetTo({ name: 'Profile' });
+    })
+    .catch((err) => {
+      //if user exists, show btn to go to signin?
+      this.props.action.printAuthError(err);
+      console.log('An error occurred with createUserWithEmail', err);
+    })
   }
 
   render() {
@@ -28,29 +76,11 @@ class Signup extends Component {
         <Text style={styles.mainHeader}>
           JOIN US
         </Text>
-        <FBLogin
-          permissions={["email", "user_friends", 'user_location']}
-          onLogin={(data) => {
-            console.log("Logged in!");
-            console.log(data);
-            let token = data.credentials.token
-            this.props.firestack.auth.signInWithProvider('facebook', token, '') // facebook need only access token.
-            .then((user)=>{
-              console.log(user)
-              this.props.navigator.resetTo({ name: 'Profile' });
-            })
-          }}
-          onLogout={() => {
-            this.props.firestack.auth.signOut()
-            .then(res => console.log('You have been signed out'))
-            .catch(err => console.error('Uh oh... something weird happened'))
-          }}
-        />
-        {/* <TouchableHighlight style={styles.loginButton} onPress={() => this._goToLogin()}>
+        <TouchableHighlight style={styles.loginButton} onPress={() => this._handleFBLogin()}>
           <Text style={styles.buttonText}>
             Join with Facebook
           </Text>
-        </TouchableHighlight> */}
+        </TouchableHighlight>
         <Text style={styles.disclamerText}>
           or
         </Text>
@@ -141,5 +171,16 @@ class Signup extends Component {
   }
  });
 
+ const mapStateToProps = function(state) {
+  return {
+    signUpMethod: state.auth.signUpMethod
+  };
+};
 
-export default Signup;
+const mapDispatchToProps = function(dispatch) {
+  return {
+    action: bindActionCreators({ setSignUpMedthod, printAuthError }, dispatch)
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);

@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View } from 'react-native';
-import { asyncFBLoginWithPermission } from '../library/asyncFBLogin.js';
+import { asyncFBLoginWithPermission, fetchFBProfile } from '../library/asyncFBLogin.js';
 import { setSignUpMedthod, printAuthError } from '../actions/auth.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,14 +20,25 @@ class Signup extends Component {
       password: '',
       error: ''
     }
+    firestack = this.props.firestack;
   }
 
-  //refactor into seperate login button component
+  //TODO error reporting for login error
   _handleFBLogin() {
     (async () => {
       try {
-        const data = await asyncFBLoginWithPermission(["email","user_friends","user_location"]);
-        await this.props.firestack.auth.signInWithProvider('facebook', data.credentials.token, '');
+        const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
+        const userProfile = await fetchFBProfile(data.credentials.token);
+        const user = await firestack.auth.signInWithProvider('facebook', data.credentials.token, '');
+        console.log('facebook profile ', userProfile);
+        console.log('firebase profile', user);
+        firestack.database.ref('users')
+        //TODO if record doesn't exist
+          //ask for more info
+          //create user record
+          //show slides
+          //redirect to profile
+
         this.props.action.setSignUpMedthod('Facebook');
         this.props.navigator.resetTo({ name: 'Profile' });
       } catch(error) {
@@ -42,6 +53,7 @@ class Signup extends Component {
     (async () => {
       try {
         const user = await firestack.auth.createUserWithEmail(this.state.email, this.state.password)
+        //TODO
         //ask for more info
         //create user record
         //show slides
@@ -104,7 +116,7 @@ class Signup extends Component {
         <Text style={styles.disclamerText}>
           By continuing, you agree to Fitly's Terms of Service & Privacy Policy.
         </Text>
-        <TouchableHighlight style={styles.actionButtonInverted} onPress={() => this._goToLogin()}>
+        <TouchableHighlight style={styles.actionButtonInverted} onPress={() => this._handleEmailSignup()}>
           <Text style={styles.buttonText}>
             SWIPE TO JOIN
           </Text>

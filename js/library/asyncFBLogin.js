@@ -1,4 +1,6 @@
 import { FBLoginManager } from 'react-native-facebook-login';
+// FBLoginManager.setLoginBehavior(FBLoginManager.LoginBehaviors.Web);
+// FBLoginManager.setLoginBehavior(FBLoginManager.LoginBehaviors.SystemAccount);
 
 export const asyncFBLogout = () => {
   return new Promise((resolve, reject) => {
@@ -23,3 +25,11 @@ export const asyncFBLoginWithPermission = (permissions) => {
     })
   })
 };
+
+export const fetchFBProfile = (token) => {
+  return fetch('https://graph.facebook.com/v2.8/me?fields=email,name,friends,first_name,last_name,picture,gender,birthday,location&access_token=' + token)
+  .then((response) => response.json())
+  // .catch(() => {
+  //   reject('ERROR GETTING DATA FROM FACEBOOK')
+  // })
+}

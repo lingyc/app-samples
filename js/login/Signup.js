@@ -3,9 +3,10 @@
  */
 
 import React, { Component } from 'react';
-import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View } from 'react-native';
+import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { asyncFBLoginWithPermission, fetchFBProfile } from '../library/asyncFBLogin.js';
 import { setSignUpMedthod, printAuthError } from '../actions/auth.js';
+import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -28,11 +29,12 @@ class Signup extends Component {
     (async () => {
       try {
         const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
+        this.props.action.setLoadingState(true);
         const userProfile = await fetchFBProfile(data.credentials.token);
         const user = await firestack.auth.signInWithProvider('facebook', data.credentials.token, '');
         console.log('facebook profile ', userProfile);
         console.log('firebase profile', user);
-        firestack.database.ref('users')
+        // firestack.database.ref('users')
         //TODO if record doesn't exist
           //ask for more info
           //create user record
@@ -69,6 +71,17 @@ class Signup extends Component {
   }
 
   render() {
+    if (this.props.loading === true) {
+      return (
+        <View style={{flex: 1}}>
+          <ActivityIndicator
+            animating={this.state.loading}
+            style={[styles.centering, {height: 80}]}
+            size="large"
+          />
+        </View>
+      )
+    }
     return (
       <View style={styles.container}>
         <StatusBar
@@ -174,13 +187,13 @@ class Signup extends Component {
 
  const mapStateToProps = function(state) {
   return {
-    signUpMethod: state.auth.signUpMethod
+    loading: state.app.loading
   };
 };
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setSignUpMedthod, printAuthError }, dispatch)
+    action: bindActionCreators({ setSignUpMedthod, printAuthError, setLoadingState }, dispatch)
   };
 };
 

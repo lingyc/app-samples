@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import {StyleSheet, ActivityIndicator } from 'react-native';
+import {StyleSheet, ActivityIndicator, View } from 'react-native';
 import FitlyNavigator from './navigator/FitlyNavigator.js'
 
 class FitlyApp extends Component {
@@ -41,12 +41,14 @@ class FitlyApp extends Component {
       //show loading screen while checking auth status
       if (this.state.loading) {
         return (
-          <ActivityIndicator
-            animating={this.state.loading}
-            style={[styles.centering, {height: 80}]}
-            size="large"
-          />
-        )
+          <View style={{flex: 1}}>
+            <ActivityIndicator
+              animating={this.state.loading}
+              style={[styles.centering, {height: 80}]}
+              size="large"
+            />
+          </View>
+        );
       } else {
         return (this.state.isLoggin)
           ? (<FitlyNavigator initialRoute={{name: 'Profile'}} firestack={firestack}/>)

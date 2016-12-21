@@ -1,6 +1,8 @@
 import ROUTES from './FitlyRoutes.js'
 import React, { Component } from 'react';
 import { Navigator } from 'react-native';
+//default navigator swipe gets too close to edge, we would increase the edgeHitWidth
+const SCREEN_WIDTH = require('Dimensions').get('window').width;
 
 class FitlyNavigator extends Component {
   constructor(props) {
@@ -21,7 +23,21 @@ class FitlyNavigator extends Component {
           if (route.sceneConfig) {
             return route.sceneConfig;
           }
-          return Navigator.SceneConfigs.SwipeFromLeft;
+
+          //this is modified
+          const PushFromRight = {
+            ...Navigator.SceneConfigs.PushFromRight,
+            gestures: {
+              pop: {
+                ...Navigator.SceneConfigs.PushFromRight.gestures.pop,
+                edgeHitWidth: SCREEN_WIDTH / 2,
+              },
+            },
+          };
+          return PushFromRight;
+
+          //below is default
+          // return Navigator.SceneConfigs.PushFromRight;
         }}
       />
     );

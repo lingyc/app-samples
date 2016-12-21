@@ -5,16 +5,18 @@
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import FBloginBtn from '../components/FBloginBtn.js';
-import { setSignInMedthod, printAuthError } from '../actions/auth.js';
+import { setSignUpMedthod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-class Signin extends Component {
+class SignUpView extends Component {
   constructor(props) {
     super(props);
     //refactor to redux later, must validate input
     this.state = {
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       error: ''
@@ -24,25 +26,54 @@ class Signin extends Component {
     action = this.props.action;
   }
 
-  _handleEmailSignin() {
+  //TODO error reporting for login error
+  _handleEmailSignup() {
     //validate the email, password and names before sending it out
     (async () => {
       try {
+        action.setLoadingState(true);
         await firestack.auth.signOut();
-        const authData = await firestack.auth.signInWithEmail(this.state.email, this.state.password)
-        action.setSignInMedthod('Email');
-        const userRef = firestack.database.ref('users/' + authData.user.uid);
-        const firebaseUserData = await userRef.once('value');
-        if (firebaseUserData.value.profileComplete === false) {
-          FitlyNavigator.resetTo({ name: 'Profile', from: 'SigninEmail, profile incomplete' });
-        } else {
-          FitlyNavigator.resetTo({ name: 'Profile', from: 'SigninEmail, profile complete' });
-        }
+        const user = await firestack.auth.createUserWithEmail(this.state.email, this.state.password)
+        action.setSignUpMedthod('Email');
+
+        //send verification email, which is not yet available on firestack
+        // firestack.auth.sendEmailVerification();
+
+        //update the user auth profile, which is not yet available on firestack
+        // const user2 = await firestack.auth.getCurrentUser();
+        // user2.updateProfile({
+        //   displayName: this.state.firstName + ' ' + this.state.lastName,
+        // });
+
+        const userRef = firestack.database.ref('users/' + user.uid);
+        userRef.set({
+          name: this.state.firstName + ' ' + this.state.lastName,
+          first_name: this.state.firstName,
+          last_name: this.state.lastName,
+          email: this.state.email,
+          picture: null,
+          gender: null,
+          birthday: null,
+          friends: null,
+          location: null,
+          provider: 'Firebase',
+          FacebookID: null,
+          height: 0,
+          weight: 0,
+          activeLevel: 0,
+          followerCount: 0,
+          followingCount: 0,
+          sessionCount: 0,
+          currentLocation: null,
+          profileComplete: false,
+        });
+        FitlyNavigator.resetTo({ name: 'ProfileView', from: 'Email signup' });
+        action.setLoadingState(true);
       } catch(error) {
         action.printAuthError(error);
         console.log("Error: ", error);
       }
-    })()
+    })();
   }
 
   render() {
@@ -63,12 +94,26 @@ class Signin extends Component {
           barStyle="light-content"
         />
         <Text style={styles.mainHeader}>
-          SIGN IN
+          JOIN US
         </Text>
-        <FBloginBtn firestack={firestack} navigator={FitlyNavigator} text="Connect With Facebook"/>
+        <FBloginBtn firestack={firestack} navigator={FitlyNavigator} text='Join with Facebook'/>
         <Text style={styles.disclamerText}>
           or
         </Text>
+        <TextInput
+          style={styles.signUpFormText}
+          onChangeText={(text) => this.setState({firstName: text})}
+          value={this.state.firstName}
+          placeholder="First Name"
+          placeholderTextColor="white"
+        />
+        <TextInput
+          style={styles.signUpFormText}
+          onChangeText={(text) => this.setState({lastName: text})}
+          value={this.state.lastName}
+          placeholder="Last Name"
+          placeholderTextColor="white"
+        />
         <TextInput
           style={styles.signUpFormText}
           onChangeText={(text) => this.setState({email: text})}
@@ -83,17 +128,15 @@ class Signin extends Component {
           placeholder="Choose Password"
           placeholderTextColor="white"
         />
+        <Text style={styles.disclamerText}>
+          By continuing, you agree to Fitly's Terms of Service & Privacy Policy.
+        </Text>
         <TouchableHighlight style={styles.actionButtonInverted} onPress={() => this._handleEmailSignup()}>
           <Text style={styles.buttonText}>
-            Forgot your password?
+            SWIPE TO JOIN
           </Text>
         </TouchableHighlight>
-        <TouchableHighlight style={styles.actionButtonInverted} onPress={() => this._handleEmailSignup()}>
-          <Text style={styles.buttonText}>
-            SWIPE TO SIGNIN
-          </Text>
-        </TouchableHighlight>
-        </View>
+      </View>
     )
    }
  };
@@ -157,8 +200,8 @@ class Signin extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setSignInMedthod, printAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setSignUpMedthod, printAuthError, setLoadingState }, dispatch)
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Signin);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpView);

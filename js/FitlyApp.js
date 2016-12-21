@@ -51,8 +51,8 @@ class FitlyApp extends Component {
         );
       } else {
         return (this.state.isLoggin)
-          ? (<FitlyNavigator initialRoute={{name: 'Profile'}} firestack={firestack}/>)
-          : (<FitlyNavigator initialRoute={{name: 'Welcome'}} firestack={firestack}/>);
+          ? (<FitlyNavigator initialRoute={{name: 'ProfileView'}} firestack={firestack}/>)
+          : (<FitlyNavigator initialRoute={{name: 'WelcomeView'}} firestack={firestack}/>);
       }
    }
  }

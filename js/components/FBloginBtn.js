@@ -54,9 +54,9 @@ class FBloginBtn extends Component {
             profileComplete: false
           });
         } else if (firebaseUserData.value.profileComplete === false) {
-          FitlyNavigator.resetTo({ name: 'Profile', from: 'FBinitSignup'});
+          FitlyNavigator.resetTo({ name: 'ProfileView', from: 'FBinitSignup'});
         } else {
-          FitlyNavigator.resetTo({ name: 'Profile', from: 'profile complete'});
+          FitlyNavigator.resetTo({ name: 'ProfileView', from: 'profile complete'});
         }
         action.setLoadingState(false);
       } catch(error) {

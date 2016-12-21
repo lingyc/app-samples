@@ -1,14 +1,14 @@
-import Welcome from '../login/Welcome.js';
-import SignUp from '../login/Signup.js';
-import SignIn from '../login/Signin.js';
-import Profile from '../profile/Profile.js';
+import WelcomeView from '../login/WelcomeView.js';
+import SignUpView from '../login/SignUpView.js';
+import SignInView from '../login/SignInView.js';
+import ProfileView from '../profile/ProfileView.js';
 
 
 const ROUTES = {
-  Welcome: Welcome,
-  SignIn: SignIn,
-  SignUp: SignUp,
-  Profile: Profile
+  WelcomeView: WelcomeView,
+  SignInView: SignInView,
+  SignUpView: SignUpView,
+  ProfileView: ProfileView
 };
 
 export default ROUTES;

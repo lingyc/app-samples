@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 
-class Profile extends Component {
+class ProfileView extends Component {
   constructor(props) {
     super(props);
   }
@@ -24,7 +24,7 @@ class Profile extends Component {
         }
           await this.props.firestack.auth.signOut()
           this.props.action.resetAuthState();
-          this.props.navigator.resetTo({name: 'Welcome'});
+          this.props.navigator.resetTo({name: 'WelcomeView'});
       } catch(err) {
         this.props.action.printAuthError(err);
         console.log('Uh oh... something weird happened', err)
@@ -92,4 +92,4 @@ const mapDispatchToProps = function(dispatch) {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileView);

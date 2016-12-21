@@ -5,17 +5,17 @@
 import React, { Component } from 'react';
 import { StatusBar, TouchableHighlight, StyleSheet, Text, View } from 'react-native';
 
-class Welcome extends Component {
+class WelcomeView extends Component {
 
   _goToSignIn() {
     this.props.navigator.push({
-      name: 'SignIn'
+      name: 'SignInView'
     })
   }
 
   _goToSignUp() {
     this.props.navigator.push({
-      name: 'SignUp'
+      name: 'SignUpView'
     })
   }
 
@@ -113,4 +113,4 @@ class Welcome extends Component {
   }
  });
 
-export default Welcome;
+export default WelcomeView;

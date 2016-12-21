@@ -3,48 +3,61 @@
  */
 
 import React, { Component } from 'react';
-import { StatusBar, TouchableHighlight, StyleSheet, Text, View } from 'react-native';
+import { StatusBar, TouchableHighlight, Text, View } from 'react-native';
+import { welcomeStyles } from '../styles/styles.js'
 
 class WelcomeView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      clicked: 'joinUs'
+    };
+  }
 
   _goToSignIn() {
+    this.setState({clicked: 'signIn'});
     this.props.navigator.push({
       name: 'SignInView'
-    })
+    });
   }
 
   _goToSignUp() {
+    this.setState({clicked: 'joinUs'});
     this.props.navigator.push({
       name: 'SignUpView'
-    })
+    });
   }
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={welcomeStyles.container}>
         <StatusBar
           barStyle="light-content"
         />
-        <View style={styles.logoContainer}>
-          <Text style={styles.logo}>
+        <View style={welcomeStyles.logoContainer}>
+          <Text style={welcomeStyles.logo}>
             Fitly
           </Text>
         </View>
-        <View style={styles.logoContainer}>
-          <Text style={styles.messageText}>
+        <View style={welcomeStyles.logoContainer}>
+          <Text style={welcomeStyles.messageText}>
             Find fitness with friends.
           </Text>
-          <Text style={styles.messageTextLight}>
+          <Text style={welcomeStyles.messageTextLight}>
             Meet work out partnes and programs just for you.
           </Text>
-          <View style={styles.buttonContainer}>
-            <TouchableHighlight style={styles.actionButton} onPress={() => this._goToSignUp()}>
-              <Text style={styles.buttonText}>
+          <View style={welcomeStyles.buttonContainer}>
+            <TouchableHighlight
+              style={(this.state.clicked === 'joinUs') ? welcomeStyles.actionButton : welcomeStyles.actionButtonInverted}
+              onPress={() => this._goToSignUp()}>
+              <Text style={(this.state.clicked === 'joinUs') ? welcomeStyles.buttonText : welcomeStyles.buttonTextInverted}>
                 JOIN US
               </Text>
             </TouchableHighlight>
-            <TouchableHighlight style={styles.actionButton} onPress={() => this._goToSignIn()}>
-              <Text style={styles.buttonText}>
+            <TouchableHighlight
+              style={(this.state.clicked === 'signIn') ? welcomeStyles.actionButton : welcomeStyles.actionButtonInverted}
+              onPress={() => this._goToSignIn()}>
+              <Text style={(this.state.clicked === 'signIn') ? welcomeStyles.buttonText : welcomeStyles.buttonTextInverted}>
                 SIGN IN
               </Text>
             </TouchableHighlight>
@@ -54,63 +67,5 @@ class WelcomeView extends Component {
     )
    }
  };
-
- const styles = StyleSheet.create({
-   container: {
-     flex: 1,
-     justifyContent: 'center',
-     alignItems: 'center',
-     backgroundColor: '#1D2F7B',
-   },
-   logoContainer: {
-     flex: 1,
-     justifyContent: 'center',
-     alignItems: 'center',
-   },
-   buttonContainer: {
-     flex: 1,
-     justifyContent: 'center',
-     alignItems: 'flex-end',
-     flexDirection: 'row'
-   },
-   logo: {
-     fontFamily: 'HelveticaNeue',
-     fontSize: 100,
-     color: 'white',
-     fontWeight: '700',
-     letterSpacing: -2
-   },
-   messageText: {
-     fontSize: 40,
-     marginBottom: 0,
-     textAlign: 'center',
-     color: '#FFFFFF',
-     marginBottom: 5,
-   },
-   messageTextLight: {
-     marginTop: 40,
-     width: 220,
-     fontSize: 18,
-     marginBottom: 0,
-     textAlign: 'center',
-     color: '#bbbbbb',
-     marginBottom: 5,
-   },
-   buttonText: {
-     fontSize: 20,
-     marginBottom: 0,
-     textAlign: 'center',
-     color: '#FFFFFF',
-     marginBottom: 5,
-   },
-   actionButton: {
-    flex: 1,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderColor: '#FFFFFF',
-    borderWidth: .5,
-  }
- });
 
 export default WelcomeView;

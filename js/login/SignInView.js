@@ -3,12 +3,14 @@
  */
 
 import React, { Component } from 'react';
-import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback } from 'react-native';
+import { loginStyles, loadingStyle } from '../styles/styles.js'
 import FBloginBtn from '../components/FBloginBtn.js';
 import { setSignInMedthod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+const dismissKeyboard = require('dismissKeyboard')
 
 class SignInView extends Component {
   constructor(props) {
@@ -45,6 +47,10 @@ class SignInView extends Component {
     })()
   }
 
+  focusNextField = (nextField) => {
+    this.refs[nextField].focus();
+  };
+
   render() {
     if (this.props.loading === true) {
       return (
@@ -58,96 +64,65 @@ class SignInView extends Component {
       );
     }
     return (
-      <View style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-        />
-        <Text style={styles.mainHeader}>
-          SIGN IN
-        </Text>
-        <FBloginBtn firestack={firestack} navigator={FitlyNavigator} text="Connect With Facebook"/>
-        <Text style={styles.disclamerText}>
-          or
-        </Text>
-        <TextInput
-          style={styles.signUpFormText}
-          onChangeText={(text) => this.setState({email: text})}
-          value={this.state.email}
-          placeholder="Email"
-          placeholderTextColor="white"
-        />
-        <TextInput
-          style={styles.signUpFormText}
-          onChangeText={(text) => this.setState({password: text})}
-          value={this.state.password}
-          placeholder="Choose Password"
-          placeholderTextColor="white"
-        />
-        <TouchableHighlight style={styles.actionButtonInverted} onPress={() => this._handleEmailSignup()}>
-          <Text style={styles.buttonText}>
-            Forgot your password?
+      <TouchableWithoutFeedback style={{flex:1}} onPress={()=> dismissKeyboard()}>
+        <View style={loginStyles.container}>
+          <StatusBar
+            barStyle="light-content"
+          />
+          <Text style={loginStyles.header}>
+            SIGN IN
           </Text>
-        </TouchableHighlight>
-        <TouchableHighlight style={styles.actionButtonInverted} onPress={() => this._handleEmailSignup()}>
-          <Text style={styles.buttonText}>
-            SWIPE TO SIGNIN
+
+          <FBloginBtn firestack={firestack} navigator={FitlyNavigator} label="Connect With Facebook"/>
+          <Text style={loginStyles.textSmall}>
+            or
           </Text>
-        </TouchableHighlight>
+
+          <View style={loginStyles.form}>
+            <TextInput
+              returnKeyType="next"
+              maxLength={30}
+              clearButtonMode="always"
+              ref="1"
+              onSubmitEditing={() => this.focusNextField('2')}
+              style={loginStyles.input}
+              onChangeText={(text) => this.setState({email: text})}
+              value={this.state.email}
+              placeholder="Email"
+              placeholderTextColor="white"
+            />
+          </View>
+
+          <View style={loginStyles.form}>
+            <TextInput
+              returnKeyType="next"
+              maxLength={30}
+              clearButtonMode="always"
+              style={loginStyles.input}
+              onSubmitEditing={() => this._handleEmailSignin()}
+              onChangeText={(text) => this.setState({password: text})}
+              value={this.state.password}
+              placeholder="Password"
+              placeholderTextColor="white"
+            />
+          </View>
+
+          <TouchableHighlight onPress={() => this._handleEmailSignup()}>
+            <Text style={loginStyles.textMid}>
+              Forgot your password?
+            </Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handleEmailSignup()}>
+            <Text style={loginStyles.btnText}>
+              SWIPE TO SIGN IN
+            </Text>
+          </TouchableHighlight>
         </View>
-    )
+      </TouchableWithoutFeedback>
+    );
    }
  };
-
- const styles = StyleSheet.create({
-   container: {
-     flex: 1,
-     justifyContent: 'center',
-     alignItems: 'center',
-     backgroundColor: '#1D2F7B',
-   },
-   mainHeader: {
-     fontFamily: 'HelveticaNeue',
-     fontSize: 50,
-     color: 'white',
-     fontWeight: '400',
-   },
-   disclamerText: {
-     fontSize: 12,
-     marginBottom: 0,
-     textAlign: 'center',
-     color: '#FFFFFF',
-     marginBottom: 5
-   },
-   signUpFormText: {
-     height: 40,
-     borderColor: 'gray',
-     borderWidth: 1,
-     textAlign: 'center',
-     color: '#FFFFFF'
-   },
-   buttonText: {
-     fontSize: 20,
-     marginBottom: 0,
-     textAlign: 'center',
-     color: '#1D2F7B',
-     marginBottom: 5,
-   },
-   loginButton: {
-     backgroundColor: 'white'
-   },
-   actionButtonInverted: {
-    alignSelf: 'stretch',
-    height: 30,
-    borderColor: '#FFFFFF',
-    backgroundColor: 'white',
-    borderWidth: .5,
-  },
-  centering: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
- });
 
  const mapStateToProps = function(state) {
   return {

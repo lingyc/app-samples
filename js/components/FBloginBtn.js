@@ -3,7 +3,8 @@
  */
 
 import React, { Component } from 'react';
-import { View, TouchableHighlight, StyleSheet, Text } from 'react-native';
+import { View, TouchableHighlight, Text } from 'react-native';
+import { loginStyles } from '../styles/styles.js'
 import { asyncFBLoginWithPermission, asyncFBLogout, fetchFBProfile } from '../library/asyncFBLogin.js';
 import { setSignUpMedthod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
@@ -60,6 +61,7 @@ class FBloginBtn extends Component {
         }
         action.setLoadingState(false);
       } catch(error) {
+        action.setLoadingState(false);
         action.printAuthError(error);
         console.log("Error: ", error);
       }
@@ -68,29 +70,14 @@ class FBloginBtn extends Component {
 
   render() {
     return (
-        <TouchableHighlight style={styles.loginButton} onPress={() => this._handleFBLogin()}>
-          <Text style={styles.buttonText}>
-            {this.props.text}
+        <TouchableHighlight style={loginStyles.FBbtn} onPress={() => this._handleFBLogin()}>
+          <Text style={loginStyles.btnText}>
+            {this.props.label}
           </Text>
         </TouchableHighlight>
     )
   }
  };
-
- const styles = StyleSheet.create({
-   buttonText: {
-     fontSize: 19,
-     textAlign: 'center',
-     color: '#1D2F7B',
-   },
-   loginButton: {
-     justifyContent: 'center',
-     flexDirection: 'column',
-     height: 50,
-     width: 270,
-     backgroundColor: 'white'
-   }
- });
 
  const mapStateToProps = function(state) {
   return {

@@ -1,4 +1,4 @@
-import { SET_SIGNUP_METHOD, SET_SIGNIN_METHOD, LOGOUT, PRINT_AUTH_ERROR } from '../actions/auth.js';
+import { SET_SIGNUP_METHOD, SET_SIGNIN_METHOD, RESET_AUTH_STATE, PRINT_AUTH_ERROR } from '../actions/auth.js';
 
 const initialState = {
   signUpMethod: '',
@@ -18,7 +18,7 @@ export default function (state = initialState, action) {
       return { ...state,
         signInMethod: action.payload
       };
-    case LOGOUT:
+    case RESET_AUTH_STATE:
       return initialState;
     case PRINT_AUTH_ERROR:
       return { ...state,

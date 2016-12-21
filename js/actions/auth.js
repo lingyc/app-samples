@@ -4,7 +4,7 @@
 
 export const SET_SIGNUP_METHOD = 'SET_SIGNUP_METHOD';
 export const SET_SIGNIN_METHOD = 'SET_SIGNIN_METHOD';
-export const LOGOUT = 'LOGOUT';
+export const RESET_AUTH_STATE = 'RESET_AUTH_STATE';
 export const PRINT_AUTH_ERROR = 'PRINT_AUTH_ERROR';
 
 export const setSignUpMedthod = (method: string) => {
@@ -28,8 +28,8 @@ export const printAuthError = (errorMsg) => {
   }
 }
 
-export const logout = () => {
+export const resetAuthState = () => {
   return {
-    type: LOGOUT,
+    type: resetAuthState,
   }
 }

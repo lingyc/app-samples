@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-import { asyncFBLoginWithPermission, fetchFBProfile } from '../library/asyncFBLogin.js';
+import { asyncFBLoginWithPermission, asyncFBLogout, fetchFBProfile } from '../library/asyncFBLogin.js';
 import { setSignUpMedthod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
@@ -28,59 +28,110 @@ class Signup extends Component {
   _handleFBLogin() {
     (async () => {
       try {
-        const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
         this.props.action.setLoadingState(true);
-        const userProfile = await fetchFBProfile(data.credentials.token);
-        const user = await firestack.auth.signInWithProvider('facebook', data.credentials.token, '');
-        console.log('facebook profile ', userProfile);
-        console.log('firebase profile', user);
-        // firestack.database.ref('users')
-        //TODO if record doesn't exist
-          //ask for more info
-          //create user record
-          //show slides
-          //redirect to profile
-
+        await asyncFBLogout();
         this.props.action.setSignUpMedthod('Facebook');
-        this.props.navigator.resetTo({ name: 'Profile' });
+        const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
+        const userFBprofile = await fetchFBProfile(data.credentials.token);
+        const user = await firestack.auth.signInWithProvider('facebook', data.credentials.token, '');
+        const userRef = firestack.database.ref('users/' + user.uid);
+        const firebaseUserData = await userRef.once('value');
+        if (firebaseUserData.value === null) {
+          const { name, first_name, last_name, picture, email, gender, birthday, friends, location, id } = userFBprofile
+          userRef.set({
+            name: name,
+            first_name: first_name,
+            last_name: last_name,
+            picture: picture.data.url,
+            email: email,
+            gender: gender,
+            birthday: birthday,
+            friends: friends.data,
+            location: location.name,
+            provider: 'Facebook',
+            FacebookID: id,
+            height: 0,
+            weight: 0,
+            activeLevel: 0,
+            followerCount: 0,
+            followingCount: 0,
+            sessionCount: 0,
+            currentLocation: null,
+            profileComplete: false
+          });
+        } else if (firebaseUserData.value.profileComplete === false) {
+            this.props.navigator.resetTo({ name: 'Profile', from: 'FBinitSignup'});
+        } else {
+          this.props.navigator.resetTo({ name: 'Profile', from: 'profile complete'});
+        }
+        this.props.action.setLoadingState(false);
       } catch(error) {
         this.props.action.printAuthError(error);
         console.log("Error: ", error);
       }
-    })()
+    })();
   }
 
   _handleEmailSignup() {
     //validate the email, password and names before sending it out
     (async () => {
       try {
+        this.props.action.setLoadingState(true);
+        await this.props.firestack.auth.signOut();
         const user = await firestack.auth.createUserWithEmail(this.state.email, this.state.password)
-        //TODO
-        //ask for more info
-        //create user record
-        //show slides
-        //redirect to profile
-        console.log('firebase: user created with email', user)
         this.props.action.setSignUpMedthod('Email');
-        this.props.navigator.resetTo({ name: 'Profile' });
+
+        //send verification email, which is not yet available on firestack
+        // firestack.auth.sendEmailVerification();
+
+        //update the user auth profile, which is not yet available on firestack
+        // const user2 = await firestack.auth.getCurrentUser();
+        // user2.updateProfile({
+        //   displayName: this.state.firstName + ' ' + this.state.lastName,
+        // });
+
+        const userRef = firestack.database.ref('users/' + user.uid);
+        userRef.set({
+          name: this.state.firstName + ' ' + this.state.lastName,
+          first_name: this.state.firstName,
+          last_name: this.state.lastName,
+          email: this.state.email,
+          picture: null,
+          gender: null,
+          birthday: null,
+          friends: null,
+          location: null,
+          provider: 'Firebase',
+          FacebookID: null,
+          height: 0,
+          weight: 0,
+          activeLevel: 0,
+          followerCount: 0,
+          followingCount: 0,
+          sessionCount: 0,
+          currentLocation: null,
+          profileComplete: false,
+        });
+        this.props.navigator.resetTo({ name: 'Profile', from: 'Email signup' });
+        this.props.action.setLoadingState(true);
       } catch(error) {
         this.props.action.printAuthError(error);
         console.log("Error: ", error);
       }
-    })()
+    })();
   }
 
   render() {
     if (this.props.loading === true) {
       return (
-        <View style={{flex: 1}}>
+        <View style={styles.centering}>
           <ActivityIndicator
             animating={this.state.loading}
-            style={[styles.centering, {height: 80}]}
+            style={{height: 80}}
             size="large"
           />
         </View>
-      )
+      );
     }
     return (
       <View style={styles.container}>
@@ -182,6 +233,11 @@ class Signup extends Component {
     borderColor: '#FFFFFF',
     backgroundColor: 'white',
     borderWidth: .5,
+  },
+  centering: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   }
  });
 

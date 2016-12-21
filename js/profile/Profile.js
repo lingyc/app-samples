@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import { asyncFBLogout } from '../library/asyncFBLogin.js';
-import { logout, printAuthError } from '../actions/auth.js';
+import { resetAuthState, printAuthError } from '../actions/auth.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -23,7 +23,7 @@ class Profile extends Component {
           await asyncFBLogout();
         }
           await this.props.firestack.auth.signOut()
-          this.props.action.logout();
+          this.props.action.resetAuthState();
           this.props.navigator.resetTo({name: 'Welcome'});
       } catch(err) {
         this.props.action.printAuthError(err);
@@ -37,6 +37,9 @@ class Profile extends Component {
       <View style={styles.container}>
         <Text style={styles.instructions}>
           in profile view
+        </Text>
+        <Text style={styles.instructions}>
+          {this.props.route.from}
         </Text>
         <TouchableHighlight style={styles.loginButton} onPress={() => this._logout()}>
           <Text style={styles.buttonText}>
@@ -77,7 +80,6 @@ class Profile extends Component {
    }
  });
 
-
  const mapStateToProps = function(state) {
   return {
     signInMethod: state.auth.signInMethod
@@ -86,7 +88,7 @@ class Profile extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ logout, printAuthError }, dispatch)
+    action: bindActionCreators({ resetAuthState, printAuthError }, dispatch)
   };
 };
 

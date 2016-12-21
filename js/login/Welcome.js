@@ -7,7 +7,7 @@ import { StatusBar, TouchableHighlight, StyleSheet, Text, View } from 'react-nat
 
 class Welcome extends Component {
 
-  _goToLogin() {
+  _goToSignIn() {
     this.props.navigator.push({
       name: 'SignIn'
     })
@@ -43,7 +43,7 @@ class Welcome extends Component {
                 JOIN US
               </Text>
             </TouchableHighlight>
-            <TouchableHighlight style={styles.actionButton} onPress={() => this._goToLogin()}>
+            <TouchableHighlight style={styles.actionButton} onPress={() => this._goToSignIn()}>
               <Text style={styles.buttonText}>
                 SIGN IN
               </Text>

@@ -41,10 +41,10 @@ class FitlyApp extends Component {
       //show loading screen while checking auth status
       if (this.state.loading) {
         return (
-          <View style={{flex: 1}}>
+          <View style={styles.centering}>
             <ActivityIndicator
               animating={this.state.loading}
-              style={[styles.centering, {height: 80}]}
+              style={{height: 80}}
               size="large"
             />
           </View>
@@ -59,9 +59,9 @@ class FitlyApp extends Component {
 
  const styles = StyleSheet.create({
   centering: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 8,
   }
 });
 

@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
-import { asyncFBLoginWithPermission, asyncFBLogout, fetchFBProfile } from '../library/asyncFBLogin.js';
+import FBloginBtn from '../components/FBloginBtn.js';
 import { setSignUpMedthod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
@@ -22,64 +22,19 @@ class Signup extends Component {
       error: ''
     }
     firestack = this.props.firestack;
+    FitlyNavigator = this.props.navigator;
+    action = this.props.action;
   }
 
   //TODO error reporting for login error
-  _handleFBLogin() {
-    (async () => {
-      try {
-        this.props.action.setLoadingState(true);
-        await asyncFBLogout();
-        this.props.action.setSignUpMedthod('Facebook');
-        const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
-        const userFBprofile = await fetchFBProfile(data.credentials.token);
-        const user = await firestack.auth.signInWithProvider('facebook', data.credentials.token, '');
-        const userRef = firestack.database.ref('users/' + user.uid);
-        const firebaseUserData = await userRef.once('value');
-        if (firebaseUserData.value === null) {
-          const { name, first_name, last_name, picture, email, gender, birthday, friends, location, id } = userFBprofile
-          userRef.set({
-            name: name,
-            first_name: first_name,
-            last_name: last_name,
-            picture: picture.data.url,
-            email: email,
-            gender: gender,
-            birthday: birthday,
-            friends: friends.data,
-            location: location.name,
-            provider: 'Facebook',
-            FacebookID: id,
-            height: 0,
-            weight: 0,
-            activeLevel: 0,
-            followerCount: 0,
-            followingCount: 0,
-            sessionCount: 0,
-            currentLocation: null,
-            profileComplete: false
-          });
-        } else if (firebaseUserData.value.profileComplete === false) {
-            this.props.navigator.resetTo({ name: 'Profile', from: 'FBinitSignup'});
-        } else {
-          this.props.navigator.resetTo({ name: 'Profile', from: 'profile complete'});
-        }
-        this.props.action.setLoadingState(false);
-      } catch(error) {
-        this.props.action.printAuthError(error);
-        console.log("Error: ", error);
-      }
-    })();
-  }
-
   _handleEmailSignup() {
     //validate the email, password and names before sending it out
     (async () => {
       try {
-        this.props.action.setLoadingState(true);
-        await this.props.firestack.auth.signOut();
+        action.setLoadingState(true);
+        await firestack.auth.signOut();
         const user = await firestack.auth.createUserWithEmail(this.state.email, this.state.password)
-        this.props.action.setSignUpMedthod('Email');
+        action.setSignUpMedthod('Email');
 
         //send verification email, which is not yet available on firestack
         // firestack.auth.sendEmailVerification();
@@ -112,10 +67,10 @@ class Signup extends Component {
           currentLocation: null,
           profileComplete: false,
         });
-        this.props.navigator.resetTo({ name: 'Profile', from: 'Email signup' });
-        this.props.action.setLoadingState(true);
+        FitlyNavigator.resetTo({ name: 'Profile', from: 'Email signup' });
+        action.setLoadingState(true);
       } catch(error) {
-        this.props.action.printAuthError(error);
+        action.printAuthError(error);
         console.log("Error: ", error);
       }
     })();
@@ -141,11 +96,7 @@ class Signup extends Component {
         <Text style={styles.mainHeader}>
           JOIN US
         </Text>
-        <TouchableHighlight style={styles.loginButton} onPress={() => this._handleFBLogin()}>
-          <Text style={styles.buttonText}>
-            Join with Facebook
-          </Text>
-        </TouchableHighlight>
+        <FBloginBtn firestack={firestack} navigator={FitlyNavigator} text='Join with Facebook'/>
         <Text style={styles.disclamerText}>
           or
         </Text>

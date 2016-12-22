@@ -1,14 +1,18 @@
 import WelcomeView from '../login/WelcomeView.js';
 import SignUpView from '../login/SignUpView.js';
 import SignInView from '../login/SignInView.js';
+import { SetupProfileView, SetupStatsView, SetupActiveLevelView, SetupLocationView  } from '../login/SetupView.js';
 import ProfileView from '../profile/ProfileView.js';
-
 
 const ROUTES = {
   WelcomeView: WelcomeView,
   SignInView: SignInView,
   SignUpView: SignUpView,
-  ProfileView: ProfileView
+  SetupProfileView: SetupProfileView,
+  SetupStatsView: SetupStatsView,
+  SetupActiveLevelView: SetupActiveLevelView,
+  SetupLocationView: SetupLocationView,
+  ProfileView: ProfileView,
 };
 
 export default ROUTES;

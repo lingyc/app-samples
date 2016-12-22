@@ -45,19 +45,19 @@ class FBloginBtn extends Component {
             friends: friends.data,
             location: location.name,
             provider: 'Facebook',
-            FacebookID: id,
-            height: 0,
-            weight: 0,
-            activeLevel: 0,
             followerCount: 0,
             followingCount: 0,
             sessionCount: 0,
-            currentLocation: null,
-            profileComplete: false
+            profileComplete: false,
+            FacebookID: id,
+            // height: 0,
+            // weight: 0,
+            // activeLevel: 0,
+            // currentLocation: null,
           });
-          FitlyNavigator.resetTo({ name: 'ProfileView', from: 'FBinitSignup'});
+          FitlyNavigator.resetTo({ name: 'SetupStatsView', from: 'FBinitSignup'});
         } else if (firebaseUserData.value.profileComplete === false) {
-          FitlyNavigator.resetTo({ name: 'ProfileView', from: 'FBinitSignup'});
+          FitlyNavigator.resetTo({ name: 'SetupStatsView', from: 'FBinitSignup'});
         } else {
           FitlyNavigator.resetTo({ name: 'ProfileView', from: 'profile complete'});
         }

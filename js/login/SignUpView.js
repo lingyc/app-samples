@@ -54,23 +54,23 @@ class SignUpView extends Component {
           first_name: this.state.firstName,
           last_name: this.state.lastName,
           email: this.state.email,
-          picture: null,
-          gender: null,
-          birthday: null,
-          friends: null,
-          location: null,
           provider: 'Firebase',
-          FacebookID: null,
-          height: 0,
-          weight: 0,
-          activeLevel: 0,
           followerCount: 0,
           followingCount: 0,
           sessionCount: 0,
-          currentLocation: null,
           profileComplete: false,
+          // picture: null,
+          // gender: null,
+          // birthday: null,
+          // friends: null,
+          // location: null,
+          // FacebookID: null,
+          // height: 0,
+          // weight: 0,
+          // activeLevel: 0,
+          // currentLocation: null,
         });
-        FitlyNavigator.resetTo({ name: 'ProfileView', from: 'Email signup' });
+        FitlyNavigator.resetTo({ name: 'SetupProfileView', from: 'Email signup' });
         action.setLoadingState(true);
       } catch(error) {
         action.setLoadingState(false);

@@ -37,7 +37,7 @@ class SignInView extends Component {
         const userRef = firestack.database.ref('users/' + authData.user.uid);
         const firebaseUserData = await userRef.once('value');
         if (firebaseUserData.value.profileComplete === false) {
-          FitlyNavigator.resetTo({ name: 'ProfileView', from: 'SigninEmail, profile incomplete' });
+          FitlyNavigator.resetTo({ name: 'SetupProfileView', from: 'SetupProfileView, profile incomplete' });
         } else {
           FitlyNavigator.resetTo({ name: 'ProfileView', from: 'SigninEmail, profile complete' });
         }

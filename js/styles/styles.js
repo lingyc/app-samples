@@ -18,6 +18,7 @@ export const loginStyles = StyleSheet.create({
     backgroundColor: '#1D2F7B'
   },
   header: {
+    textAlign: 'center',
     fontFamily: 'HelveticaNeue',
     fontSize: 40,
     color: 'white',
@@ -26,6 +27,7 @@ export const loginStyles = StyleSheet.create({
     paddingBottom: 45,
   },
   FBbtn: {
+    alignSelf:'center',
     justifyContent: 'center',
     flexDirection: 'column',
     height: 48,

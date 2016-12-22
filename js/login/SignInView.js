@@ -3,10 +3,10 @@
  */
 
 import React, { Component } from 'react';
-import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback } from 'react-native';
+import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
 import { loginStyles, loadingStyle } from '../styles/styles.js'
 import FBloginBtn from '../components/FBloginBtn.js';
-import { setSignInMedthod, printAuthError } from '../actions/auth.js';
+import { setFirebaseUID, setSignInMedthod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -33,6 +33,7 @@ class SignInView extends Component {
         await firestack.auth.signOut();
         const authData = await firestack.auth.signInWithEmail(this.state.email, this.state.password)
         action.setSignInMedthod('Email');
+        action.setFirebaseUID(authData.user.uid);
         const userRef = firestack.database.ref('users/' + authData.user.uid);
         const firebaseUserData = await userRef.once('value');
         if (firebaseUserData.value.profileComplete === false) {
@@ -65,7 +66,7 @@ class SignInView extends Component {
     }
     return (
       <TouchableWithoutFeedback style={{flex:1}} onPress={()=> dismissKeyboard()}>
-        <View style={loginStyles.container}>
+        <KeyboardAvoidingView behavior="padding" style={loginStyles.container}>
           <StatusBar
             barStyle="light-content"
           />
@@ -118,7 +119,7 @@ class SignInView extends Component {
               SWIPE TO SIGN IN
             </Text>
           </TouchableHighlight>
-        </View>
+        </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     );
    }
@@ -132,7 +133,7 @@ class SignInView extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setSignInMedthod, printAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignInMedthod, printAuthError, setLoadingState }, dispatch)
   };
 };
 

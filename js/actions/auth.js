@@ -6,6 +6,7 @@ export const SET_SIGNUP_METHOD = 'SET_SIGNUP_METHOD';
 export const SET_SIGNIN_METHOD = 'SET_SIGNIN_METHOD';
 export const RESET_AUTH_STATE = 'RESET_AUTH_STATE';
 export const PRINT_AUTH_ERROR = 'PRINT_AUTH_ERROR';
+export const SET_FIREBASE_UID = 'SET_FIREBASE_UID';
 
 export const setSignUpMedthod = (method: string) => {
   return {
@@ -30,6 +31,13 @@ export const printAuthError = (errorMsg) => {
 
 export const resetAuthState = () => {
   return {
-    type: resetAuthState,
+    type: RESET_AUTH_STATE,
+  }
+}
+
+export const setFirebaseUID = (uID: string) => {
+  return {
+    type: SET_FIREBASE_UID,
+    payload: uID
   }
 }

@@ -3,10 +3,10 @@
  */
 
 import React, { Component } from 'react';
-import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback } from 'react-native';
+import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
 import { loginStyles, loadingStyle } from '../styles/styles.js'
 import FBloginBtn from '../components/FBloginBtn.js';
-import { setSignUpMedthod, printAuthError } from '../actions/auth.js';
+import { setFirebaseUID, setSignUpMedthod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -38,7 +38,7 @@ class SignUpView extends Component {
         await firestack.auth.signOut();
         const user = await firestack.auth.createUserWithEmail(this.state.email, this.state.password)
         action.setSignUpMedthod('Email');
-
+        action.setFirebaseUID(user.uid);
         //send verification email, which is not yet available on firestack
         // firestack.auth.sendEmailVerification();
 
@@ -97,97 +97,98 @@ class SignUpView extends Component {
       );
     } else {
       return (
-        <TouchableWithoutFeedback style={{flex:1}} onPress={()=> dismissKeyboard()}>
+        <TouchableWithoutFeedback onPress={()=> dismissKeyboard()}>
           <View style={loginStyles.container}>
-            <StatusBar
-              barStyle="light-content"
-            />
-
-            <Text style={loginStyles.header}>
-              JOIN US
-            </Text>
-
-            <FBloginBtn firestack={firestack} navigator={FitlyNavigator} label='Join with Facebook'/>
-
-            <Text style={loginStyles.textSmall}>
-              or
-            </Text>
-
-            <View style={loginStyles.form}>
-              <TextInput
-                returnKeyType="next"
-                maxLength={30}
-                clearButtonMode="always"
-                ref="1"
-                onSubmitEditing={() => this.focusNextField('2')}
-                style={loginStyles.input}
-                onChangeText={(text) => this.setState({firstName: text})}
-                value={this.state.firstName}
-                placeholder="First Name"
-                placeholderTextColor="white"
+            <KeyboardAvoidingView behavior="position" style={loginStyles.KeyboardAvoidingContainer}>
+              <StatusBar
+                barStyle="light-content"
               />
-            </View>
-            <View style={loginStyles.form}>
-              <TextInput
-                returnKeyType="next"
-                maxLength={30}
-                clearButtonMode="always"
-                ref="2"
-                onSubmitEditing={() => this.focusNextField('3')}
-                style={loginStyles.input}
-                onChangeText={(text) => this.setState({lastName: text})}
-                value={this.state.lastName}
-                placeholder="Last Name"
-                placeholderTextColor="white"
-              />
-            </View>
-            <View style={loginStyles.form}>
-              <TextInput
-                returnKeyType="next"
-                maxLength={128}
-                clearButtonMode="always"
-                ref="3"
-                onSubmitEditing={() => this.focusNextField('4')}
-                keyboardType="email-address"
-                style={loginStyles.input}
-                onChangeText={(text) => this.setState({email: text})}
-                value={this.state.email}
-                placeholder="Email"
-                placeholderTextColor="white"
-              />
-            </View>
-            <View style={loginStyles.form}>
-              <TextInput
-                returnKeyType="next"
-                maxLength={128}
-                clearButtonMode="always"
-                secureTextEntry={true}
-                ref="4"
-                onSubmitEditing={() => this.focusNextField('5')}
-                style={loginStyles.input}
-                onChangeText={(text) => this.setState({password: text})}
-                value={this.state.password}
-                placeholder="Choose Password"
-                placeholderTextColor="white"
-              />
-            </View>
-            <View style={loginStyles.form}>
-              {/* make sure the confirm password is the same */}
-              <TextInput
-                returnKeyType="join"
-                maxLength={128}
-                clearButtonMode="always"
-                secureTextEntry={true}
-                ref="5"
-                onSubmitEditing={() => this._handleEmailSignup()}
-                style={loginStyles.input}
-                onChangeText={(text) => this.setState({passwordConfirm: text})}
-                value={this.state.passwordConfirm}
-                placeholder="Confirm Password"
-                placeholderTextColor="white"
-              />
-            </View>
 
+              <Text style={loginStyles.header}>
+                JOIN US
+              </Text>
+
+              <FBloginBtn firestack={firestack} navigator={FitlyNavigator} label='Join with Facebook'/>
+
+              <Text style={loginStyles.textSmall}>
+                or
+              </Text>
+
+              <View style={loginStyles.form}>
+                <TextInput
+                  returnKeyType="next"
+                  maxLength={30}
+                  clearButtonMode="always"
+                  ref="1"
+                  onSubmitEditing={() => this.focusNextField('2')}
+                  style={loginStyles.input}
+                  onChangeText={(text) => this.setState({firstName: text})}
+                  value={this.state.firstName}
+                  placeholder="First Name"
+                  placeholderTextColor="white"
+                />
+              </View>
+              <View style={loginStyles.form}>
+                <TextInput
+                  returnKeyType="next"
+                  maxLength={30}
+                  clearButtonMode="always"
+                  ref="2"
+                  onSubmitEditing={() => this.focusNextField('3')}
+                  style={loginStyles.input}
+                  onChangeText={(text) => this.setState({lastName: text})}
+                  value={this.state.lastName}
+                  placeholder="Last Name"
+                  placeholderTextColor="white"
+                />
+              </View>
+              <View style={loginStyles.form}>
+                <TextInput
+                  returnKeyType="next"
+                  maxLength={128}
+                  clearButtonMode="always"
+                  ref="3"
+                  onSubmitEditing={() => this.focusNextField('4')}
+                  keyboardType="email-address"
+                  style={loginStyles.input}
+                  onChangeText={(text) => this.setState({email: text})}
+                  value={this.state.email}
+                  placeholder="Email"
+                  placeholderTextColor="white"
+                />
+              </View>
+              <View style={loginStyles.form}>
+                <TextInput
+                  returnKeyType="next"
+                  maxLength={128}
+                  clearButtonMode="always"
+                  secureTextEntry={true}
+                  ref="4"
+                  onSubmitEditing={() => this.focusNextField('5')}
+                  style={loginStyles.input}
+                  onChangeText={(text) => this.setState({password: text})}
+                  value={this.state.password}
+                  placeholder="Choose Password"
+                  placeholderTextColor="white"
+                />
+              </View>
+              <View style={loginStyles.form}>
+                {/* make sure the confirm password is the same */}
+                <TextInput
+                  returnKeyType="join"
+                  maxLength={128}
+                  clearButtonMode="always"
+                  secureTextEntry={true}
+                  ref="5"
+                  onSubmitEditing={() => this._handleEmailSignup()}
+                  style={loginStyles.input}
+                  onChangeText={(text) => this.setState({passwordConfirm: text})}
+                  value={this.state.passwordConfirm}
+                  placeholder="Confirm Password"
+                  placeholderTextColor="white"
+                />
+              </View>
+            </KeyboardAvoidingView>
             <Text style={loginStyles.disclamerText}>
               By continuing, you agree to Fitly's Terms of Service & Privacy Policy.
             </Text>
@@ -210,7 +211,7 @@ class SignUpView extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setSignUpMedthod, printAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignUpMedthod, printAuthError, setLoadingState }, dispatch)
   };
 };
 

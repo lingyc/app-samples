@@ -1,10 +1,17 @@
-import { SET_SIGNUP_METHOD, SET_SIGNIN_METHOD, RESET_AUTH_STATE, PRINT_AUTH_ERROR } from '../actions/auth.js';
+import {
+  SET_SIGNUP_METHOD,
+  SET_SIGNIN_METHOD,
+  RESET_AUTH_STATE,
+  PRINT_AUTH_ERROR,
+  SET_FIREBASE_UID
+} from '../actions/auth.js';
 
 const initialState = {
   signUpMethod: '',
   signInMethod: '',
   error: false,
-  errorMsg: ''
+  errorMsg: '',
+  uID: null
 };
 
 export default function (state = initialState, action) {
@@ -24,6 +31,10 @@ export default function (state = initialState, action) {
       return { ...state,
         error: true,
         errorMsg: action.payload
+      };
+    case SET_FIREBASE_UID:
+      return { ...state,
+        uID: action.payload
       };
     default:
     return state;

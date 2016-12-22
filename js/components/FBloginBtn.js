@@ -32,7 +32,9 @@ class FBloginBtn extends Component {
         const userRef = firestack.database.ref('users/' + user.uid);
         action.setFirebaseUID(user.uid);
         const firebaseUserData = await userRef.once('value');
+        console.log('firebaseUserData', firebaseUserData);
         if (firebaseUserData.value === null) {
+          console.log('creating user data');
           const { name, first_name, last_name, picture, email, gender, birthday, friends, location, id } = userFBprofile;
           userRef.set({
             name: name,

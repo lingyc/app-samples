@@ -34,6 +34,9 @@ class SignInView extends Component {
         const authData = await firestack.auth.signInWithEmail(this.state.email, this.state.password)
         action.setSignInMedthod('Email');
         action.setFirebaseUID(authData.user.uid);
+
+        //TODO abstract away check for profile completion
+        //write a isProfileComplete function
         const userRef = firestack.database.ref('users/' + authData.user.uid);
         const firebaseUserData = await userRef.once('value');
         if (firebaseUserData.value.profileComplete === false) {

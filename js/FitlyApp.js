@@ -11,7 +11,7 @@ class FitlyApp extends Component {
     super(props);
     this.state = {
       loading: true,
-      isLoggin: false
+      initialRoute: 'Welcome'
     }
     firestack = this.props.firestack;
   }
@@ -20,21 +20,39 @@ class FitlyApp extends Component {
   }
 
   _checkAuth() {
-    firestack.auth.getCurrentUser()
-    .then(user => {
-      console.log('initial authentication check from firebase: ', user);
-      this.setState({
-        loading: false,
-        isLoggin: true
-      })
-    })
-    .catch(err => {
-      console.log('initial authentication check - user has not signin', err)
-      this.setState({
-        loading: false,
-        isLoggin: false
-      })
-    })
+    (async () => {
+      try {
+        const authData = await firestack.auth.getCurrentUser();
+        console.log('authData', authData);
+        const userRef = firestack.database.ref('users/' + authData.user.uid);
+        const firebaseUserData = await userRef.once('value');
+        console.log('firebaseUserData', firebaseUserData);
+        if (firebaseUserData.value.profileComplete === false) {
+          if (firebaseUserData.value.Firebase === 'Facebook') {
+            this.setState({
+              loading: false,
+              initialRoute: "SetupStatsView"
+            });
+          } else {
+            this.setState({
+              loading: false,
+              initialRoute: "SetupProfileView"
+            });
+          }
+        } else {
+          this.setState({
+            loading: false,
+            initialRoute: "ProfileView"
+          });
+        }
+      } catch(error) {
+        console.log('initial authentication check - user has not signin', error)
+        this.setState({
+          loading: false,
+          initialRoute: "WelcomeView"
+        })
+      }
+    })();
   }
 
   render() {
@@ -50,9 +68,7 @@ class FitlyApp extends Component {
           </View>
         );
       } else {
-        return (this.state.isLoggin)
-          ? (<FitlyNavigator initialRoute={{name: 'ProfileView'}} firestack={firestack}/>)
-          : (<FitlyNavigator initialRoute={{name: 'WelcomeView'}} firestack={firestack}/>);
+        return (<FitlyNavigator initialRoute={{name: this.state.initialRoute}} firestack={firestack}/>);
       }
    }
  }

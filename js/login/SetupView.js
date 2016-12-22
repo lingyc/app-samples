@@ -110,7 +110,7 @@ class SetupProfileView extends Component {
                   color: 'white'
                 },
                 btnCancel: {
-                  color: '#007AFF'
+
                 },
                 btnTextConfirm: {
                   color: '#007AFF'

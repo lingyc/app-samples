@@ -24,6 +24,7 @@ class FitlyApp extends Component {
       try {
         const authData = await firestack.auth.getCurrentUser();
         console.log('authData', authData);
+        //set uID in redux store
         const userRef = firestack.database.ref('users/' + authData.user.uid);
         const firebaseUserData = await userRef.once('value');
         console.log('firebaseUserData', firebaseUserData);

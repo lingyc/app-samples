@@ -22,6 +22,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
+		3D27EDD41E0C8B4100CA537C /* libRNGeocoder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D27EDD31E0C8B1400CA537C /* libRNGeocoder.a */; };
 		3DAA3D111E071E7500397B88 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3DAA3D101E071E7500397B88 /* GoogleService-Info.plist */; };
 		3DAA3D451E076FAE00397B88 /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAA3D341E076F6900397B88 /* libRCTFBLogin.a */; };
 		3DEA605B1E07761100C233A5 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DEA60581E07761100C233A5 /* FBSDKCoreKit.framework */; };
@@ -97,6 +98,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
+		};
+		3D27EDD21E0C8B1400CA537C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3D27EDB91E0C8B1400CA537C /* RNGeocoder.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BF8FCF941BFFB184000FCD37;
+			remoteInfo = RNGeocoder;
 		};
 		3D744AD91DFF648200F6E962 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -212,6 +220,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Fitly/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Fitly/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		3D27EDB91E0C8B1400CA537C /* RNGeocoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNGeocoder.xcodeproj; path = "../node_modules/react-native-geocoder/ios/RNGeocoder.xcodeproj"; sourceTree = "<group>"; };
 		3DAA3D101E071E7500397B88 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3DAA3D2B1E076F6900397B88 /* RCTFBLogin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBLogin.xcodeproj; path = "../node_modules/react-native-facebook-login/RCTFBLogin.xcodeproj"; sourceTree = "<group>"; };
 		3DEA60581E07761100C233A5 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../node_modules/react-native-facebook-login/FacebookSDK/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
@@ -243,6 +252,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D27EDD41E0C8B4100CA537C /* libRNGeocoder.a in Frameworks */,
 				3DEA605C1E07761100C233A5 /* FBSDKLoginKit.framework in Frameworks */,
 				3DAA3D451E076FAE00397B88 /* libRCTFBLogin.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
@@ -377,6 +387,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3D27EDBA1E0C8B1400CA537C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3D27EDD31E0C8B1400CA537C /* libRNGeocoder.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		3DAA3D2C1E076F6900397B88 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -414,6 +432,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				3D27EDB91E0C8B1400CA537C /* RNGeocoder.xcodeproj */,
 				3DEA60E71E0A1E0000C233A5 /* Firestack.xcodeproj */,
 				3DAA3D2B1E076F6900397B88 /* RCTFBLogin.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
@@ -604,6 +623,10 @@
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
+				{
+					ProductGroup = 3D27EDBA1E0C8B1400CA537C /* Products */;
+					ProjectRef = 3D27EDB91E0C8B1400CA537C /* RNGeocoder.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -668,6 +691,13 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3D27EDD31E0C8B1400CA537C /* libRNGeocoder.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNGeocoder.a;
+			remoteRef = 3D27EDD21E0C8B1400CA537C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3D744ADA1DFF648200F6E962 /* libRCTImage-tvOS.a */ = {

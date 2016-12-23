@@ -3,16 +3,26 @@
  */
 
 import React, { Component } from 'react';
-import { StatusBar, TextInput, TouchableHighlight, Text, View, TouchableWithoutFeedback, KeyboardAvoidingView, DatePickerIOS, Slider } from 'react-native';
-import { loginStyles, loadingStyle } from '../styles/styles.js'
-import { printAuthError } from '../actions/auth.js';
+import {
+  StatusBar,
+  TextInput,
+  TouchableHighlight,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Slider,
+  ActivityIndicator
+} from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-//iOS Only
 import FMPicker from 'react-native-fm-picker';
 import DatePicker from 'react-native-datepicker'
-
 const dismissKeyboard = require('dismissKeyboard');
+
+import { loginStyles, loadingStyle } from '../styles/styles.js'
+import { printAuthError } from '../actions/auth.js';
+import { getCurrentPlace, getPlace } from '../library/asyncGeolocation.js';
 
 class SetupProfileView extends Component {
   constructor(props) {
@@ -40,11 +50,15 @@ class SetupProfileView extends Component {
 
   _handlePress() {
     //TODO validate the input before pushing to next scene
-    FitlyNavigator.push({
-      name:'SetupStatsView',
-      passProps: this.state,
-      from:'SetupProfileView, profile incomplete'
-    });
+    if (this.state.gender !== null && this.state.birthday !== null) {
+      FitlyNavigator.push({
+        name:'SetupStatsView',
+        passProps: this.state,
+        from:'SetupProfileView, profile incomplete'
+      });
+    } else {
+      console.log(this.state.gender + this.state.birthday)
+    }
   }
 
   render() {
@@ -86,7 +100,7 @@ class SetupProfileView extends Component {
             </Text>
             <DatePicker
               style={{width: 200, alignSelf: 'center'}}
-              date={this.state.date}
+              date={this.state.birthday}
               mode="date"
               placeholder="date"
               format="YYYY-MM-DD"
@@ -94,7 +108,7 @@ class SetupProfileView extends Component {
               maxDate={this.formatDate(new Date())}
               confirmBtnText="Confirm"
               cancelBtnText="Cancel"
-              onDateChange={(date) => {this.setState({date: date})}}
+              onDateChange={(date) => {this.setState({birthday: date})}}
               customStyles={{
                 dateIcon: {
                   position: 'absolute',
@@ -143,12 +157,16 @@ class SetupStatsView extends Component {
 
    _handlePress() {
      //TODO validate input
-     console.log(this.state);
-     FitlyNavigator.push({
-       name:'SetupActiveLevelView',
-       passProps: this.state,
-       from:'SetupStatsView, profile incomplete'
-     });
+     if (this.state.height !== null && this.state.weight !== null ) {
+       FitlyNavigator.push({
+         name:'SetupActiveLevelView',
+         passProps: this.state,
+         from:'SetupStatsView, profile incomplete'
+       });
+     } else {
+        //show error
+        console.log(this.state.height + this.state.weight);
+     }
    }
 
    focusNextField = (nextField) => {
@@ -220,12 +238,16 @@ class SetupActiveLevelView extends Component {
    }
 
    _handlePress() {
-     console.log(this.state);
-     FitlyNavigator.push({
-       name:'SetupLocationView',
-       passProps: this.state,
-       from:'SetupActiveLevelView, profile incomplete'
-     });
+     if (this.state.activeLevel !== null) {
+       FitlyNavigator.push({
+         name:'SetupLocationView',
+         passProps: this.state,
+         from:'SetupActiveLevelView, profile incomplete'
+       });
+     } else {
+       //show error
+       console.log(this.state.activeLevel);
+     }
    }
 
    render() {
@@ -271,12 +293,13 @@ class SetupActiveLevelView extends Component {
    }
   };
 
-class SetupLocationView extends Component {
+class SetupLocation extends Component {
    constructor(props) {
      super(props);
      this.state = {
+       loading: false,
        location: null,
-       ...this.props.route.passProps
+       locationInput: null,
      }
      FitlyNavigator = this.props.navigator;
    }
@@ -284,16 +307,39 @@ class SetupLocationView extends Component {
    _handlePress() {
      //TODO update firebase with new user info
      //if picture not created yet, direct to picture upload scene
-     console.log(this.state);
-     FitlyNavigator.push({
-       name:'ProfileView',
-       passProps: this.state,
-       from:'SetupLocationView, profile incomplete'
-     });
+     if (this.state.location) {
+        let updates = {};
+        updates['/users/' + this.state.uid] = {...this.props.route.passProps, location:this.state.location};
+        console.log(updates);
+        firestack.database.ref().update(updates);
+        FitlyNavigator.push({
+         name:'ProfileView',
+         from:'SetupLocationView, profile incomplete'
+        });
+     } else {
+       //show error
+     }
    }
 
-   _getLocation() {
-     //TODO get current location and set to state
+   _getLocation(input) {
+     let getLocationFunc = (input) ? getPlace.bind(null, input) : getCurrentPlace;
+     (async () => {
+       try {
+         this.setState({loading: true});
+         const place = await getLocationFunc();
+         this.setState({
+           loading: false,
+           location: {
+             place: `${place.locality}, ${place.adminArea}`,
+             lat: place.position.lat,
+             lon: place.position.lng,
+             zip: place.postalCode
+           }
+         })
+       } catch(err) {
+         console.log('geolocation err', err)
+       }
+     })();
    }
 
    render() {
@@ -323,20 +369,26 @@ class SetupLocationView extends Component {
            <View style={loginStyles.form}>
              <TextInput
                maxLength={30}
-               returnKeyType="done"
+               returnKeyType="search"
                clearButtonMode="always"
-               onSubmitEditing={() => this._handlePress()}
+               onSubmitEditing={() => this._getLocation(this.state.locationInput)}
                style={loginStyles.input}
-               onChangeText={(text) => this.setState({location: text})}
-               value={this.state.location}
+               onChangeText={(text) => this.setState({locationInput: text})}
+               value={this.state.locationInput}
                placeholder="Enter postal code, or city"
                placeholderTextColor="white"
              />
            </View>
 
-           <Text style={[loginStyles.input, {marginTop: 40, fontSize: 40}]}>
-             {(this.state.location) ? this.state.location : '' }
+           <Text style={[loginStyles.input, {marginTop: 40, fontSize: 30}]}>
+             {(this.state.location && this.state.location.place) ? this.state.location.place : '' }
            </Text>
+
+           <ActivityIndicator
+             animating={this.state.loading}
+             style={{height: 80}}
+             size="large"
+           />
 
            <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handlePress()}>
              <Text style={loginStyles.btnText}>
@@ -360,4 +412,5 @@ const mapDispatchToProps = function(dispatch) {
   };
 };
 
-export { SetupProfileView, SetupStatsView, SetupActiveLevelView, SetupLocationView };
+export { SetupProfileView, SetupStatsView, SetupActiveLevelView };
+export const SetupLocationView = connect(mapStateToProps, mapDispatchToProps)(SetupLocation);

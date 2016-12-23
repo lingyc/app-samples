@@ -23,6 +23,7 @@ const dismissKeyboard = require('dismissKeyboard');
 import { loginStyles, loadingStyle } from '../styles/styles.js'
 import { printAuthError } from '../actions/auth.js';
 import { getCurrentPlace, getPlace } from '../library/asyncGeolocation.js';
+import { createUpdateObj } from '../library/firebaseHelpers.js';
 
 class SetupProfileView extends Component {
   constructor(props) {
@@ -308,9 +309,12 @@ class SetupLocation extends Component {
      //TODO update firebase with new user info
      //if picture not created yet, direct to picture upload scene
      if (this.state.location) {
-        let updates = {};
-        updates['/users/' + this.state.uid] = {...this.props.route.passProps, location:this.state.location};
-        console.log(updates);
+        let updates = createUpdateObj('/users/' + this.props.uID, {
+          ...this.props.route.passProps,
+          location:this.state.location,
+          currentLocation:this.state.location,
+          profileComplete: true
+        });
         firestack.database.ref().update(updates);
         FitlyNavigator.push({
          name:'ProfileView',

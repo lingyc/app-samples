@@ -22,7 +22,7 @@ function setup() {
    render() {
      return (
        <Provider store={store}>
-         <FitlyApp firestack={firestack}/>
+         <FitlyApp store={store} firestack={firestack}/>
        </Provider>
      );
    }

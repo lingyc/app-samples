@@ -15,11 +15,9 @@ export const getCurrentPosition = () => {
 export const getCurrentPlace = () => {
   return getCurrentPosition()
   .then(({coords}) => {
-    // console.log(coords);
     return Geocoder.geocodePosition({lat: coords.latitude, lng: coords.longitude})
   })
   .then(geocoding => {
-    console.log(geocoding);
     return geocoding[0];
   })
 };
@@ -27,7 +25,6 @@ export const getCurrentPlace = () => {
 export const getPlace = (userInput) => {
   return Geocoder.geocodeAddress(userInput)
   .then(geocoding => {
-    console.log(geocoding);
     return geocoding[0];
   })
 };

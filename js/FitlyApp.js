@@ -14,6 +14,7 @@ class FitlyApp extends Component {
       initialRoute: 'Welcome'
     }
     firestack = this.props.firestack;
+    store = this.props.store;
   }
   componentDidMount() {
     this._checkAuth();
@@ -25,11 +26,15 @@ class FitlyApp extends Component {
         const authData = await firestack.auth.getCurrentUser();
         console.log('authData', authData);
         //set uID in redux store
+        store.dispatch({
+          type: 'SET_FIREBASE_UID',
+          payload: authData.user.uid
+        });
         const userRef = firestack.database.ref('users/' + authData.user.uid);
         const firebaseUserData = await userRef.once('value');
         console.log('firebaseUserData', firebaseUserData);
-        if (firebaseUserData.value.profileComplete === false) {
-          if (firebaseUserData.value.Firebase === 'Facebook') {
+        if (firebaseUserData.value === null || firebaseUserData.value.profileComplete === false) {
+          if (firebaseUserData.value.provider === 'Facebook') {
             this.setState({
               loading: false,
               initialRoute: "SetupStatsView"

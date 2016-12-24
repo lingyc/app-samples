@@ -13,14 +13,13 @@ class FitlyApp extends Component {
       loading: true,
       initialRoute: 'Welcome'
     }
-    firestack = this.props.firestack;
-    store = this.props.store;
   }
   componentDidMount() {
     this._checkAuth();
   }
 
   _checkAuth() {
+    const {firestack, store} = this.props;
     (async () => {
       try {
         const authData = await firestack.auth.getCurrentUser();
@@ -33,8 +32,8 @@ class FitlyApp extends Component {
         const userRef = firestack.database.ref('users/' + authData.user.uid);
         const firebaseUserData = await userRef.once('value');
         console.log('firebaseUserData', firebaseUserData);
-        if (firebaseUserData.value === null || firebaseUserData.value.profileComplete === false) {
-          if (firebaseUserData.value.provider === 'Facebook') {
+        if (firebaseUserData.value.public.profileComplete === false) {
+          if (firebaseUserData.value.public.provider === 'Facebook') {
             this.setState({
               loading: false,
               initialRoute: "SetupStatsView"
@@ -62,6 +61,7 @@ class FitlyApp extends Component {
   }
 
   render() {
+      const {firestack} = this.props;
       //show loading screen while checking auth status
       if (this.state.loading) {
         return (

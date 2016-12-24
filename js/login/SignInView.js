@@ -5,8 +5,8 @@
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
 import { loginStyles, loadingStyle } from '../styles/styles.js'
-import FBloginBtn from '../components/FBloginBtn.js';
-import { setFirebaseUID, setSignInMedthod, printAuthError } from '../actions/auth.js';
+import FBloginBtn from '../common/FBloginBtn.js';
+import { setFirebaseUID, setSignInMethod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -21,34 +21,37 @@ class SignInView extends Component {
       password: '',
       error: ''
     }
-    firestack = this.props.firestack;
-    FitlyNavigator = this.props.navigator;
-    action = this.props.action;
   }
 
   _handleEmailSignin() {
     //validate the email, password and names before sending it out
+    const { firestack, navigator: FitlyNavigator, action } = this.props;
     (async () => {
       try {
-        await firestack.auth.signOut();
-        const authData = await firestack.auth.signInWithEmail(this.state.email, this.state.password)
-        action.setSignInMedthod('Email');
+        action.setLoadingState(true);
+        const authData = await firestack.auth.signInWithEmail(this.state.email, this.state.password);
+        console.log('signInView', setSignInMethod);
+        console.log('signInView', action);
+        action.setSignInMethod('Email');
         action.setFirebaseUID(authData.user.uid);
 
         //TODO abstract away check for profile completion
         //write a isProfileComplete function
         const userRef = firestack.database.ref('users/' + authData.user.uid);
         const firebaseUserData = await userRef.once('value');
-        if (firebaseUserData.value.profileComplete === false) {
+        if (firebaseUserData.value.public.profileComplete === false) {
           FitlyNavigator.resetTo({ name: 'SetupProfileView', from: 'SetupProfileView, profile incomplete' });
+          action.setLoadingState(false);
         } else {
           FitlyNavigator.resetTo({ name: 'ProfileView', from: 'SigninEmail, profile complete' });
+          action.setLoadingState(false);
         }
       } catch(error) {
+        action.setLoadingState(false);
         action.printAuthError(error);
         console.log("Error: ", error);
       }
-    })()
+    })();
   }
 
   focusNextField = (nextField) => {
@@ -56,9 +59,10 @@ class SignInView extends Component {
   };
 
   render() {
+    const { firestack, navigator: FitlyNavigator } = this.props;
     if (this.props.loading === true) {
       return (
-        <View style={styles.centering}>
+        <View style={loadingStyle.app}>
           <ActivityIndicator
             animating={this.state.loading}
             style={{height: 80}}
@@ -102,6 +106,7 @@ class SignInView extends Component {
               returnKeyType="next"
               maxLength={30}
               clearButtonMode="always"
+              ref="2"
               style={loginStyles.input}
               onSubmitEditing={() => this._handleEmailSignin()}
               onChangeText={(text) => this.setState({password: text})}
@@ -111,13 +116,13 @@ class SignInView extends Component {
             />
           </View>
 
-          <TouchableHighlight onPress={() => this._handleEmailSignup()}>
+          <TouchableHighlight onPress={() => this._handleEmailSignin()}>
             <Text style={loginStyles.textMid}>
               Forgot your password?
             </Text>
           </TouchableHighlight>
 
-          <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handleEmailSignup()}>
+          <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handleEmailSignin()}>
             <Text style={loginStyles.btnText}>
               SWIPE TO SIGN IN
             </Text>
@@ -136,7 +141,7 @@ class SignInView extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignInMedthod, printAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignInMethod, printAuthError, setLoadingState }, dispatch)
   };
 };
 

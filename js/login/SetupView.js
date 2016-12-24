@@ -32,9 +32,6 @@ class SetupProfileView extends Component {
       gender: null,
       birthday: null
     }
-    FitlyNavigator = this.props.navigator;
-    options = ['male', 'female'];
-    labels = ['male', 'female'];
   }
 
   formatDate(date) {
@@ -52,7 +49,7 @@ class SetupProfileView extends Component {
   _handlePress() {
     //TODO validate the input before pushing to next scene
     if (this.state.gender !== null && this.state.birthday !== null) {
-      FitlyNavigator.push({
+      this.props.navigator.push({
         name:'SetupStatsView',
         passProps: this.state,
         from:'SetupProfileView, profile incomplete'
@@ -63,6 +60,9 @@ class SetupProfileView extends Component {
   }
 
   render() {
+      const options = ['male', 'female'];
+      const labels = ['male', 'female'];
+
       let genderInput = (this.state.gender)
         ? (<Text style={loginStyles.input} onPress={()=> this.refs.genderPicker.show()}>
             I am a {this.state.gender}
@@ -153,13 +153,12 @@ class SetupStatsView extends Component {
        weight: null,
        ...this.props.route.passProps
      }
-     FitlyNavigator = this.props.navigator;
    }
 
    _handlePress() {
      //TODO validate input
      if (this.state.height !== null && this.state.weight !== null ) {
-       FitlyNavigator.push({
+       this.props.navigator.push({
          name:'SetupActiveLevelView',
          passProps: this.state,
          from:'SetupStatsView, profile incomplete'
@@ -235,12 +234,11 @@ class SetupActiveLevelView extends Component {
        activeLevel: 0,
        ...this.props.route.passProps
      }
-     FitlyNavigator = this.props.navigator;
    }
 
    _handlePress() {
      if (this.state.activeLevel !== null) {
-       FitlyNavigator.push({
+       this.props.navigator.push({
          name:'SetupLocationView',
          passProps: this.state,
          from:'SetupActiveLevelView, profile incomplete'
@@ -302,24 +300,27 @@ class SetupLocation extends Component {
        location: null,
        locationInput: null,
      }
-     FitlyNavigator = this.props.navigator;
    }
 
    _handlePress() {
      //TODO update firebase with new user info
      //if picture not created yet, direct to picture upload scene
      if (this.state.location) {
-        let updates = createUpdateObj('/users/' + this.props.uID, {
-          ...this.props.route.passProps,
-          location:this.state.location,
-          currentLocation:this.state.location,
-          profileComplete: true
-        });
-        firestack.database.ref().update(updates);
-        FitlyNavigator.push({
-         name:'ProfileView',
-         from:'SetupLocationView, profile incomplete'
-        });
+       let publicDataUpdates = createUpdateObj('/users/' + this.props.uID + '/public', {
+         location:this.state.location,
+         currentLocation:this.state.location,
+         profileComplete: true
+       });
+
+      let privateDataUpdates = createUpdateObj('/users/' + this.props.uID + '/private', this.props.route.passProps);
+
+      this.props.firestack.database.ref().update({...publicDataUpdates, ...privateDataUpdates})
+      .catch(error => console.log('cannot update user profile: ', error));
+
+      this.props.navigator.push({
+       name:'ProfileView',
+       from:'SetupLocationView, profile incomplete'
+      });
      } else {
        //show error
      }

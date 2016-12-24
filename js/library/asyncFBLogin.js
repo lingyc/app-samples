@@ -28,4 +28,4 @@ export const asyncFBLoginWithPermission = (permissions: array) => {
 export const fetchFBProfile = (token: string) => {
   return fetch('https://graph.facebook.com/v2.8/me?fields=email,name,friends,first_name,last_name,picture,gender,birthday,location&access_token=' + token)
   .then((response) => response.json())
-}
+};

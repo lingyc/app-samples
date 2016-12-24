@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import { View, TouchableHighlight, Text } from 'react-native';
 import { loginStyles } from '../styles/styles.js'
 import { asyncFBLoginWithPermission, asyncFBLogout, fetchFBProfile } from '../library/asyncFBLogin.js';
-import { setFirebaseUID, setSignUpMedthod, printAuthError } from '../actions/auth.js';
+import { setFirebaseUID, setSignUpMethod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,18 +14,16 @@ import { bindActionCreators } from 'redux';
 class FBloginBtn extends Component {
   constructor(props) {
     super(props);
-    firestack = this.props.firestack;
-    navigator = this.props.navigator;
-    action = this.props.action;
   }
 
   //TODO error reporting for login error
   _handleFBLogin() {
+    const { firestack, navigator: FitlyNavigator, action } = this.props;
     (async () => {
       try {
         action.setLoadingState(true);
         await asyncFBLogout();
-        action.setSignUpMedthod('Facebook');
+        action.setSignUpMethod('Facebook');
         const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
         const userFBprofile = await fetchFBProfile(data.credentials.token);
         const user = await firestack.auth.signInWithProvider('facebook', data.credentials.token, '');
@@ -35,27 +33,29 @@ class FBloginBtn extends Component {
         console.log('firebaseUserData', firebaseUserData);
         if (firebaseUserData.value === null) {
           console.log('creating user data');
-          const { name, first_name, last_name, picture, email, gender, birthday, friends, location, id } = userFBprofile;
+          const { first_name, last_name, picture, email, gender, birthday, friends, location, id } = userFBprofile;
           userRef.set({
-            name: name,
-            first_name: first_name,
-            last_name: last_name,
-            picture: picture.data.url,
-            email: email,
-            gender: gender,
-            birthday: birthday,
-            friends: friends.data,
-            location: location.name,
-            provider: 'Facebook',
-            followerCount: 0,
-            followingCount: 0,
-            sessionCount: 0,
-            profileComplete: false,
-            FacebookID: id,
-            // height: 0,
-            // weight: 0,
-            // activeLevel: 0,
-            // currentLocation: null,
+            public: {
+              first_name: first_name,
+              last_name: last_name,
+              picture: picture.data.url,
+              location: location.name,
+              provider: 'Facebook',
+              summary: '',
+              profileComplete: false,
+              FacebookID: id,
+              dateJoined: firestack.ServerValue.TIMESTAMP,
+              lastActive: firestack.ServerValue.TIMESTAMP,
+              followerCount: 0,
+              followingCount: 0,
+              sessionCount: 0,
+            },
+            private: {
+              email: email,
+              gender: gender,
+              birthday: birthday,
+              friends: friends.data,
+            }
           });
           FitlyNavigator.resetTo({ name: 'SetupStatsView', from: 'FBinitSignup'});
         } else if (firebaseUserData.value.profileComplete === false) {
@@ -91,7 +91,7 @@ class FBloginBtn extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignUpMedthod, printAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, setLoadingState }, dispatch)
   };
 };
 

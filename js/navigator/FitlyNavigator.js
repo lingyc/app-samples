@@ -23,8 +23,7 @@ class FitlyNavigator extends Component {
           if (route.sceneConfig) {
             return route.sceneConfig;
           }
-
-          //this is modified
+          //this is modified PushFromRight transistion, which increase the edge hit width of the swipe
           const PushFromRight = {
             ...Navigator.SceneConfigs.PushFromRight,
             gestures: {
@@ -35,9 +34,6 @@ class FitlyNavigator extends Component {
             },
           };
           return PushFromRight;
-
-          //below is default
-          // return Navigator.SceneConfigs.PushFromRight;
         }}
       />
     );

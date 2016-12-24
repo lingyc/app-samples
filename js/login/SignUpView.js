@@ -5,8 +5,8 @@
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
 import { loginStyles, loadingStyle } from '../styles/styles.js'
-import FBloginBtn from '../components/FBloginBtn.js';
-import { setFirebaseUID, setSignUpMedthod, printAuthError } from '../actions/auth.js';
+import FBloginBtn from '../common/FBloginBtn.js';
+import { setFirebaseUID, setSignUpMethod, printAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,54 +24,43 @@ class SignUpView extends Component {
       passwordConfirm: '',
       error: ''
     }
-    firestack = this.props.firestack;
-    FitlyNavigator = this.props.navigator;
-    action = this.props.action;
   }
 
   //TODO error reporting for login error
   _handleEmailSignup() {
     //TODO validate the email, password and names before sending it out
+    const { firestack, navigator: FitlyNavigator, action } = this.props;
+
     (async () => {
       try {
         action.setLoadingState(true);
         await firestack.auth.signOut();
         const user = await firestack.auth.createUserWithEmail(this.state.email, this.state.password)
-        action.setSignUpMedthod('Email');
+        action.setSignUpMethod('Email');
         action.setFirebaseUID(user.uid);
-        //send verification email, which is not yet available on firestack
+
+        //TODO: send verification email, which is not yet available on firestack
         // firestack.auth.sendEmailVerification();
 
-        //update the user auth profile, which is not yet available on firestack
-        // const user2 = await firestack.auth.getCurrentUser();
-        // user2.updateProfile({
-        //   displayName: this.state.firstName + ' ' + this.state.lastName,
-        // });
-
         const userRef = firestack.database.ref('users/' + user.uid);
+        const serverVal = await firestack.ServerValue;
         userRef.set({
-          name: this.state.firstName + ' ' + this.state.lastName,
-          first_name: this.state.firstName,
-          last_name: this.state.lastName,
-          email: this.state.email,
-          provider: 'Firebase',
-          followerCount: 0,
-          followingCount: 0,
-          sessionCount: 0,
-          profileComplete: false,
-          // picture: null,
-          // gender: null,
-          // birthday: null,
-          // friends: null,
-          // location: null,
-          // FacebookID: null,
-          // height: 0,
-          // weight: 0,
-          // activeLevel: 0,
-          // currentLocation: null,
+          public: {
+            first_name: this.state.firstName,
+            last_name: this.state.lastName,
+            provider: 'Firebase',
+            followerCount: 0,
+            followingCount: 0,
+            sessionCount: 0,
+            profileComplete: false,
+            dateJoined: serverVal.TIMESTAMP
+          },
+          private: {
+            email: this.state.email,
+          }
         });
+        action.setLoadingState(false);
         FitlyNavigator.resetTo({ name: 'SetupProfileView', from: 'Email signup' });
-        action.setLoadingState(true);
       } catch(error) {
         action.setLoadingState(false);
         action.printAuthError(error);
@@ -85,6 +74,7 @@ class SignUpView extends Component {
   };
 
   render() {
+    const { firestack, navigator: FitlyNavigator } = this.props;
     if (this.props.loading === true) {
       return (
         <View style={loadingStyle.app}>
@@ -211,7 +201,7 @@ class SignUpView extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignUpMedthod, printAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, setLoadingState }, dispatch)
   };
 };
 

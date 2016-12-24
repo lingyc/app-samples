@@ -8,14 +8,14 @@ export const RESET_AUTH_STATE = 'RESET_AUTH_STATE';
 export const PRINT_AUTH_ERROR = 'PRINT_AUTH_ERROR';
 export const SET_FIREBASE_UID = 'SET_FIREBASE_UID';
 
-export const setSignUpMedthod = (method: string) => {
+export const setSignUpMethod = (method: string) => {
   return {
     type: SET_SIGNUP_METHOD,
     payload: method
   }
 }
 
-export const setSignInMedthod = (method: string) => {
+export const setSignInMethod = (method: string) => {
   return {
     type: SET_SIGNIN_METHOD,
     payload: method

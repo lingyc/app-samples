@@ -10,7 +10,7 @@ const initialState = {
 
 };
 
-function user(state = initialState, action) {
+export default function(state = initialState, action) {
   switch (action.type) {
     case STORE_USER_PROFILE:
       return { ...state,
@@ -24,8 +24,7 @@ function user(state = initialState, action) {
       return { ...state,
         isLoggedIn: action.payload
       };
-  default:
-  return state;
+    default:
+    return state;
+  }
 };
-
-export default user;

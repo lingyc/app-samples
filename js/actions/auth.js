@@ -36,7 +36,6 @@ export const clearAuthError = () => {
   }
 }
 
-
 export const resetAuthState = () => {
   return {
     type: RESET_AUTH_STATE,

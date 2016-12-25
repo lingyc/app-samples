@@ -7,12 +7,12 @@ import {
 const initialState = {
   isLoggedIn: false,
   user: null,
-
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
     case STORE_USER_PROFILE:
+      console.log('STORE_USER_PROFILE: ', action.payload);
       return { ...state,
         user: action.payload
       };

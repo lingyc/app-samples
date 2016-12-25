@@ -1,6 +1,7 @@
 import ROUTES from './FitlyRoutes.js'
 import React, { Component } from 'react';
-import { Navigator } from 'react-native';
+import { Navigator, View, Text } from 'react-native';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -17,8 +18,10 @@ class FitlyNavigator extends Component {
     let Component = ROUTES[route.name];
     //if logged in show tabs
     //has uID, has profile, isLoggedIn
-    if (isLoggedIn && user && user.profileComplete) {
-      return (<Component route={route} navigator={navigator} firestack={this.props.firestack}/>);
+    if (isLoggedIn && user && user.public.profileComplete) {
+      return (
+        <Component route={route} navigator={navigator} firestack={this.props.firestack}/>
+      );
     } else {
       return (<Component route={route} navigator={navigator} firestack={this.props.firestack}/>);
     }

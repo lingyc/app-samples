@@ -7,6 +7,7 @@ import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator
 import { loginStyles, loadingStyle, commonStyle } from '../styles/styles.js'
 import FBloginBtn from '../common/FBloginBtn.js';
 import { setFirebaseUID, setSignInMethod, printAuthError, clearAuthError } from '../actions/auth.js';
+import { updateLogginStatus, storeUserProfile } from '../actions/user.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -29,6 +30,7 @@ class SignInView extends Component {
         action.clearAuthError();
         action.setLoadingState(true);
         const authData = await firestack.auth.signInWithEmail(this.state.email, this.state.password);
+        action.updateLogginStatus(true);
         action.setSignInMethod('Email');
         action.setFirebaseUID(authData.user.uid);
 
@@ -39,6 +41,7 @@ class SignInView extends Component {
           FitlyNavigator.resetTo({ name: 'SetupProfileView', from: 'SetupProfileView, profile incomplete' });
           action.setLoadingState(false);
         } else {
+          action.storeUserProfile(firebaseUserData.value);
           FitlyNavigator.resetTo({ name: 'ProfileView', from: 'SigninEmail, profile complete' });
           action.setLoadingState(false);
         }
@@ -141,7 +144,7 @@ class SignInView extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignInMethod, printAuthError, clearAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignInMethod, printAuthError, clearAuthError, setLoadingState, updateLogginStatus, storeUserProfile }, dispatch)
   };
 };
 

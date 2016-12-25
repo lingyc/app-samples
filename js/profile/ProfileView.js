@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import { asyncFBLogout } from '../library/asyncFBLogin.js';
 import { resetAuthState, printAuthError } from '../actions/auth.js';
+import { updateLogginStatus, clearUserProfile } from '../actions/user.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -24,6 +25,8 @@ class ProfileView extends Component {
         }
           await this.props.firestack.auth.signOut()
           this.props.action.resetAuthState();
+          this.props.action.updateLogginStatus(false);
+          this.props.action.clearUserProfile();
           this.props.navigator.resetTo({name: 'WelcomeView'});
       } catch(err) {
         this.props.action.printAuthError(err);
@@ -88,7 +91,7 @@ class ProfileView extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ resetAuthState, printAuthError }, dispatch)
+    action: bindActionCreators({ resetAuthState, printAuthError, updateLogginStatus, clearUserProfile }, dispatch)
   };
 };
 

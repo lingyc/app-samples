@@ -5,6 +5,10 @@
 import React, { Component } from 'react';
 import {StyleSheet, ActivityIndicator, View } from 'react-native';
 import FitlyNavigator from './navigator/FitlyNavigator.js'
+import { updateLogginStatus, storeUserProfile } from '../js/actions/user.js';
+import { setFirebaseUID } from '../js/actions/auth.js';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 class FitlyApp extends Component {
   constructor(props) {
@@ -19,19 +23,17 @@ class FitlyApp extends Component {
   }
 
   _checkAuth() {
-    const {firestack, store} = this.props;
+    const {firestack, action} = this.props;
+    //consider using the auth status listener instead of getCurrentUser, which listens to change in auth state
     (async () => {
       try {
         const authData = await firestack.auth.getCurrentUser();
-        console.log('authData', authData);
-        //set uID in redux store
-        store.dispatch({
-          type: 'SET_FIREBASE_UID',
-          payload: authData.user.uid
-        });
-        const userRef = firestack.database.ref('users/' + authData.user.uid);
-        const firebaseUserData = await userRef.once('value');
-        console.log('firebaseUserData', firebaseUserData);
+        //below code are for redirection, consider refactoring it out
+        action.setFirebaseUID(authData.user.uid);
+        action.updateLogginStatus(true);
+
+        const firebaseUserData = firestack.database.ref('users/' + authData.user.uid).once('value');
+
         if (firebaseUserData.value.public.profileComplete === false) {
           if (firebaseUserData.value.public.provider === 'Facebook') {
             this.setState({
@@ -45,6 +47,7 @@ class FitlyApp extends Component {
             });
           }
         } else {
+          action.storeUserProfile(firebaseUserData.value);
           this.setState({
             loading: false,
             initialRoute: "ProfileView"
@@ -87,4 +90,10 @@ class FitlyApp extends Component {
   }
 });
 
- export default FitlyApp;
+const mapDispatchToProps = function(dispatch) {
+ return {
+   action: bindActionCreators({ updateLogginStatus, setFirebaseUID, storeUserProfile }, dispatch)
+ };
+};
+
+export default connect(() => { return {}; }, mapDispatchToProps)(FitlyApp);

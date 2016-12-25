@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { storeUserProfile } from '../actions/user.js';
 import FMPicker from 'react-native-fm-picker';
 import DatePicker from 'react-native-datepicker'
 const dismissKeyboard = require('dismissKeyboard');
@@ -49,6 +50,7 @@ class SetupProfile extends Component {
   _handlePress() {
     //TODO validate the input before pushing to next scene
     if (this.state.gender !== null && this.state.birthday !== null) {
+      this.props.action.clearError();
       this.props.navigator.push({
         name:'SetupStatsView',
         passProps: this.state,
@@ -303,27 +305,36 @@ class SetupLocation extends Component {
        location: null,
        locationInput: null,
      }
+     console.log('this.props.route.passProps', this.props.route.passProps)
    }
 
    _handlePress() {
      //TODO: if picture not created yet, direct to picture upload scene
      this.props.action.clearError();
      if (this.state.location) {
-       let publicDataUpdates = createUpdateObj('/users/' + this.props.uID + '/public', {
-         location:this.state.location,
-         currentLocation:this.state.location,
-         profileComplete: true
-       });
+       (async () => {
+         try {
+           let publicDataUpdates = createUpdateObj('/users/' + this.props.uID + '/public', {
+             location:this.state.location,
+             currentLocation:this.state.location,
+             profileComplete: true
+           });
 
-      let privateDataUpdates = createUpdateObj('/users/' + this.props.uID + '/private', this.props.route.passProps);
+           let privateDataUpdates = createUpdateObj('/users/' + this.props.uID + '/private', this.props.route.passProps);
 
-      this.props.firestack.database.ref().update({...publicDataUpdates, ...privateDataUpdates})
-      .catch(error => this.props.action.printError(error.description));
+           await this.props.firestack.database.ref().update({...publicDataUpdates, ...privateDataUpdates})
+           const userData = await firestack.database.ref('users/' + authData.user.uid).once('value');
+           this.props.action.storeUserProfile(userData.value);
+           
+           this.props.navigator.push({
+             name:'ProfileView',
+             from:'SetupLocationView, profile incomplete'
+           });
 
-      this.props.navigator.push({
-       name:'ProfileView',
-       from:'SetupLocationView, profile incomplete'
-      });
+         } catch(error) {
+           this.props.action.printError(error.description)
+         }
+       })();
      } else {
        //TODO: show proper error
        this.props.action.printError('location error')
@@ -420,7 +431,7 @@ class SetupLocation extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ printError, clearError }, dispatch)
+    action: bindActionCreators({ printError, clearError, storeUserProfile }, dispatch)
   };
 };
 

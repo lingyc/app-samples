@@ -7,6 +7,7 @@ import { View, TouchableHighlight, Text } from 'react-native';
 import { loginStyles } from '../styles/styles.js'
 import { asyncFBLoginWithPermission, asyncFBLogout, fetchFBProfile } from '../library/asyncFBLogin.js';
 import { setFirebaseUID, setSignUpMethod, printAuthError } from '../actions/auth.js';
+import { updateLogginStatus, storeUserProfile } from '../actions/user.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,8 +25,9 @@ class FBloginBtn extends Component {
         action.printAuthError(null);
         action.setLoadingState(true);
         await asyncFBLogout();
-        action.setSignUpMethod('Facebook');
         const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
+        action.setSignUpMethod('Facebook');
+        action.updateLogginStatus(true);
         const userFBprofile = await fetchFBProfile(data.credentials.token);
         const user = await firestack.auth.signInWithProvider('facebook', data.credentials.token, '');
         const userRef = firestack.database.ref('users/' + user.uid);
@@ -62,6 +64,7 @@ class FBloginBtn extends Component {
         } else if (firebaseUserData.value.profileComplete === false) {
           FitlyNavigator.resetTo({ name: 'SetupStatsView', from: 'FBinitSignup'});
         } else {
+          action.storeUserProfile(firebaseUserData.value);
           FitlyNavigator.resetTo({ name: 'ProfileView', from: 'profile complete'});
         }
         action.setLoadingState(false);
@@ -91,7 +94,7 @@ class FBloginBtn extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, setLoadingState, updateLogginStatus, storeUserProfile }, dispatch)
   };
 };
 

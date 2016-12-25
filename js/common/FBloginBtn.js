@@ -21,6 +21,7 @@ class FBloginBtn extends Component {
     const { firestack, navigator: FitlyNavigator, action } = this.props;
     (async () => {
       try {
+        action.printAuthError(null);
         action.setLoadingState(true);
         await asyncFBLogout();
         action.setSignUpMethod('Facebook');
@@ -66,8 +67,7 @@ class FBloginBtn extends Component {
         action.setLoadingState(false);
       } catch(error) {
         action.setLoadingState(false);
-        action.printAuthError(error);
-        console.log("Error: ", error);
+        action.printAuthError(error.description);
       }
     })();
   }

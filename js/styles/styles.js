@@ -6,7 +6,21 @@ export const loadingStyle = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+})
+
+export const commonStyle = StyleSheet.create({
+  error: {
+    height: 40,
+    width: 250,
+    fontWeight: '100',
+    textAlign: 'center',
+    color: '#FF0000'
+  },
+  hidden: {
+    height: 0,
+    width: 0,
+  },
 })
 
 export const loginStyles = StyleSheet.create({

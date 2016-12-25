@@ -4,9 +4,9 @@
 
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
-import { loginStyles, loadingStyle } from '../styles/styles.js'
+import { loginStyles, loadingStyle, commonStyle } from '../styles/styles.js'
 import FBloginBtn from '../common/FBloginBtn.js';
-import { setFirebaseUID, setSignInMethod, printAuthError } from '../actions/auth.js';
+import { setFirebaseUID, setSignInMethod, printAuthError, clearAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,28 +15,24 @@ const dismissKeyboard = require('dismissKeyboard')
 class SignInView extends Component {
   constructor(props) {
     super(props);
-    //refactor to redux later, must validate input
     this.state = {
       email: '',
       password: '',
-      error: ''
     }
   }
 
   _handleEmailSignin() {
-    //validate the email, password and names before sending it out
+    //TODO: validate the email, password and names before sending it out
     const { firestack, navigator: FitlyNavigator, action } = this.props;
     (async () => {
       try {
+        action.clearAuthError();
         action.setLoadingState(true);
         const authData = await firestack.auth.signInWithEmail(this.state.email, this.state.password);
-        console.log('signInView', setSignInMethod);
-        console.log('signInView', action);
         action.setSignInMethod('Email');
         action.setFirebaseUID(authData.user.uid);
 
-        //TODO abstract away check for profile completion
-        //write a isProfileComplete function
+        //TODO abstract away check for profile completion, write a isProfileComplete function
         const userRef = firestack.database.ref('users/' + authData.user.uid);
         const firebaseUserData = await userRef.once('value');
         if (firebaseUserData.value.public.profileComplete === false) {
@@ -48,13 +44,13 @@ class SignInView extends Component {
         }
       } catch(error) {
         action.setLoadingState(false);
-        action.printAuthError(error);
-        console.log("Error: ", error);
+        action.printAuthError(error.description);
       }
     })();
   }
 
   focusNextField = (nextField) => {
+    this.props.action.clearAuthError();
     this.refs[nextField].focus();
   };
 
@@ -96,6 +92,7 @@ class SignInView extends Component {
               style={loginStyles.input}
               onChangeText={(text) => this.setState({email: text})}
               value={this.state.email}
+              keyboardType="email-address"
               placeholder="Email"
               placeholderTextColor="white"
             />
@@ -111,17 +108,19 @@ class SignInView extends Component {
               onSubmitEditing={() => this._handleEmailSignin()}
               onChangeText={(text) => this.setState({password: text})}
               value={this.state.password}
+              keyboardType="email-address"
+              secureTextEntry={true}
               placeholder="Password"
               placeholderTextColor="white"
             />
           </View>
-
+          {/* TODO: need to implement the forget password and reset password feature */}
           <TouchableHighlight onPress={() => this._handleEmailSignin()}>
             <Text style={loginStyles.textMid}>
               Forgot your password?
             </Text>
           </TouchableHighlight>
-
+          {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
           <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handleEmailSignin()}>
             <Text style={loginStyles.btnText}>
               SWIPE TO SIGN IN
@@ -135,13 +134,14 @@ class SignInView extends Component {
 
  const mapStateToProps = function(state) {
   return {
-    loading: state.app.loading
+    loading: state.app.loading,
+    error: state.auth.errorMsg
   };
 };
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignInMethod, printAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignInMethod, printAuthError, clearAuthError, setLoadingState }, dispatch)
   };
 };
 

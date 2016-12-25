@@ -20,12 +20,12 @@ import FMPicker from 'react-native-fm-picker';
 import DatePicker from 'react-native-datepicker'
 const dismissKeyboard = require('dismissKeyboard');
 
-import { loginStyles, loadingStyle } from '../styles/styles.js'
-import { printAuthError } from '../actions/auth.js';
+import { loginStyles, loadingStyle, commonStyle } from '../styles/styles.js'
+import { printError, clearError } from '../actions/app.js';
 import { getCurrentPlace, getPlace } from '../library/asyncGeolocation.js';
 import { createUpdateObj } from '../library/firebaseHelpers.js';
 
-class SetupProfileView extends Component {
+class SetupProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +55,8 @@ class SetupProfileView extends Component {
         from:'SetupProfileView, profile incomplete'
       });
     } else {
-      console.log(this.state.gender + this.state.birthday)
+      //TODO: print proper errors
+      this.props.action.printError('field cannot be empty');
     }
   }
 
@@ -64,16 +65,16 @@ class SetupProfileView extends Component {
       const labels = ['male', 'female'];
 
       let genderInput = (this.state.gender)
-        ? (<Text style={loginStyles.input} onPress={()=> this.refs.genderPicker.show()}>
+        ? (<Text style={loginStyles.input} onPress={() => this.refs.genderPicker.show()}>
             I am a {this.state.gender}
           </Text>)
-        : (<Text style={loginStyles.input} onPress={()=> this.refs.genderPicker.show()}>
+        : (<Text style={loginStyles.input} onPress={() => this.refs.genderPicker.show()}>
             I am a Male? I am a Female?
           </Text>);
 
 
     return (
-      <TouchableWithoutFeedback style={{flex:1}} onPress={()=> dismissKeyboard()}>
+      <TouchableWithoutFeedback style={{flex:1}} onPress={() => dismissKeyboard()}>
         <View style={loginStyles.container}>
           <StatusBar
             barStyle="light-content"
@@ -133,7 +134,7 @@ class SetupProfileView extends Component {
               }}
             />
           </View>
-
+          {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
           <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handlePress()}>
             <Text style={loginStyles.btnText}>
               SAVE & CONTINUE
@@ -145,7 +146,7 @@ class SetupProfileView extends Component {
   }
  };
 
-class SetupStatsView extends Component {
+class SetupStats extends Component {
    constructor(props) {
      super(props);
      this.state = {
@@ -157,6 +158,7 @@ class SetupStatsView extends Component {
 
    _handlePress() {
      //TODO validate input
+     this.props.action.clearError();
      if (this.state.height !== null && this.state.weight !== null ) {
        this.props.navigator.push({
          name:'SetupActiveLevelView',
@@ -164,8 +166,8 @@ class SetupStatsView extends Component {
          from:'SetupStatsView, profile incomplete'
        });
      } else {
-        //show error
-        console.log(this.state.height + this.state.weight);
+       //TODO: print proper errors
+       this.props.action.printError('field cannot be empty');
      }
    }
 
@@ -215,7 +217,7 @@ class SetupStatsView extends Component {
                placeholderTextColor="white"
              />
            </View>
-
+           {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
            <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handlePress()}>
              <Text style={loginStyles.btnText}>
                SAVE & CONTINUE
@@ -227,7 +229,7 @@ class SetupStatsView extends Component {
    }
   };
 
-class SetupActiveLevelView extends Component {
+class SetupActiveLevel extends Component {
    constructor(props) {
      super(props);
      this.state = {
@@ -237,6 +239,7 @@ class SetupActiveLevelView extends Component {
    }
 
    _handlePress() {
+     this.props.action.clearError();
      if (this.state.activeLevel !== null) {
        this.props.navigator.push({
          name:'SetupLocationView',
@@ -244,8 +247,8 @@ class SetupActiveLevelView extends Component {
          from:'SetupActiveLevelView, profile incomplete'
        });
      } else {
-       //show error
-       console.log(this.state.activeLevel);
+       //TODO: print proper errors
+       this.props.action.printError('field cannot be empty');
      }
    }
 
@@ -280,7 +283,7 @@ class SetupActiveLevelView extends Component {
            <Text style={[loginStyles.input, {marginTop: 40, fontSize: 40}]}>
              {this.state.activeLevel}
            </Text>
-
+           {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
            <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handlePress()}>
              <Text style={loginStyles.btnText}>
                SAVE & CONTINUE
@@ -303,8 +306,8 @@ class SetupLocation extends Component {
    }
 
    _handlePress() {
-     //TODO update firebase with new user info
-     //if picture not created yet, direct to picture upload scene
+     //TODO: if picture not created yet, direct to picture upload scene
+     this.props.action.clearError();
      if (this.state.location) {
        let publicDataUpdates = createUpdateObj('/users/' + this.props.uID + '/public', {
          location:this.state.location,
@@ -315,19 +318,21 @@ class SetupLocation extends Component {
       let privateDataUpdates = createUpdateObj('/users/' + this.props.uID + '/private', this.props.route.passProps);
 
       this.props.firestack.database.ref().update({...publicDataUpdates, ...privateDataUpdates})
-      .catch(error => console.log('cannot update user profile: ', error));
+      .catch(error => this.props.action.printError(error.description));
 
       this.props.navigator.push({
        name:'ProfileView',
        from:'SetupLocationView, profile incomplete'
       });
      } else {
-       //show error
+       //TODO: show proper error
+       this.props.action.printError('location error')
      }
    }
 
    _getLocation(input) {
      let getLocationFunc = (input) ? getPlace.bind(null, input) : getCurrentPlace;
+     this.props.action.clearError();
      (async () => {
        try {
          this.setState({loading: true});
@@ -341,8 +346,9 @@ class SetupLocation extends Component {
              zip: place.postalCode
            }
          })
-       } catch(err) {
-         console.log('geolocation err', err)
+       } catch(error) {
+         this.props.action.printError(error);
+         console.log('geolocation error', error)
        }
      })();
    }
@@ -388,7 +394,7 @@ class SetupLocation extends Component {
            <Text style={[loginStyles.input, {marginTop: 40, fontSize: 30}]}>
              {(this.state.location && this.state.location.place) ? this.state.location.place : '' }
            </Text>
-
+           {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
            <ActivityIndicator
              animating={this.state.loading}
              style={{height: 80}}
@@ -407,15 +413,18 @@ class SetupLocation extends Component {
   };
  const mapStateToProps = function(state) {
   return {
-    uID: state.auth.uID
+    uID: state.auth.uID,
+    error: state.app.error
   };
 };
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ printAuthError }, dispatch)
+    action: bindActionCreators({ printError, clearError }, dispatch)
   };
 };
 
-export { SetupProfileView, SetupStatsView, SetupActiveLevelView };
+export const SetupProfileView = connect(mapStateToProps, mapDispatchToProps)(SetupProfile);
+export const SetupStatsView = connect(mapStateToProps, mapDispatchToProps)(SetupStats);
+export const SetupActiveLevelView = connect(mapStateToProps, mapDispatchToProps)(SetupActiveLevel);
 export const SetupLocationView = connect(mapStateToProps, mapDispatchToProps)(SetupLocation);

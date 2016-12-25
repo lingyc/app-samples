@@ -4,9 +4,9 @@
 
 import React, { Component } from 'react';
 import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
-import { loginStyles, loadingStyle } from '../styles/styles.js'
+import { loginStyles, loadingStyle, commonStyle } from '../styles/styles.js'
 import FBloginBtn from '../common/FBloginBtn.js';
-import { setFirebaseUID, setSignUpMethod, printAuthError } from '../actions/auth.js';
+import { setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError } from '../actions/auth.js';
 import { setLoadingState } from '../actions/app.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -22,18 +22,18 @@ class SignUpView extends Component {
       email: '',
       password: '',
       passwordConfirm: '',
-      error: ''
     }
   }
 
-  //TODO error reporting for login error
   _handleEmailSignup() {
+    //TODO error reporting for login error
     //TODO validate the email, password and names before sending it out
     const { firestack, navigator: FitlyNavigator, action } = this.props;
 
     (async () => {
       try {
         action.setLoadingState(true);
+        action.clearAuthError();
         await firestack.auth.signOut();
         const user = await firestack.auth.createUserWithEmail(this.state.email, this.state.password)
         action.setSignUpMethod('Email');
@@ -63,18 +63,19 @@ class SignUpView extends Component {
         FitlyNavigator.resetTo({ name: 'SetupProfileView', from: 'Email signup' });
       } catch(error) {
         action.setLoadingState(false);
-        action.printAuthError(error);
-        console.log("Sign Up Error: ", error);
+        action.printAuthError(error.description);
       }
     })();
   }
 
   focusNextField = (nextField) => {
+    this.props.action.clearAuthError();
     this.refs[nextField].focus();
   };
 
   render() {
     const { firestack, navigator: FitlyNavigator } = this.props;
+
     if (this.props.loading === true) {
       return (
         <View style={loadingStyle.app}>
@@ -178,6 +179,7 @@ class SignUpView extends Component {
                   placeholderTextColor="white"
                 />
               </View>
+              {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
             </KeyboardAvoidingView>
             <Text style={loginStyles.disclamerText}>
               By continuing, you agree to Fitly's Terms of Service & Privacy Policy.
@@ -195,13 +197,14 @@ class SignUpView extends Component {
 
  const mapStateToProps = function(state) {
   return {
-    loading: state.app.loading
+    loading: state.app.loading,
+    error: state.auth.errorMsg
   };
 };
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, setLoadingState }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError, setLoadingState }, dispatch)
   };
 };
 

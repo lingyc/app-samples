@@ -9,6 +9,7 @@ import FBloginBtn from '../common/FBloginBtn.js';
 import { setFirebaseUID, setSignInMethod, printAuthError, clearAuthError } from '../actions/auth.js';
 import { updateLogginStatus, storeUserProfile } from '../actions/user.js';
 import { setLoadingState } from '../actions/app.js';
+import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 const dismissKeyboard = require('dismissKeyboard')
@@ -24,7 +25,7 @@ class SignInView extends Component {
 
   _handleEmailSignin() {
     //TODO: validate the email, password and names before sending it out
-    const { firestack, navigator: FitlyNavigator, action } = this.props;
+    const { firestack, navigation, action } = this.props;
     (async () => {
       try {
         action.clearAuthError();
@@ -38,11 +39,11 @@ class SignInView extends Component {
         const userRef = firestack.database.ref('users/' + authData.user.uid);
         const firebaseUserData = await userRef.once('value');
         if (firebaseUserData.value.public.profileComplete === false) {
-          FitlyNavigator.resetTo({ name: 'SetupProfileView', from: 'SetupProfileView, profile incomplete' });
+          navigation.resetTo({ key: 'SetupProfileView', global: true, from: 'SetupProfileView, profile incomplete' });
           action.setLoadingState(false);
         } else {
           action.storeUserProfile(firebaseUserData.value);
-          FitlyNavigator.resetTo({ name: 'ProfileView', from: 'SigninEmail, profile complete' });
+          navigation.resetTo({ key: 'HomeView', global: true, from: 'SigninEmail, profile complete' });
           action.setLoadingState(false);
         }
       } catch(error) {
@@ -58,7 +59,7 @@ class SignInView extends Component {
   };
 
   render() {
-    const { firestack, navigator: FitlyNavigator } = this.props;
+    const { firestack } = this.props;
     if (this.props.loading === true) {
       return (
         <View style={loadingStyle.app}>
@@ -80,7 +81,7 @@ class SignInView extends Component {
             SIGN IN
           </Text>
 
-          <FBloginBtn firestack={firestack} navigator={FitlyNavigator} label="Connect With Facebook"/>
+          <FBloginBtn firestack={firestack} label="Connect With Facebook"/>
           <Text style={loginStyles.textSmall}>
             or
           </Text>
@@ -144,7 +145,8 @@ class SignInView extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignInMethod, printAuthError, clearAuthError, setLoadingState, updateLogginStatus, storeUserProfile }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignInMethod, printAuthError, clearAuthError, setLoadingState, updateLogginStatus, storeUserProfile }, dispatch),
+    navigation: bindActionCreators({ resetTo }, dispatch)
   };
 };
 

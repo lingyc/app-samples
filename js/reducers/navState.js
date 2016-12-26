@@ -1,14 +1,14 @@
 /**
  * @flow
  */
-import { PUSH_ROUTE, POP_ROUTE, SELECT_TAB } from '../actions/navigation.js';
+import { PUSH_ROUTE, POP_ROUTE, SELECT_TAB, RESET_TO } from '../actions/navigation.js';
 import { NavigationExperimental } from 'react-native';
-const { NavigationStateUtils } = NavigationExperimental;
+const { StateUtils } = NavigationExperimental;
 
 const initialState: State = {
   global: {
     index: 0,
-    routes: [{key: 'Welcome', global: true}]
+    routes: [{key: 'WelcomeView', global: true}]
   },
 
   tabs: {
@@ -61,19 +61,18 @@ export default function (state: State = initialState, action): State {
       let {route} = action;
       if (route.global) {
         const scenes = state.global;
-        const nextScenes = NavigationStateUtils.push(scenes, route);
+        const nextScenes = StateUtils.push(scenes, route);
         if (scenes !== nextScenes) {
           return {
             ...state,
             global: nextScenes
           };
         }
-        break;
       } else {
         const {tabs} = state;
         const tabKey = tabs[tabs.index].key;
         const scenes = state[tabKey];
-        const nextScenes = NavigationStateUtils.push(scenes, route);
+        const nextScenes = StateUtils.push(scenes, route);
         if (scenes !== nextScenes) {
           return {
             ...state,
@@ -85,9 +84,9 @@ export default function (state: State = initialState, action): State {
 
     case POP_ROUTE: {
       let {route} = action;
-      if (route.global) {
+      if (!route || route.global) {
         const scenes = state.global;
-        const nextScenes = NavigationStateUtils.pop(scenes);
+        const nextScenes = StateUtils.pop(scenes);
         if (scenes !== nextScenes) {
           return {
             ...state,
@@ -98,7 +97,7 @@ export default function (state: State = initialState, action): State {
         const {tabs} = state;
         const tabKey = tabs[tabs.index].key;
         const scenes = state[tabKey];
-        const nextScenes = NavigationStateUtils.pop(scenes);
+        const nextScenes = StateUtils.pop(scenes);
         if (scenes !== nextScenes) {
           return {
             ...state,
@@ -108,14 +107,39 @@ export default function (state: State = initialState, action): State {
       }
     }
 
-    case SWITCH_TAB: {
+    case SELECT_TAB: {
       const {tabKey} = action;
-      const tabs = NavigationStateUtils.jumpTo(state.tabs, tabKey);
+      const tabs = StateUtils.jumpTo(state.tabs, tabKey);
       if (tabs !== state.tabs) {
         return {
           ...state,
           tabs,
         };
+      }
+    }
+
+    case RESET_TO: {
+      let {route} = action;
+      if (route.global) {
+        const scenes = state.global;
+        const nextScenes = StateUtils.reset(scenes, [route], 0);
+        if (scenes !== nextScenes) {
+          return {
+            ...state,
+            global: nextScenes
+          };
+        }
+      } else {
+        const {tabs} = state;
+        const tabKey = tabs[tabs.index].key;
+        const scenes = state[tabKey];
+        const nextScenes = StateUtils.reset(scenes, [route], 0);
+        if (scenes !== nextScenes) {
+          return {
+            ...state,
+            [tabKey]: nextScenes
+          };
+        }
       }
     }
   }

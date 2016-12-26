@@ -7,6 +7,9 @@ import {StyleSheet, ActivityIndicator, View } from 'react-native';
 import FitlyNavigator from './navigator/FitlyNavigator.js'
 import { updateLogginStatus, storeUserProfile } from '../js/actions/user.js';
 import { setFirebaseUID } from '../js/actions/auth.js';
+import { resetTo } from '../js/actions/navigation.js';
+import { asyncFBLogout } from './library/asyncFBLogin.js';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -15,7 +18,6 @@ class FitlyApp extends Component {
     super(props);
     this.state = {
       loading: true,
-      initialRoute: 'Welcome'
     }
   }
   componentDidMount() {
@@ -23,7 +25,7 @@ class FitlyApp extends Component {
   }
 
   _checkAuth() {
-    const {firestack, action} = this.props;
+    const {firestack, action, navigation} = this.props;
     //consider using the auth status listener instead of getCurrentUser, which listens to change in auth state
     (async () => {
       try {
@@ -35,30 +37,22 @@ class FitlyApp extends Component {
         const firebaseUserData = firestack.database.ref('users/' + authData.user.uid).once('value');
 
         if (firebaseUserData.value.public.profileComplete === false) {
-          if (firebaseUserData.value.public.provider === 'Facebook') {
-            this.setState({
-              loading: false,
-              initialRoute: "SetupStatsView"
-            });
+          if (firebaseUserData.value.public.provider === 'Firebase') {
+            this.setState({ loading: false });
+            navigation.resetTo({key: "SetupProfileView", global: true});
           } else {
-            this.setState({
-              loading: false,
-              initialRoute: "SetupProfileView"
-            });
+            this.setState({ loading: false });
+            navigation.resetTo({key: "SetupStatsView", global: true});
           }
         } else {
           action.storeUserProfile(firebaseUserData.value);
-          this.setState({
-            loading: false,
-            initialRoute: "ProfileView"
-          });
+          this.setState({ loading: false });
+          navigation.resetTo({key: "HomeView", global: true});
         }
       } catch(error) {
         console.log('initial authentication check - user has not signin', error)
-        this.setState({
-          loading: false,
-          initialRoute: "WelcomeView"
-        })
+        this.setState({ loading: false });
+        navigation.resetTo({key: "WelcomeView", global: true});
       }
     })();
   }
@@ -77,7 +71,7 @@ class FitlyApp extends Component {
           </View>
         );
       } else {
-        return (<FitlyNavigator initialRoute={{name: this.state.initialRoute}} firestack={firestack}/>);
+        return (<FitlyNavigator firestack={firestack}/>);
       }
    }
  }
@@ -92,7 +86,8 @@ class FitlyApp extends Component {
 
 const mapDispatchToProps = function(dispatch) {
  return {
-   action: bindActionCreators({ updateLogginStatus, setFirebaseUID, storeUserProfile }, dispatch)
+   action: bindActionCreators({ updateLogginStatus, setFirebaseUID, storeUserProfile }, dispatch),
+   navigation: bindActionCreators({ resetTo }, dispatch)
  };
 };
 

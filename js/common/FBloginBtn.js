@@ -6,9 +6,10 @@ import React, { Component } from 'react';
 import { View, TouchableHighlight, Text } from 'react-native';
 import { loginStyles } from '../styles/styles.js'
 import { asyncFBLoginWithPermission, asyncFBLogout, fetchFBProfile } from '../library/asyncFBLogin.js';
-import { setFirebaseUID, setSignUpMethod, printAuthError } from '../actions/auth.js';
+import { setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError } from '../actions/auth.js';
 import { updateLogginStatus, storeUserProfile } from '../actions/user.js';
 import { setLoadingState } from '../actions/app.js';
+import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -19,10 +20,10 @@ class FBloginBtn extends Component {
 
   //TODO error reporting for login error
   _handleFBLogin() {
-    const { firestack, navigator: FitlyNavigator, action } = this.props;
+    const { firestack, navigation, action } = this.props;
     (async () => {
       try {
-        action.printAuthError(null);
+        action.clearAuthError();
         action.setLoadingState(true);
         await asyncFBLogout();
         const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
@@ -60,12 +61,12 @@ class FBloginBtn extends Component {
               friends: friends.data,
             }
           });
-          FitlyNavigator.resetTo({ name: 'SetupStatsView', from: 'FBinitSignup'});
+          navigation.resetTo({ key: 'SetupStatsView', global: true, from: 'FBinitSignup'});
         } else if (firebaseUserData.value.profileComplete === false) {
-          FitlyNavigator.resetTo({ name: 'SetupStatsView', from: 'FBinitSignup'});
+          navigation.resetTo({ key: 'SetupStatsView', global: true, from: 'FBinitSignup'});
         } else {
           action.storeUserProfile(firebaseUserData.value);
-          FitlyNavigator.resetTo({ name: 'ProfileView', from: 'profile complete'});
+          navigation.resetTo({ key: 'HomeView', global: true, from: 'profile complete'});
         }
         action.setLoadingState(false);
       } catch(error) {
@@ -94,7 +95,8 @@ class FBloginBtn extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, setLoadingState, updateLogginStatus, storeUserProfile }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, setLoadingState, updateLogginStatus, storeUserProfile, clearAuthError }, dispatch),
+    navigation: bindActionCreators({ resetTo }, dispatch)
   };
 };
 

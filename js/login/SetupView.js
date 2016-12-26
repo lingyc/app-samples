@@ -14,15 +14,17 @@ import {
   Slider,
   ActivityIndicator
 } from 'react-native';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { storeUserProfile } from '../actions/user.js';
+import { printError, clearError } from '../actions/app.js';
+import { push, resetTo } from '../actions/navigation.js';
 import FMPicker from 'react-native-fm-picker';
 import DatePicker from 'react-native-datepicker'
 const dismissKeyboard = require('dismissKeyboard');
 
 import { loginStyles, loadingStyle, commonStyle } from '../styles/styles.js'
-import { printError, clearError } from '../actions/app.js';
 import { getCurrentPlace, getPlace } from '../library/asyncGeolocation.js';
 import { createUpdateObj } from '../library/firebaseHelpers.js';
 
@@ -51,8 +53,9 @@ class SetupProfile extends Component {
     //TODO validate the input before pushing to next scene
     if (this.state.gender !== null && this.state.birthday !== null) {
       this.props.action.clearError();
-      this.props.navigator.push({
-        name:'SetupStatsView',
+      this.props.navigation.push({
+        key:'SetupStatsView',
+        global: true,
         passProps: this.state,
         from:'SetupProfileView, profile incomplete'
       });
@@ -154,7 +157,7 @@ class SetupStats extends Component {
      this.state = {
        height: null,
        weight: null,
-       ...this.props.route.passProps
+       ...this.props.sceneProps.route.passProps
      }
    }
 
@@ -162,8 +165,9 @@ class SetupStats extends Component {
      //TODO validate input
      this.props.action.clearError();
      if (this.state.height !== null && this.state.weight !== null ) {
-       this.props.navigator.push({
-         name:'SetupActiveLevelView',
+       this.props.navigation.push({
+         key:'SetupActiveLevelView',
+         global: true,
          passProps: this.state,
          from:'SetupStatsView, profile incomplete'
        });
@@ -236,15 +240,16 @@ class SetupActiveLevel extends Component {
      super(props);
      this.state = {
        activeLevel: 0,
-       ...this.props.route.passProps
+       ...this.props.sceneProps.route.passProps
      }
    }
 
    _handlePress() {
      this.props.action.clearError();
      if (this.state.activeLevel !== null) {
-       this.props.navigator.push({
-         name:'SetupLocationView',
+       this.props.navigation.push({
+         key:'SetupLocationView',
+         global: true,
          passProps: this.state,
          from:'SetupActiveLevelView, profile incomplete'
        });
@@ -305,7 +310,7 @@ class SetupLocation extends Component {
        location: null,
        locationInput: null,
      }
-     console.log('this.props.route.passProps', this.props.route.passProps)
+     console.log('this.props.sceneProps.route.passProps', this.props.sceneProps.route.passProps)
    }
 
    _handlePress() {
@@ -320,14 +325,15 @@ class SetupLocation extends Component {
              profileComplete: true
            });
 
-           let privateDataUpdates = createUpdateObj('/users/' + this.props.uID + '/private', this.props.route.passProps);
+           let privateDataUpdates = createUpdateObj('/users/' + this.props.uID + '/private', this.props.sceneProps.route.passProps);
 
            await this.props.firestack.database.ref().update({...publicDataUpdates, ...privateDataUpdates})
            const userData = await firestack.database.ref('users/' + authData.user.uid).once('value');
            this.props.action.storeUserProfile(userData.value);
-           
-           this.props.navigator.push({
-             name:'ProfileView',
+
+           this.props.navigation.resetTo({
+             key:'HomeView',
+             global: true,
              from:'SetupLocationView, profile incomplete'
            });
 
@@ -431,7 +437,8 @@ class SetupLocation extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ printError, clearError, storeUserProfile }, dispatch)
+    action: bindActionCreators({ printError, clearError, storeUserProfile }, dispatch),
+    navigation: bindActionCreators({ push, resetTo }, dispatch)
   };
 };
 

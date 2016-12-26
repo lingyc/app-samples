@@ -5,6 +5,9 @@
 import React, { Component } from 'react';
 import { StatusBar, TouchableHighlight, Text, View } from 'react-native';
 import { welcomeStyles } from '../styles/styles.js'
+import { push } from '../actions/navigation.js';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 class WelcomeView extends Component {
   constructor(props) {
@@ -16,16 +19,12 @@ class WelcomeView extends Component {
 
   _goToSignIn() {
     this.setState({clicked: 'signIn'});
-    this.props.navigator.push({
-      name: 'SignInView'
-    });
+    this.props.navigation.push({ key: 'SignInView', global: true });
   }
 
   _goToSignUp() {
     this.setState({clicked: 'joinUs'});
-    this.props.navigator.push({
-      name: 'SignUpView'
-    });
+    this.props.navigation.push({ key: 'SignUpView', global: true });
   }
 
   render() {
@@ -68,4 +67,10 @@ class WelcomeView extends Component {
    }
  };
 
-export default WelcomeView;
+ const mapDispatchToProps = function(dispatch) {
+  return {
+    navigation: bindActionCreators({ push }, dispatch),
+  };
+ };
+
+ export default connect(() => { return {}; }, mapDispatchToProps)(WelcomeView);

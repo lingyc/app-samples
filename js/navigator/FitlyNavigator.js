@@ -1,53 +1,36 @@
 import ROUTES from './FitlyRoutes.js'
 import React, { Component } from 'react';
-import { Navigator, View, Text } from 'react-native';
-
+import { NavigationExperimental, View, Text } from 'react-native';
+const { CardStack } = NavigationExperimental;
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { pop } from '../actions/navigation.js'
 
 //default navigator swipe gets too close to edge, we would increase the edgeHitWidth
-const SCREEN_WIDTH = require('Dimensions').get('window').width;
-
+// const SCREEN_WIDTH = require('Dimensions').get('window').width;
 class FitlyNavigator extends Component {
   constructor(props) {
     super(props);
   }
 
-  renderScene(route, navigator) {
+  _renderScene(props) {
     const {isLoggedIn, user} = this.props;
-    let Component = ROUTES[route.name];
-    //if logged in show tabs
-    //has uID, has profile, isLoggedIn
+    let Component = ROUTES[props.scene.route.key];
     if (isLoggedIn && user && user.public.profileComplete) {
       return (
-        <Component route={route} navigator={navigator} firestack={this.props.firestack}/>
+        <Component sceneProps={props.scene} firestack={this.props.firestack}/>
       );
     } else {
-      return (<Component route={route} navigator={navigator} firestack={this.props.firestack}/>);
+      return (<Component sceneProps={props.scene} firestack={this.props.firestack}/>);
     }
   }
 
   render() {
     return (
-      <Navigator
-        initialRoute= {this.props.initialRoute}
-        renderScene={this.renderScene.bind(this)}
-        configureScene={(route, routeStack) => {
-          if (route.sceneConfig) {
-            return route.sceneConfig;
-          }
-          //this is modified PushFromRight transistion, which increase the edge hit width of the swipe
-          const PushFromRight = {
-            ...Navigator.SceneConfigs.PushFromRight,
-            gestures: {
-              pop: {
-                ...Navigator.SceneConfigs.PushFromRight.gestures.pop,
-                edgeHitWidth: SCREEN_WIDTH / 2,
-              },
-            },
-          };
-          return PushFromRight;
-        }}
+      <CardStack
+        onNavigateBack={this.props.navigation.pop.bind(this)}
+        navigationState={this.props.globalNavState}
+        renderScene={this._renderScene.bind(this)}
       />
     );
    }
@@ -56,9 +39,16 @@ class FitlyNavigator extends Component {
  const mapStateToProps = function(state) {
   return {
     user: state.user.user,
-    isLoggedIn: state.user.isLoggedIn
+    isLoggedIn: state.user.isLoggedIn,
+    globalNavState: state.navState.global
+  };
+};
+
+const mapDispatchToProps = function(dispatch) {
+  return {
+    navigation: bindActionCreators({ pop }, dispatch)
   };
 };
 
 
-export default connect(mapStateToProps)(FitlyNavigator);
+export default connect(mapStateToProps, mapDispatchToProps)(FitlyNavigator);

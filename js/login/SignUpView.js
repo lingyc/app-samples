@@ -9,6 +9,7 @@ import FBloginBtn from '../common/FBloginBtn.js';
 import { setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError } from '../actions/auth.js';
 import { updateLogginStatus } from '../actions/user.js';
 import { setLoadingState } from '../actions/app.js';
+import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 const dismissKeyboard = require('dismissKeyboard')
@@ -29,7 +30,7 @@ class SignUpView extends Component {
   _handleEmailSignup() {
     //TODO error reporting for login error
     //TODO validate the email, password and names before sending it out
-    const { firestack, navigator: FitlyNavigator, action } = this.props;
+    const { firestack, navigation, action } = this.props;
 
     (async () => {
       try {
@@ -62,7 +63,7 @@ class SignUpView extends Component {
           }
         });
         action.setLoadingState(false);
-        FitlyNavigator.resetTo({ name: 'SetupProfileView', from: 'Email signup' });
+        navigation.resetTo({ key: 'SetupProfileView', global: true, from: 'Email signup' });
       } catch(error) {
         action.setLoadingState(false);
         action.printAuthError(error.description);
@@ -76,7 +77,7 @@ class SignUpView extends Component {
   };
 
   render() {
-    const { firestack, navigator: FitlyNavigator } = this.props;
+    const { firestack } = this.props;
 
     if (this.props.loading === true) {
       return (
@@ -101,7 +102,7 @@ class SignUpView extends Component {
                 JOIN US
               </Text>
 
-              <FBloginBtn firestack={firestack} navigator={FitlyNavigator} label='Join with Facebook'/>
+              <FBloginBtn firestack={firestack} label='Join with Facebook'/>
 
               <Text style={loginStyles.textSmall}>
                 or
@@ -206,7 +207,8 @@ class SignUpView extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError, setLoadingState, updateLogginStatus }, dispatch)
+    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError, setLoadingState, updateLogginStatus }, dispatch),
+    navigation: bindActionCreators({ resetTo }, dispatch)
   };
 };
 

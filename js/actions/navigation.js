@@ -2,11 +2,27 @@
  * @flow
  */
 
-export const SWITCH_TAB = 'SWITCH_TAB';
+export const PUSH_ROUTE = 'PUSH_ROUTE';
+export const POP_ROUTE = 'POP_ROUTE';
+export const SELECT_TAB = 'SELECT_TAB';
 
-export const switchTab = (tab: string) => {
+export const push = (route: object) => {
   return {
-    type: SWITCH_TAB,
-    payload: tab
+    type: PUSH_ROUTE,
+    route: route
+  }
+};
+
+export const pop = (route: object) => {
+  return {
+    type: POP_ROUTE,
+    route: route
+  }
+};
+
+export const selectTab = (tabKey: string) => {
+  return {
+    type: SELECT_TAB,
+    tabKey: tabKey
   }
 };

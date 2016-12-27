@@ -4,6 +4,7 @@
 
 import React, { Component } from 'react';
 import { View, TouchableHighlight, Text } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { tabStyle } from '../styles/styles.js'
 import LOCAL_ROUTES from '../navigator/RoutesLocal.js';
 import { asyncFBLogout } from '../library/asyncFBLogin.js';
@@ -23,11 +24,28 @@ class TabBar extends Component {
 
   render() {
     const tabs = this.props.tabs.routes.map((tab, index) => {
+      let tabStyling = tabStyle.tab;
+      let iconSize = 30;
+      if (this.props.tabs.index === index) {
+        tabStyling = tabStyle.selectedTab;
+        iconSize = 40;
+      }
+      let iconName, size = 30;
+      if (tab.key === 'Activity') {
+        iconName = "calendar";
+      } else if (tab.key === 'Search') {
+        iconName = "search";
+      } else if (tab.key === 'Profile') {
+        iconName = "user-circle-o";
+      } else if (tab.key === 'Notification') {
+        iconName = "rss";
+      } else if (tab.key === 'Connect') {
+        iconName = "users";
+      }
+
       return (
-        <TouchableHighlight style={tabStyle.tab} onPress={() => this._changeTab(index)}>
-          <Text style={tabStyle.btnText}>
-            {tab.key}
-          </Text>
+        <TouchableHighlight style={tabStyling} key={index} onPress={() => this._changeTab(index)}>
+          <Icon name={iconName} size={iconSize} color="white"/>
         </TouchableHighlight>
       )
     });

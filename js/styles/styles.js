@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 const SCREEN_WIDTH = require('Dimensions').get('window').width;
+const SCREEN_HEIGHT = require('Dimensions').get('window').height;
 
 export const loadingStyle = StyleSheet.create({
   app: {
@@ -25,19 +26,35 @@ export const commonStyle = StyleSheet.create({
 
 export const tabStyle = StyleSheet.create({
   tabBar: {
-    flex: 1,
-    height: 30,
+    // flex: 0,
+    // backgroundColor: "#3d3d3d",
+    position: 'absolute',
+    height: 80,
+    bottom: 0,
     flexDirection: "row",
-    alignItems: "center"
+    justifyContent: "space-around",
+    alignItems: "flex-end"
   },
   tab: {
-    backgroundColor: "blue",
-    height: 30,
-    width: 0,
+    backgroundColor: "#3d3d3d",
+    height: 70,
+    width: SCREEN_WIDTH / 5,
+    justifyContent: 'center',
+    alignItems: "center"
   },
-  text: {
-    fontSize: 50,
-    textAlign: "center"
+  selectedTab: {
+    backgroundColor: "#3d3d3d",
+    borderTopRightRadius: 7,
+    borderTopLeftRadius: 7,
+    height: 80,
+    width: SCREEN_WIDTH / 5,
+    justifyContent: 'center',
+    alignItems: "center",
+    shadowColor: "black",
+    shadowOpacity: .3,
+    shadowOffset: {width: 0, height: 0},
+    shadowRadius: 2,
+    zIndex: 10
   }
 })
 

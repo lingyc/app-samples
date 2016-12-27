@@ -21,10 +21,10 @@ export const pop = (route: object) => {
   }
 };
 
-export const selectTab = (tabIndex: string) => {
+export const selectTab = (tabIndex: number) => {
   return {
     type: SELECT_TAB,
-    tabKey: tabIndex
+    tabIndex: tabIndex
   }
 };
 

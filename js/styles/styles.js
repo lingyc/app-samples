@@ -23,6 +23,24 @@ export const commonStyle = StyleSheet.create({
   },
 })
 
+export const tabStyle = StyleSheet.create({
+  tabBar: {
+    flex: 1,
+    height: 30,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  tab: {
+    backgroundColor: "blue",
+    height: 30,
+    width: 0,
+  },
+  text: {
+    fontSize: 50,
+    textAlign: "center"
+  }
+})
+
 export const loginStyles = StyleSheet.create({
   container: {
     flex: 1,

@@ -1,4 +1,4 @@
-import ROUTES from './FitlyRoutes.js'
+import GLOBAL_ROUTES from './RoutesGlobal.js'
 import React, { Component } from 'react';
 import { NavigationExperimental, View, Text } from 'react-native';
 const { CardStack } = NavigationExperimental;
@@ -15,7 +15,8 @@ class FitlyNavigator extends Component {
 
   _renderScene(props) {
     const {isLoggedIn, user} = this.props;
-    let Component = ROUTES[props.scene.route.key];
+    //TODO: seperate global routes with local routes
+    let Component = GLOBAL_ROUTES[props.scene.route.key];
     if (isLoggedIn && user && user.public.profileComplete) {
       return (
         <Component sceneProps={props.scene} firestack={this.props.firestack}/>

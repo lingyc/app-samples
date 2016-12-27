@@ -198,7 +198,7 @@ class SignUpView extends Component {
     }
  };
 
- const mapStateToProps = function(state) {
+const mapStateToProps = function(state) {
   return {
     loading: state.app.loading,
     error: state.auth.errorMsg

@@ -66,7 +66,7 @@ class FBloginBtn extends Component {
           navigation.resetTo({ key: 'SetupStatsView', global: true, from: 'FBinitSignup'});
         } else {
           action.storeUserProfile(firebaseUserData.value);
-          navigation.resetTo({ key: 'HomeView', global: true, from: 'profile complete'});
+          navigation.resetTo({ key: 'FitlyHomeView', global: true, from: 'profile complete'});
         }
         action.setLoadingState(false);
       } catch(error) {

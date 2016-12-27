@@ -3,7 +3,6 @@ import SignUpView from '../login/SignUpView.js';
 import SignInView from '../login/SignInView.js';
 import { SetupProfileView, SetupStatsView, SetupActiveLevelView, SetupLocationView  } from '../login/SetupView.js';
 import FitlyHomeView from '../FitlyHomeView.js';
-import ProfileView from '../profile/ProfileView.js';
 
 const ROUTES = {
   WelcomeView: WelcomeView,

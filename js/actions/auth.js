@@ -9,6 +9,7 @@ export const PRINT_AUTH_ERROR = 'PRINT_AUTH_ERROR';
 export const CLEAR_AUTH_ERROR = 'CLEAR_AUTH_ERROR';
 export const SET_FIREBASE_UID = 'SET_FIREBASE_UID';
 
+
 export const setSignUpMethod = (method: string) => {
   return {
     type: SET_SIGNUP_METHOD,

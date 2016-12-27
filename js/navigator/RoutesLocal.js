@@ -1,19 +1,15 @@
-import WelcomeView from '../login/WelcomeView.js';
-import SignUpView from '../login/SignUpView.js';
-import SignInView from '../login/SignInView.js';
-import { SetupProfileView, SetupStatsView, SetupActiveLevelView, SetupLocationView  } from '../login/SetupView.js';
-import FitlyHomeView from '../FitlyHomeView.js';
-import ProfileView from '../profile/ProfileView.js';
+import Profile from '../tabs/profile/Profile.js';
+import Activity from '../tabs/activity/Activity.js';
+import Search from '../tabs/search/Search.js';
+import Notification from '../tabs/notification/Notification.js';
+import Connect from '../tabs/connect/Connect.js';
 
 const ROUTES = {
-  WelcomeView: WelcomeView,
-  SignInView: SignInView,
-  SignUpView: SignUpView,
-  SetupProfileView: SetupProfileView,
-  SetupStatsView: SetupStatsView,
-  SetupActiveLevelView: SetupActiveLevelView,
-  SetupLocationView: SetupLocationView,
-  FitlyHomeView: FitlyHomeView,
+  Profile: Profile,
+  Activity: Activity,
+  Search: Search,
+  Notification: Notification,
+  Connect: Connect
 };
 
 export default ROUTES;

@@ -43,7 +43,7 @@ class SignInView extends Component {
           action.setLoadingState(false);
         } else {
           action.storeUserProfile(firebaseUserData.value);
-          navigation.resetTo({ key: 'HomeView', global: true, from: 'SigninEmail, profile complete' });
+          navigation.resetTo({ key: 'FitlyHomeView', global: true, from: 'SigninEmail, profile complete' });
           action.setLoadingState(false);
         }
       } catch(error) {

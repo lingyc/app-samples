@@ -34,10 +34,9 @@ class FitlyApp extends Component {
         action.setFirebaseUID(authData.user.uid);
         action.updateLogginStatus(true);
 
-        const firebaseUserData = firestack.database.ref('users/' + authData.user.uid).once('value');
-
-        if (firebaseUserData.value.public.profileComplete === false) {
-          if (firebaseUserData.value.public.provider === 'Firebase') {
+        const firebaseUserData = await firestack.database.ref('users/' + authData.user.uid).once('value');
+        if (firebaseUserData.value === null || firebaseUserData.value.public.profileComplete === false) {
+          if (firebaseUserData.value === null || firebaseUserData.value.public.provider === 'Firebase') {
             this.setState({ loading: false });
             navigation.resetTo({key: "SetupProfileView", global: true});
           } else {
@@ -47,7 +46,7 @@ class FitlyApp extends Component {
         } else {
           action.storeUserProfile(firebaseUserData.value);
           this.setState({ loading: false });
-          navigation.resetTo({key: "HomeView", global: true});
+          navigation.resetTo({key: "FitlyHomeView", global: true});
         }
       } catch(error) {
         console.log('initial authentication check - user has not signin', error)

@@ -14,33 +14,33 @@ const initialState: State = {
   tabs: {
     index:0,
     routes: [
-      {key: 'profile'},
-      {key: 'search'},
-      {key: 'activity'},
-      {key: 'notification'},
-      {key: 'connect'}
+      {key: 'Profile'},
+      {key: 'Search'},
+      {key: 'Activity'},
+      {key: 'Notification'},
+      {key: 'Connect'}
     ]
   },
 
-  activity: {
+  Activity: {
     index: 0,
-    routes: [{key: 'activity home', global: false}]
+    routes: [{key: 'Activity', global: false}]
   },
-  search: {
+  Search: {
     index: 0,
-    routes: [{key: 'search home', global: false}]
+    routes: [{key: 'Search', global: false}]
   },
-  profile: {
+  Profile: {
     index: 0,
-    routes: [{key: 'profile home', global: false}]
+    routes: [{key: 'Profile', global: false}]
   },
-  notification: {
+  Notification: {
     index: 0,
-    routes: [{key: 'notification home', global: false}]
+    routes: [{key: 'Notification', global: false}]
   },
-  connect: {
+  Connect: {
     index: 0,
-    routes: [{key: 'connect home', global: false}]
+    routes: [{key: 'Connect', global: false}]
   },
 };
 
@@ -108,12 +108,12 @@ export default function (state: State = initialState, action): State {
     }
 
     case SELECT_TAB: {
-      const {tabKey} = action;
-      const tabs = StateUtils.jumpTo(state.tabs, tabKey);
-      if (tabs !== state.tabs) {
+      const {tabIndex} = action;
+      if (tabIndex !== state.tabs.index) {
+        const tabs = {...state.tabs, index: tabIndex};
         return {
           ...state,
-          tabs,
+          tabs
         };
       }
     }

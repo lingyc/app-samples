@@ -332,7 +332,7 @@ class SetupLocation extends Component {
            this.props.action.storeUserProfile(userData.value);
 
            this.props.navigation.resetTo({
-             key:'HomeView',
+             key:'FitlyHomeView',
              global: true,
              from:'SetupLocationView, profile incomplete'
            });

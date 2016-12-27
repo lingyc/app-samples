@@ -12,11 +12,11 @@ const initialState: State = {
   },
 
   tabs: {
-    index:0,
+    index: 2,
     routes: [
-      {key: 'Profile'},
-      {key: 'Search'},
       {key: 'Activity'},
+      {key: 'Search'},
+      {key: 'Profile'},
       {key: 'Notification'},
       {key: 'Connect'}
     ]
@@ -80,6 +80,7 @@ export default function (state: State = initialState, action): State {
           };
         }
       }
+      break;
     }
 
     case POP_ROUTE: {
@@ -105,6 +106,7 @@ export default function (state: State = initialState, action): State {
           };
         }
       }
+      break;
     }
 
     case SELECT_TAB: {
@@ -116,6 +118,7 @@ export default function (state: State = initialState, action): State {
           tabs
         };
       }
+      break;
     }
 
     case RESET_TO: {
@@ -141,6 +144,7 @@ export default function (state: State = initialState, action): State {
           };
         }
       }
+      break;
     }
   }
 

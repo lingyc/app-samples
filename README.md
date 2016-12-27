@@ -11,6 +11,9 @@ React-Native-FMPicker
 ## Running the development server ##
 Change host in the to your pc's ip
 
+## Icons ##
+Get the icon names at http://fontawesome.io/icons/ for the react-native-vector-icons library
+
 ## TODOs ##
 - [ ] Incomplete task
     Onboarding:

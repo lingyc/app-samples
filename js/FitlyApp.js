@@ -9,7 +9,6 @@ import { updateLogginStatus, storeUserProfile } from '../js/actions/user.js';
 import { setFirebaseUID } from '../js/actions/auth.js';
 import { resetTo } from '../js/actions/navigation.js';
 import { asyncFBLogout } from './library/asyncFBLogin.js';
-
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

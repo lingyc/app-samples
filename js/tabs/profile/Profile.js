@@ -10,7 +10,6 @@ import { bindActionCreators } from 'redux';
 class Profile extends Component {
   constructor(props) {
     super(props);
-    console.log('profile Component');
   }
 
   render() {

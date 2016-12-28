@@ -6,6 +6,8 @@ export const PUSH_ROUTE = 'PUSH_ROUTE';
 export const POP_ROUTE = 'POP_ROUTE';
 export const SELECT_TAB = 'SELECT_TAB';
 export const RESET_TO = 'RESET_TO';
+export const MOVE_BACK = 'MOVE_BACK';
+export const MOVE_FORWARD = 'MOVE_FORWARD';
 
 export const push = (route: object) => {
   return {
@@ -32,5 +34,17 @@ export const resetTo = (route: object) => {
   return {
     type: RESET_TO,
     route: route
+  }
+};
+
+export const moveBack = () => {
+  return {
+    type: MOVE_BACK,
+  }
+};
+
+export const moveForward = () => {
+  return {
+    type: MOVE_FORWARD,
   }
 };

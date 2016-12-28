@@ -7,7 +7,51 @@ export const loadingStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-})
+});
+
+export const headerStyle = StyleSheet.create({
+  header: {
+    height: 80,
+    width: SCREEN_WIDTH,
+    backgroundColor: '#1D2F7B',
+    flex: 0,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    // flexDirection: 'row'
+  },
+  container: {
+    // borderWidth: 1,
+    flex: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // justifyContent: "center"
+  },
+  logoText: {
+    position: "absolute",
+    paddingTop: 10,
+    left: -30,
+    fontFamily: 'HelveticaNeue',
+    fontSize: 30,
+    color: 'white',
+    fontWeight: '700',
+    letterSpacing: -1,
+  },
+  msgBtn: {
+    position: "absolute",
+    paddingTop: 15,
+    right: 25,
+  },
+  settingsBtn: {
+    position: "absolute",
+    paddingTop: 16,
+    right: -25,
+  },
+  titleText: {
+    borderWidth: 1,
+    color: "white",
+    textAlign: "center",
+  }
+});
 
 export const commonStyle = StyleSheet.create({
   error: {
@@ -25,7 +69,7 @@ export const commonStyle = StyleSheet.create({
     flex: 1,
     alignItems: "center"
   }
-})
+});
 
 export const tabStyle = StyleSheet.create({
   tabBar: {
@@ -59,7 +103,7 @@ export const tabStyle = StyleSheet.create({
     shadowRadius: 2,
     zIndex: 10
   }
-})
+});
 
 export const loginStyles = StyleSheet.create({
   container: {

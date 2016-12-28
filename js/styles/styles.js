@@ -266,3 +266,42 @@ export const welcomeStyles = StyleSheet.create({
   borderWidth: .5,
  }
 });
+
+export const profileStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start'
+  },
+  profileImg: {
+    borderRadius: 60,
+    width: 120,
+    height: 120
+  },
+  dashboard: {
+    flex:0,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: SCREEN_WIDTH,
+    borderTopWidth: .5,
+    borderBottomWidth: .5,
+    paddingTop: 10,
+    paddingBottom: 10,
+    borderColor: "#ccc",
+  },
+  dashboardItem: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  centeredText: {
+    textAlign: "center",
+  },
+  dashboardTextColor: {
+    color: "#326fd1",
+    fontSize: 20,
+    paddingBottom: 10
+  },
+  dashboardText: {
+    color: "grey"
+  },
+});

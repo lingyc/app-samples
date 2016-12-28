@@ -7,7 +7,6 @@ import { View, TouchableHighlight, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { tabStyle } from '../styles/styles.js'
 import LOCAL_ROUTES from '../navigator/RoutesLocal.js';
-import { asyncFBLogout } from '../library/asyncFBLogin.js';
 import { selectTab } from '../actions/navigation.js'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

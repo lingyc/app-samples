@@ -1,16 +1,26 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { View, Text } from 'react-native';
-import { LogoutBtn } from '../../common/LogoutBtn.js';
+import { commonStyle } from '../../styles/styles.js';
+import { resetTo } from '../../actions/navigation.js';
+import LogoutBtn from '../../common/LogoutBtn.js';
 import { push } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-const Notification = (props) => (
-  <View style={{flex: 1}}>
-    <Text>Hello from Profile!</Text>
-    <LogoutBtn/>
-  </View>
-)
+class Notification extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <View style={{flex: 1}}>
+        <Text style={{fontSize: 50}}>Hello from Notification!</Text>
+        <LogoutBtn/>
+      </View>
+    );
+  }
+};
 
 const mapStateToProps = function(state) {
   return {

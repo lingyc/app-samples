@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 const SCREEN_WIDTH = require('Dimensions').get('window').width;
-const SCREEN_HEIGHT = require('Dimensions').get('window').height;
 
 export const loadingStyle = StyleSheet.create({
   app: {
@@ -22,6 +21,10 @@ export const commonStyle = StyleSheet.create({
     height: 0,
     width: 0,
   },
+  container: {
+    flex: 1,
+    alignItems: "center"
+  }
 })
 
 export const tabStyle = StyleSheet.create({

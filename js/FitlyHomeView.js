@@ -19,7 +19,7 @@ class FitlyHomeView extends Component {
 
   _renderScene(sceneProps) {
     let Component = LOCAL_ROUTES[sceneProps.scene.route.key];
-    <Component sceneProps={sceneProps} firestack={this.props.firestack}/>
+    return (<Component sceneProps={sceneProps} firestack={this.props.firestack}/>);
   }
 
   render() {
@@ -29,10 +29,11 @@ class FitlyHomeView extends Component {
     return (
       <View style={{flex: 1}}>
         <CardStack
+          key={key}
           onNavigateBack={this.props.navigation.pop.bind(this)}
           navigationState={localNavState}
           renderScene={this._renderScene.bind(this)}
-          // renderHeader={this._renderHeader}
+          // renderHeader={this._ renderHeader}
           // style={styles.navigatorCardStack}
         />
         <TabBar/>

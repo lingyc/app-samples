@@ -11,17 +11,17 @@ export const setLoadingState = (state: boolean) => {
     type: SET_LOADING_STATE,
     payload: state
   }
-}
+};
 
 export const printError = (error: string) => {
   return {
     type: PRINT_ERROR,
     payload: error
   }
-}
+};
 
 export const clearError = () => {
   return {
     type: CLEAR_ERROR
   }
-}
+};

@@ -70,7 +70,8 @@ class LogoutBtn extends Component {
 
  const mapStateToProps = function(state) {
   return {
-    signInMethod: state.auth.signInMethod
+    signInMethod: state.auth.signInMethod,
+    firestack: state.app.firestack,
   };
 };
 

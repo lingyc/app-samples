@@ -83,6 +83,12 @@ class FitlyApp extends Component {
   }
 });
 
+const mapStateToProps = function(state) {
+  return {
+    firestack: state.app.firestack,
+  };
+};
+
 const mapDispatchToProps = function(dispatch) {
  return {
    action: bindActionCreators({ updateLogginStatus, setFirebaseUID, storeUserProfile }, dispatch),
@@ -90,4 +96,4 @@ const mapDispatchToProps = function(dispatch) {
  };
 };
 
-export default connect(() => { return {}; }, mapDispatchToProps)(FitlyApp);
+export default connect(mapStateToProps, mapDispatchToProps)(FitlyApp);

@@ -5,6 +5,8 @@ const { CardStack } = NavigationExperimental;
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { pop } from '../actions/navigation.js'
+import HeaderGlobal from '../header/HeaderGlobal.js';
+
 
 //default navigator swipe gets too close to edge, we would increase the edgeHitWidth
 // const SCREEN_WIDTH = require('Dimensions').get('window').width;
@@ -15,7 +17,6 @@ class FitlyNavigator extends Component {
 
   _renderScene(props) {
     const {isLoggedIn, user} = this.props;
-    //TODO: seperate global routes with local routes
     let Component = GLOBAL_ROUTES[props.scene.route.key];
     if (isLoggedIn && user && user.public.profileComplete) {
       return (
@@ -26,10 +27,19 @@ class FitlyNavigator extends Component {
     }
   }
 
+  _renderHeader(sceneProps) {
+    if (sceneProps.scene.route.key === "SettingsMenu") {
+      return (<HeaderGlobal sceneProps={sceneProps}/>);
+    }
+    return null;
+  }
+
+
   render() {
     return (
       <CardStack
-        onNavigateBack={this.props.navigation.pop.bind(this)}
+        onNavigateBack={() => this.props.navigation.pop({global: true})}
+        renderHeader={this._renderHeader}
         navigationState={this.props.globalNavState}
         renderScene={this._renderScene.bind(this)}
       />

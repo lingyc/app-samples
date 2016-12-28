@@ -3,7 +3,8 @@
  */
 
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { Text, View, TouchableHighlight } from 'react-native';
+import { headerStyle } from '../styles/styles.js';
 import { asyncFBLogout } from '../library/asyncFBLogin.js';
 import { resetAuthState, printAuthError } from '../actions/auth.js';
 import { updateLogginStatus, clearUserProfile } from '../actions/user.js';
@@ -38,35 +39,14 @@ class LogoutBtn extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <TouchableHighlight style={styles.loginButton} onPress={() => this._logout()}>
-          <Text style={styles.buttonText}>
-            Logout
-          </Text>
-        </TouchableHighlight>
-      </View>
+      <TouchableHighlight style={headerStyle.logoutBtn} onPress={() => this._logout()}>
+        <Text style={headerStyle.logoutBtnText}>
+          Logout
+        </Text>
+      </TouchableHighlight>
     )
    }
  };
-
- const styles = StyleSheet.create({
-   container: {
-     flex: 1,
-     justifyContent: 'center',
-     alignItems: 'center',
-     backgroundColor: '#F5FCFF',
-   },
-   buttonText: {
-     fontSize: 20,
-     marginBottom: 0,
-     textAlign: 'center',
-     color: '#1D2F7B',
-     marginBottom: 5,
-   },
-   loginButton: {
-     backgroundColor: 'white'
-   }
- });
 
  const mapStateToProps = function(state) {
   return {

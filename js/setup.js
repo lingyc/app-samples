@@ -6,14 +6,6 @@ import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import configStore from './store/configStore.js';
 import FitlyApp from './FitlyApp.js'
-import Firestack from 'react-native-firestack'
-import firebaseConfig from '../credentials/firebaseConfig.js'
-
-const firestack = new Firestack({
-  debug: __DEV__ && !!window.navigator.userAgent,
-  ...firebaseConfig
-});
-
 
 const store = configStore();
 
@@ -22,7 +14,7 @@ function setup() {
    render() {
      return (
        <Provider store={store}>
-         <FitlyApp firestack={firestack}/>
+         <FitlyApp/>
        </Provider>
      );
    }

@@ -16,7 +16,6 @@ class Notification extends Component {
     return (
       <View style={{flex: 1}}>
         <Text style={{fontSize: 50}}>Hello from Notification!</Text>
-        <LogoutBtn/>
       </View>
     );
   }

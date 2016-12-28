@@ -7,7 +7,7 @@ import { NavigationExperimental, View, Text, TouchableOpacity } from 'react-nati
 const { Header } = NavigationExperimental;
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { headerStyle } from '../styles/styles.js';
-import { pop } from '../actions/navigation.js';
+import { pop, push } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -18,7 +18,7 @@ class HeaderLocal extends Component {
   }
 
   _renderTitleComponent(sceneProps) {
-    console.log('sceneProps', sceneProps);
+    // console.log('sceneProps', sceneProps);
     if (sceneProps.scene.route.key === "Profile") {
       return (
         //header for the profile home view
@@ -29,7 +29,9 @@ class HeaderLocal extends Component {
           <TouchableOpacity style={headerStyle.msgBtn}>
             <Icon name="envelope-o" size={30} color="white"/>
           </TouchableOpacity>
-          <TouchableOpacity style={headerStyle.settingsBtn}>
+          <TouchableOpacity
+            style={headerStyle.settingsBtn}
+            onPress={() => this.props.navigation.push({key: "SettingsMenu", global: true})}>
             <Icon name="bars" size={30} color="white"/>
           </TouchableOpacity>
         </View>
@@ -66,7 +68,7 @@ class HeaderLocal extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    navigation: bindActionCreators({ pop }, dispatch)
+    navigation: bindActionCreators({ pop, push }, dispatch)
   };
 };
 

@@ -5,11 +5,12 @@
 import React, { Component } from 'react';
 import { NavigationExperimental, View, Text, TouchableOpacity } from 'react-native';
 const { Header } = NavigationExperimental;
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { headerStyle } from '../styles/styles.js';
 import { pop } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import LogoutBtn from '../common/LogoutBtn.js';
 
 
 class HeaderGlobal extends Component {
@@ -18,40 +19,36 @@ class HeaderGlobal extends Component {
   }
 
   _renderTitleComponent(sceneProps) {
-    console.log('sceneProps', sceneProps);
-    if (sceneProps.scene.route.key === "Profile") {
+    if (sceneProps.scene.route.key === "SettingsMenu") {
       return (
-        //header for the profile home view
-        <View style={headerStyle.container}>
-          <Text style={headerStyle.logoText}>
-            Fitly
-          </Text>
-          <TouchableOpacity style={headerStyle.msgBtn}>
-            <Icon name="envelope-o" size={30} color="white"/>
-          </TouchableOpacity>
-          <TouchableOpacity style={headerStyle.settingsBtn}>
-            <Icon name="bars" size={30} color="white"/>
-          </TouchableOpacity>
-        </View>
-      )
-    } else {
-      return (
-        //header for the profile home view
         <View style={headerStyle.container}>
           <Text style={headerStyle.titleText}>
-            {sceneProps.scene.route.key}
+            Settings
           </Text>
+          <LogoutBtn/>
         </View>
       )
     }
-  }
+  };
+
+  _renderLeftComponent(sceneProps) {
+    if (sceneProps.scene.route.key === "SettingsMenu") {
+      return (
+        <TouchableOpacity style={headerStyle.closeBtn} onPress={() => this.props.navigation.pop({global: true})}>
+          <Icon name="ios-close" size={50} color="white"/>
+        </TouchableOpacity>
+      )
+    }
+    return null;
+  };
 
   render() {
     return (
       <Header
         {...this.props.sceneProps}
         renderTitleComponent={this._renderTitleComponent.bind(this)}
-        onNavigateBack={this.props.navigation.pop.bind(this)}
+        renderLeftComponent={this._renderLeftComponent.bind(this)}
+        onNavigateBack={() => this.props.navigation.pop({global: true})}
         style={headerStyle.header}
       />
     )

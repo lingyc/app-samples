@@ -3,6 +3,7 @@ import SignUpView from '../login/SignUpView.js';
 import SignInView from '../login/SignInView.js';
 import { SetupProfileView, SetupStatsView, SetupActiveLevelView, SetupLocationView  } from '../login/SetupView.js';
 import FitlyHomeView from '../FitlyHomeView.js';
+import SettingsMenu from '../settings/SettingsMenu.js';
 
 const ROUTES = {
   WelcomeView: WelcomeView,
@@ -13,6 +14,7 @@ const ROUTES = {
   SetupActiveLevelView: SetupActiveLevelView,
   SetupLocationView: SetupLocationView,
   FitlyHomeView: FitlyHomeView,
+  SettingsMenu: SettingsMenu,
 };
 
 export default ROUTES;

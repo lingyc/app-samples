@@ -16,7 +16,6 @@ class Connect extends Component {
     return (
       <View style={{flex: 1}}>
         <Text>Hello from Connect!</Text>
-        <LogoutBtn/>
       </View>
     );
   }

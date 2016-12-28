@@ -15,16 +15,13 @@ export const headerStyle = StyleSheet.create({
     width: SCREEN_WIDTH,
     backgroundColor: '#1D2F7B',
     flex: 0,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // flexDirection: 'row'
   },
   container: {
     // borderWidth: 1,
     flex: 0,
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: "center"
+    justifyContent: 'center'
   },
   logoText: {
     position: "absolute",
@@ -47,9 +44,23 @@ export const headerStyle = StyleSheet.create({
     right: -25,
   },
   titleText: {
-    borderWidth: 1,
     color: "white",
+    paddingTop: 13,
+    fontWeight: "600",
+    fontSize: 20,
     textAlign: "center",
+  },
+  logoutBtn: {
+    position: "absolute",
+    paddingTop: 16,
+    right: -25,
+  },
+  logoutBtnText: {
+    fontWeight: "100",
+    color: "white"
+  },
+  closeBtn: {
+    paddingLeft: 20,
   }
 });
 

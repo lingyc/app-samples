@@ -16,7 +16,6 @@ class Profile extends Component {
     return (
       <View style={{flex: 1}}>
         <Text>Hello from Profile!</Text>
-        <LogoutBtn/>
       </View>
     );
   }

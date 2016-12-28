@@ -274,9 +274,12 @@ export const profileStyle = StyleSheet.create({
     justifyContent: 'flex-start'
   },
   profileImg: {
-    borderRadius: 60,
-    width: 120,
-    height: 120
+    marginTop: 20,
+    borderRadius: 50,
+    width: 100,
+    height: 100,
+    borderWidth: 2,
+    borderColor: '#1D2F7B',
   },
   dashboard: {
     flex:0,
@@ -285,8 +288,8 @@ export const profileStyle = StyleSheet.create({
     width: SCREEN_WIDTH,
     borderTopWidth: .5,
     borderBottomWidth: .5,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 8,
+    paddingBottom: 8,
     borderColor: "#ccc",
   },
   dashboardItem: {
@@ -296,12 +299,32 @@ export const profileStyle = StyleSheet.create({
   centeredText: {
     textAlign: "center",
   },
+  nameText: {
+    fontSize: 26,
+    paddingTop: 8,
+    paddingBottom: 8
+  },
   dashboardTextColor: {
     color: "#326fd1",
     fontSize: 20,
     paddingBottom: 10
   },
   dashboardText: {
-    color: "grey"
+    color: "grey",
+    fontSize: 12,
+    paddingBottom: 8
   },
+  followBtn: {
+    borderRadius: 2,
+    backgroundColor: '#1D2F7B',
+    width: 170,
+    height: 40,
+    justifyContent: "center",
+    marginTop: 10,
+    marginBottom: 10,
+    shadowColor: "black",
+    shadowOpacity: .6,
+    shadowOffset: {width: 0, height: 0},
+    shadowRadius: 2,
+  }
 });

@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableHighlight } from 'react-native';
 import { commonStyle } from '../../styles/styles.js';
-import { resetTo } from '../../actions/navigation.js';
-import LogoutBtn from '../../common/LogoutBtn.js';
 import { push } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -12,11 +10,22 @@ class Search extends Component {
     super(props);
   }
 
+  _openProfile() {
+    this.props.navigation.push({
+      key: "ProfileEntry",
+      passProps: {
+        otherUID: "CcVODIpufJhEGLIufy0ApdsuXYm1"
+      }
+    })
+  }
+
   render() {
     return (
       <View style={{flex: 1}}>
         <Text>Hello from Search!</Text>
-        <LogoutBtn/>
+        <TouchableHighlight onPress={() => this._openProfile()}>
+          <Text>open up a profile</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -30,7 +39,7 @@ const mapStateToProps = function(state) {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    navigation: bindActionCreators({ resetTo }, dispatch)
+    navigation: bindActionCreators({ push }, dispatch)
   };
 };
 

@@ -32,7 +32,7 @@ class Profile extends Component {
     const {public: profile} = this.props.user;
     return (
       <ScrollView contentContainerStyle={profileStyle.container}>
-        <Image source={{uri:profile.picture}} style={profileStyle.profileImg}/>
+        <Image source={(profile.picture) ? {uri:profile.picture} : require('../../../img/default-user-image.png')} style={profileStyle.profileImg}/>
         <Text>{profile.first_name + ' ' + profile.last_name}</Text>
         <Text>{profile.location.place}</Text>
         <Text>{(profile.summary) ? profile.summary : 'I love to workout!'}</Text>

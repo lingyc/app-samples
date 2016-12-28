@@ -70,7 +70,7 @@ export default function (state: State = initialState, action): State {
         }
       } else {
         const {tabs} = state;
-        const tabKey = tabs[tabs.index].key;
+        const tabKey = tabs.routes[tabs.index].key;
         const scenes = state[tabKey];
         const nextScenes = StateUtils.push(scenes, route);
         if (scenes !== nextScenes) {
@@ -96,7 +96,7 @@ export default function (state: State = initialState, action): State {
         }
       } else {
         const {tabs} = state;
-        const tabKey = tabs[tabs.index].key;
+        const tabKey = tabs.routes[tabs.index].key;
         const scenes = state[tabKey];
         const nextScenes = StateUtils.pop(scenes);
         if (scenes !== nextScenes) {
@@ -134,7 +134,7 @@ export default function (state: State = initialState, action): State {
         }
       } else {
         const {tabs} = state;
-        const tabKey = tabs[tabs.index].key;
+        const tabKey = tabs.routes[tabs.index].key;
         const scenes = state[tabKey];
         const nextScenes = StateUtils.reset(scenes, [route], 0);
         if (scenes !== nextScenes) {

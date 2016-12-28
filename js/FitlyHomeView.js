@@ -24,7 +24,8 @@ class FitlyHomeView extends Component {
 
   _renderScene(sceneProps) {
     let Component = LOCAL_ROUTES[sceneProps.scene.route.key];
-    return (<Component sceneProps={sceneProps} firestack={this.props.firestack}/>);
+    let passProps = sceneProps.scene.route.passProps || {};
+    return (<Component {...passProps} sceneProps={sceneProps}/>);
   }
 
   render() {

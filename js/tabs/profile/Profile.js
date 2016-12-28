@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { commonStyle } from '../../styles/styles.js';
 import { resetTo } from '../../actions/navigation.js';
-import LogoutBtn from '../../common/LogoutBtn.js';
 import { push } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,9 +13,9 @@ class Profile extends Component {
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <ScrollView style={{flex: 1}}>
         <Text>Hello from Profile!</Text>
-      </View>
+      </ScrollView>
     );
   }
 };
@@ -24,6 +23,7 @@ class Profile extends Component {
 const mapStateToProps = function(state) {
   return {
     loading: state.app.loading,
+    user: state.user.user
   };
 };
 

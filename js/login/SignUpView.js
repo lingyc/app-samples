@@ -7,7 +7,6 @@ import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator
 import { loginStyles, loadingStyle, commonStyle } from '../styles/styles.js'
 import FBloginBtn from '../common/FBloginBtn.js';
 import { setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError } from '../actions/auth.js';
-import { updateLogginStatus } from '../actions/user.js';
 import { setLoadingState } from '../actions/app.js';
 import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
@@ -39,7 +38,6 @@ class SignUpView extends Component {
         await firestack.auth.signOut();
         const user = await firestack.auth.createUserWithEmail(this.state.email, this.state.password)
         action.setSignUpMethod('Email');
-        action.updateLogginStatus(true);
         action.setFirebaseUID(user.uid);
 
         //TODO: send verification email, which is not yet available on firestack
@@ -207,7 +205,7 @@ const mapStateToProps = function(state) {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError, setLoadingState, updateLogginStatus }, dispatch),
+    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError, setLoadingState }, dispatch),
     navigation: bindActionCreators({ resetTo }, dispatch)
   };
 };

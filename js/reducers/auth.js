@@ -4,14 +4,16 @@ import {
   RESET_AUTH_STATE,
   PRINT_AUTH_ERROR,
   CLEAR_AUTH_ERROR,
-  SET_FIREBASE_UID
+  SET_FIREBASE_UID,
+  UPDATE_LOGIN_STATUS,
 } from '../actions/auth.js';
 
 const initialState = {
   signUpMethod: '',
   signInMethod: '',
   errorMsg: null,
-  uID: null
+  uID: null,
+  isLoggedIn: false,
 };
 
 export default function (state = initialState, action) {
@@ -19,11 +21,13 @@ export default function (state = initialState, action) {
     case SET_SIGNUP_METHOD:
       return { ...state,
         signInMethod: action.payload,
-        signUpMethod: action.payload
+        signUpMethod: action.payload,
+        isLoggedIn: true
       };
     case SET_SIGNIN_METHOD:
       return { ...state,
-        signInMethod: action.payload
+        signInMethod: action.payload,
+        isLoggedIn: true
       };
     case RESET_AUTH_STATE:
       return initialState;
@@ -39,6 +43,10 @@ export default function (state = initialState, action) {
     case SET_FIREBASE_UID:
       return { ...state,
         uID: action.payload
+      };
+    case UPDATE_LOGIN_STATUS:
+      return { ...state,
+        isLoggedIn: action.payload
       };
     default:
     return state;

@@ -5,8 +5,8 @@
 import React, { Component } from 'react';
 import {StyleSheet, ActivityIndicator, View } from 'react-native';
 import FitlyNavigator from './navigator/FitlyNavigator.js'
-import { updateLogginStatus, storeUserProfile } from '../js/actions/user.js';
-import { setFirebaseUID } from '../js/actions/auth.js';
+import { storeUserProfile } from '../js/actions/user.js';
+import { setFirebaseUID, updateLogginStatus } from '../js/actions/auth.js';
 import { resetTo } from '../js/actions/navigation.js';
 import { asyncFBLogout } from './library/asyncFBLogin.js';
 import { connect } from 'react-redux';

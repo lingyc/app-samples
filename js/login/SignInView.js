@@ -7,7 +7,7 @@ import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator
 import { loginStyles, loadingStyle, commonStyle } from '../styles/styles.js'
 import FBloginBtn from '../common/FBloginBtn.js';
 import { setFirebaseUID, setSignInMethod, printAuthError, clearAuthError } from '../actions/auth.js';
-import { updateLogginStatus, storeUserProfile } from '../actions/user.js';
+import { storeUserProfile } from '../actions/user.js';
 import { setLoadingState } from '../actions/app.js';
 import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
@@ -31,7 +31,6 @@ class SignInView extends Component {
         action.clearAuthError();
         action.setLoadingState(true);
         const authData = await firestack.auth.signInWithEmail(this.state.email, this.state.password);
-        action.updateLogginStatus(true);
         action.setSignInMethod('Email');
         action.setFirebaseUID(authData.user.uid);
 
@@ -145,7 +144,7 @@ class SignInView extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignInMethod, printAuthError, clearAuthError, setLoadingState, updateLogginStatus, storeUserProfile }, dispatch),
+    action: bindActionCreators({ setFirebaseUID, setSignInMethod, printAuthError, clearAuthError, setLoadingState, storeUserProfile }, dispatch),
     navigation: bindActionCreators({ resetTo }, dispatch)
   };
 };

@@ -7,7 +7,7 @@ import { Text, View, TouchableHighlight } from 'react-native';
 import { headerStyle } from '../styles/styles.js';
 import { asyncFBLogout } from '../library/asyncFBLogin.js';
 import { resetAuthState, printAuthError } from '../actions/auth.js';
-import { updateLogginStatus, clearUserProfile } from '../actions/user.js';
+import { clearUserProfile } from '../actions/user.js';
 import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -27,7 +27,6 @@ class LogoutBtn extends Component {
         }
           await this.props.firestack.auth.signOut()
           this.props.action.resetAuthState();
-          this.props.action.updateLogginStatus(false);
           this.props.action.clearUserProfile();
           this.props.navigation.resetTo({key: 'WelcomeView', global: true});
       } catch(err) {
@@ -57,7 +56,7 @@ class LogoutBtn extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ resetAuthState, printAuthError, updateLogginStatus, clearUserProfile }, dispatch),
+    action: bindActionCreators({ resetAuthState, printAuthError, clearUserProfile }, dispatch),
     navigation: bindActionCreators({ resetTo }, dispatch)
   };
 };

@@ -304,6 +304,10 @@ export const profileStyle = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 8
   },
+  summaryText: {
+    fontSize: 12,
+    paddingBottom: 10
+  },
   dashboardTextColor: {
     color: "#326fd1",
     fontSize: 20,

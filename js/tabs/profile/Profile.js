@@ -29,38 +29,41 @@ class Profile extends Component {
   }
 
   render() {
-    console.log('this.props.user', this.props.user);
+    // console.log('this.props.user', this.props.user);
     const {public: profile} = this.props.user;
     return (
       <ScrollView contentContainerStyle={profileStyle.container}>
+        {/* TODO: add upload photo btn */}
         <Image source={(profile.picture) ? {uri:profile.picture} : require('../../../img/default-user-image.png')} style={profileStyle.profileImg}/>
-        <Text>{profile.first_name + ' ' + profile.last_name}</Text>
-        <Text>{profile.location.place}</Text>
-        <Text>{(profile.summary) ? profile.summary : 'I love to workout!'}</Text>
+        <Text style={profileStyle.nameText}>{profile.first_name + ' ' + profile.last_name}</Text>
+        <Text style={profileStyle.dashboardText}>{profile.location.place}</Text>
+        {/* TODO: add edit summary btn */}
+        <Text style={profileStyle.summaryText}>{(profile.summary) ? profile.summary : 'I love to workout!'}</Text>
+        {/* TODO: add content creation */}
         <View style={profileStyle.dashboard}>
           <TouchableOpacity style={profileStyle.dashboardItem}>
             <View>
               {this._renderCenteredText(profile.sessionCount, profileStyle.dashboardTextColor)}
-              {this._renderCenteredText('SESSIONS')}
+              {this._renderCenteredText('SESSIONS', profileStyle.dashboardText)}
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity style={profileStyle.dashboardItem}>
             <View>
               {this._renderCenteredText(profile.followerCount, profileStyle.dashboardTextColor)}
-              {this._renderCenteredText('FOLLOWERS')}
+              {this._renderCenteredText('FOLLOWERS', profileStyle.dashboardText)}
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity style={profileStyle.dashboardItem}>
             <View>
               {this._renderCenteredText(profile.followingCount, profileStyle.dashboardTextColor)}
-              {this._renderCenteredText('FOLLOWING')}
+              {this._renderCenteredText('FOLLOWING', profileStyle.dashboardText)}
             </View>
           </TouchableOpacity>
         </View>
 
-        <View style={[profileStyle.dashboard, {borderTopWidth: 0, paddingTop: 20, paddingBottom: 20}]}>
+        <View style={[profileStyle.dashboard, {borderTopWidth: 0, paddingTop: 17, paddingBottom: 17}]}>
           <TouchableOpacity>
             <Text>FEED</Text>
           </TouchableOpacity>

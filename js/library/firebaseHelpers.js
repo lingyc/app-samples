@@ -1,6 +1,7 @@
 import Firebase from 'firebase';
 import firebaseConfig from '../../credentials/firebaseConfig.js'
 export const FitlyFirebase = Firebase.initializeApp(firebaseConfig);
+import { getCurrentPlace } from './asyncGeolocation.js';
 
 
 export const createUpdateObj = (ref: string, data) => {
@@ -24,5 +25,18 @@ export const firebaseGetCurrentUser = () => {
       }
     };
     let unsubscribe = FitlyFirebase.auth().onAuthStateChanged(observer);
+  });
+};
+
+export const updateCurrentLocationInDB = (uid) => {
+  return getCurrentPlace().then(place => {
+    return {
+      place: `${place.locality}, ${place.adminArea}`,
+      lat: place.position.lat,
+      lon: place.position.lng,
+      zip: place.postalCode
+    };
+  }).then(placeObj => {
+    return FitlyFirebase.database().ref('users/' + uid + '/public/currentLocation/').set(placeObj);
   });
 };

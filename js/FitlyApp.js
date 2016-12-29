@@ -12,6 +12,8 @@ import { asyncFBLogout } from './library/asyncFBLogin.js';
 import { firebaseGetCurrentUser } from './library/firebaseHelpers.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { updateCurrentLocationInDB } from './library/firebaseHelpers.js';
+
 
 class FitlyApp extends Component {
   constructor(props) {
@@ -35,6 +37,9 @@ class FitlyApp extends Component {
         //below code are for redirection, consider refactoring it out
         action.setFirebaseUID(authData.uid);
         action.updateLogginStatus(true);
+
+        //this line updates the currentLocation of the user on the database, when should we update the location of the user?
+        await updateCurrentLocationInDB(authData.uid);
 
         const firebaseUserData = (await FitlyFirebase.database().ref('users/' + authData.uid).once('value')).val();
         if (firebaseUserData === null || firebaseUserData.public.profileComplete === false) {

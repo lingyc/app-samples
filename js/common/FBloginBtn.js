@@ -13,6 +13,7 @@ import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import Firebase from 'firebase';
 import { bindActionCreators } from 'redux';
+import { updateCurrentLocationInDB } from '../library/firebaseHelpers.js';
 
 class FBloginBtn extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class FBloginBtn extends Component {
         const userFBprofile = await fetchFBProfile(data.credentials.token);
         const credential = Firebase.auth.FacebookAuthProvider.credential(data.credentials.token);
         const user = await FitlyFirebase.auth().signInWithCredential(credential);
+        await updateCurrentLocationInDB(user.uid);
         const userRef = FitlyFirebase.database().ref('users/' + user.uid + '/');
         action.setFirebaseUID(user.uid);
         const firebaseUserData = (await userRef.once('value')).val();

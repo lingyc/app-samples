@@ -27,6 +27,10 @@ class SignUpView extends Component {
     }
   }
 
+  componentWillMount() {
+    this.props.action.clearAuthError();
+  }
+
   _handleEmailSignup() {
     //TODO error reporting for login error
     //TODO validate the email, password and names before sending it out

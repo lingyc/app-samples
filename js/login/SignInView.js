@@ -12,6 +12,8 @@ import { setLoadingState } from '../actions/app.js';
 import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { updateCurrentLocationInDB } from '../library/firebaseHelpers.js';
+
 const dismissKeyboard = require('dismissKeyboard')
 
 class SignInView extends Component {
@@ -21,6 +23,10 @@ class SignInView extends Component {
       email: '',
       password: '',
     }
+  }
+
+  componentWillMount() {
+    this.props.action.clearAuthError();
   }
 
   _handleEmailSignin() {
@@ -33,7 +39,7 @@ class SignInView extends Component {
         const authData = await FitlyFirebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
         action.setSignInMethod('Email');
         action.setFirebaseUID(authData.uid);
-
+        await updateCurrentLocationInDB(authData.uid);
         //TODO abstract away check for profile completion, write a isProfileComplete function
         const userRef = FitlyFirebase.database().ref('users/' + authData.uid);
         const firebaseUserData = (await userRef.once('value')).val();

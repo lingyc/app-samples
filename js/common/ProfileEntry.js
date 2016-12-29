@@ -41,6 +41,7 @@ class ProfileEntry extends Component {
   }
 
   _handleFollowingChange(following) {
+    console.log('following.val()', following.val());
     this.setState({
       following: !!(following.val())
     })
@@ -48,17 +49,13 @@ class ProfileEntry extends Component {
 
   _toggleFollow() {
     if (this.state.following) {
-      let updates = {};
-      updates['/followings/' + this.props.uID + '/' + this.props.otherUID] = null;
-      updates['/followers/' + this.props.otherUID + '/' + this.props.uID] = null;
-      this.database.ref().update(updates);
+      this.database.ref('/followings/' + this.props.uID + '/' + this.props.otherUID).set(null);
+      this.database.ref('/followers/' + this.props.otherUID + '/' + this.props.uID).set(null);
       this.database.ref('users/' + this.props.otherUID + '/public/followerCount').transaction(currentFollowerCount => currentFollowerCount - 1);
       this.database.ref('users/' + this.props.uID + '/public/followingCount').transaction(currentFollowingCount => currentFollowingCount - 1);
     } else {
-      let updates = {};
-      updates['/followings/' + this.props.uID + '/' + this.props.otherUID] = true;
-      updates['/followers/' + this.props.otherUID + '/' + this.props.uID] = true;
-      this.database.ref().update(updates);
+      this.database.ref('/followings/' + this.props.uID + '/' + this.props.otherUID).set(true);
+      this.database.ref('/followers/' + this.props.otherUID + '/' + this.props.uID).set(true);
       this.database.ref('users/' + this.props.otherUID + '/public/followerCount').transaction(currentFollowerCount => currentFollowerCount + 1);
       this.database.ref('users/' + this.props.uID + '/public/followingCount').transaction(currentFollowingCount => currentFollowingCount + 1);
     }
@@ -78,13 +75,13 @@ class ProfileEntry extends Component {
     if (this.state.following) {
       followBtn = (
         <TouchableHighlight style={[profileStyle.followBtn, {backgroundColor: 'green'}]} onPress={() => this._toggleFollow()}>
-          {this._renderCenteredText("Following", {color: "white"})}
+          {this._renderCenteredText("Following", {color: "white", fontSize: 17})}
         </TouchableHighlight>
       );
     } else {
       followBtn = (
         <TouchableHighlight style={profileStyle.followBtn} onPress={() => this._toggleFollow()}>
-          {this._renderCenteredText("Follow", {color: "white"})}
+          {this._renderCenteredText("Follow", {color: "white", fontSize: 17})}
         </TouchableHighlight>
       );
     }

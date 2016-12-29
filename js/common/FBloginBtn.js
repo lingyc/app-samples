@@ -36,6 +36,8 @@ class FBloginBtn extends Component {
         await updateCurrentLocationInDB(user.uid);
         const userRef = FitlyFirebase.database().ref('users/' + user.uid + '/');
         action.setFirebaseUID(user.uid);
+        //update user's Facebook friends everytime they login with Facebook
+        await FitlyFirebase.database().ref('users/' + user.uid + '/private/friends').set(userFBprofile.friends);
         const firebaseUserData = (await userRef.once('value')).val();
         // console.log('firebaseUserData', firebaseUserData);
         if (firebaseUserData === null) {

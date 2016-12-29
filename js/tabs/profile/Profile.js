@@ -14,7 +14,7 @@ class Profile extends Component {
 
   //register listener to update the feeds, and follower count
   componentDidMount() {
-    this.props.firestack.database.ref('users/' + this.props.uID + '/public/').on('value', this._handleProfileChange.bind(this));
+    this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/').on('value', this._handleProfileChange.bind(this));
   }
 
   _handleProfileChange(snapshot) {
@@ -29,6 +29,7 @@ class Profile extends Component {
   }
 
   render() {
+    console.log('this.props.user', this.props.user);
     const {public: profile} = this.props.user;
     return (
       <ScrollView contentContainerStyle={profileStyle.container}>
@@ -80,7 +81,7 @@ const mapStateToProps = function(state) {
     loading: state.app.loading,
     user: state.user.user,
     uID: state.auth.uID,
-    firestack: state.app.firestack
+    FitlyFirebase: state.app.FitlyFirebase
   };
 };
 

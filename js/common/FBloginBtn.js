@@ -7,10 +7,11 @@ import { View, TouchableHighlight, Text } from 'react-native';
 import { loginStyles } from '../styles/styles.js'
 import { asyncFBLoginWithPermission, asyncFBLogout, fetchFBProfile } from '../library/asyncFBLogin.js';
 import { setFirebaseUID, setSignUpMethod, printAuthError, clearAuthError } from '../actions/auth.js';
-import { updateLogginStatus, storeUserProfile } from '../actions/user.js';
+import { storeUserProfile } from '../actions/user.js';
 import { setLoadingState } from '../actions/app.js';
 import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
+import Firebase from 'firebase';
 import { bindActionCreators } from 'redux';
 
 class FBloginBtn extends Component {
@@ -20,7 +21,7 @@ class FBloginBtn extends Component {
 
   //TODO error reporting for login error
   _handleFBLogin() {
-    const { firestack, navigation, action } = this.props;
+    const { FitlyFirebase, navigation, action } = this.props;
     (async () => {
       try {
         action.clearAuthError();
@@ -28,14 +29,14 @@ class FBloginBtn extends Component {
         await asyncFBLogout();
         const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
         action.setSignUpMethod('Facebook');
-        action.updateLogginStatus(true);
         const userFBprofile = await fetchFBProfile(data.credentials.token);
-        const user = await firestack.auth.signInWithProvider('facebook', data.credentials.token, '');
-        const userRef = firestack.database.ref('users/' + user.uid);
+        const credential = Firebase.auth.FacebookAuthProvider.credential(data.credentials.token);
+        const user = await FitlyFirebase.auth().signInWithCredential(credential);
+        const userRef = FitlyFirebase.database().ref('users/' + user.uid + '/');
         action.setFirebaseUID(user.uid);
-        const firebaseUserData = await userRef.once('value');
-        console.log('firebaseUserData', firebaseUserData);
-        if (firebaseUserData.value === null) {
+        const firebaseUserData = (await userRef.once('value')).val();
+        // console.log('firebaseUserData', firebaseUserData);
+        if (firebaseUserData === null) {
           console.log('creating user data');
           const { first_name, last_name, picture, email, gender, birthday, friends, location, id } = userFBprofile;
           userRef.set({
@@ -48,8 +49,8 @@ class FBloginBtn extends Component {
               summary: '',
               profileComplete: false,
               FacebookID: id,
-              dateJoined: firestack.ServerValue.TIMESTAMP,
-              lastActive: firestack.ServerValue.TIMESTAMP,
+              dateJoined: Firebase.database.ServerValue.TIMESTAMP,
+              lastActive: Firebase.database.ServerValue.TIMESTAMP,
               followerCount: 0,
               followingCount: 0,
               sessionCount: 0,
@@ -62,16 +63,17 @@ class FBloginBtn extends Component {
             }
           });
           navigation.resetTo({ key: 'SetupStatsView', global: true, from: 'FBinitSignup'});
-        } else if (firebaseUserData.value.profileComplete === false) {
+        } else if (firebaseUserData.profileComplete === false) {
           navigation.resetTo({ key: 'SetupStatsView', global: true, from: 'FBinitSignup'});
         } else {
-          action.storeUserProfile(firebaseUserData.value);
+          action.storeUserProfile(firebaseUserData);
           navigation.resetTo({ key: 'FitlyHomeView', global: true, from: 'profile complete'});
         }
         action.setLoadingState(false);
       } catch(error) {
         action.setLoadingState(false);
-        action.printAuthError(error.description);
+        console.log(error);
+        action.printAuthError(error.message);
       }
     })();
   }
@@ -95,7 +97,7 @@ class FBloginBtn extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, setLoadingState, updateLogginStatus, storeUserProfile, clearAuthError }, dispatch),
+    action: bindActionCreators({ setFirebaseUID, setSignUpMethod, printAuthError, setLoadingState, storeUserProfile, clearAuthError }, dispatch),
     navigation: bindActionCreators({ resetTo }, dispatch)
   };
 };

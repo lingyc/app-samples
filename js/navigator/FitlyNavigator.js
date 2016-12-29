@@ -20,10 +20,10 @@ class FitlyNavigator extends Component {
     let Component = GLOBAL_ROUTES[props.scene.route.key];
     if (isLoggedIn && user && user.public.profileComplete) {
       return (
-        <Component sceneProps={props.scene} firestack={this.props.firestack}/>
+        <Component sceneProps={props.scene} FitlyFirebase={this.props.FitlyFirebase}/>
       );
     } else {
-      return (<Component sceneProps={props.scene} firestack={this.props.firestack}/>);
+      return (<Component sceneProps={props.scene} FitlyFirebase={this.props.FitlyFirebase}/>);
     }
   }
 

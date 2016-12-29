@@ -314,6 +314,7 @@ class SetupLocation extends Component {
    }
 
    _handlePress() {
+     const { FitlyFirebase } = this.props;
      //TODO: if picture not created yet, direct to picture upload scene
      this.props.action.clearError();
      if (this.state.location) {
@@ -327,9 +328,9 @@ class SetupLocation extends Component {
 
            let privateDataUpdates = createUpdateObj('/users/' + this.props.uID + '/private', this.props.sceneProps.route.passProps);
 
-           await this.props.firestack.database.ref().update({...publicDataUpdates, ...privateDataUpdates})
-           const userData = await firestack.database.ref('users/' + authData.user.uid).once('value');
-           this.props.action.storeUserProfile(userData.value);
+           await this.props.FitlyFirebase.database().ref().update({...publicDataUpdates, ...privateDataUpdates})
+           const userData = (await FitlyFirebase.database().ref('users/' + this.props.uID).once('value')).val();
+           this.props.action.storeUserProfile(userData);
 
            this.props.navigation.resetTo({
              key:'FitlyHomeView',
@@ -338,7 +339,7 @@ class SetupLocation extends Component {
            });
 
          } catch(error) {
-           this.props.action.printError(error.description)
+           this.props.action.printError(error.message)
          }
        })();
      } else {
@@ -431,7 +432,8 @@ class SetupLocation extends Component {
  const mapStateToProps = function(state) {
   return {
     uID: state.auth.uID,
-    error: state.app.error
+    error: state.app.error,
+    FitlyFirebase: state.app.FitlyFirebase
   };
 };
 

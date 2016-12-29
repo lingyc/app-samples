@@ -8,6 +8,7 @@ export const SELECT_TAB = 'SELECT_TAB';
 export const RESET_TO = 'RESET_TO';
 export const MOVE_BACK = 'MOVE_BACK';
 export const MOVE_FORWARD = 'MOVE_FORWARD';
+export const CLEAR_LOCAL_NAV_STATE = 'CLEAR_LOCAL_NAV_STATE';
 
 export const push = (route: object) => {
   return {
@@ -46,5 +47,11 @@ export const moveBack = () => {
 export const moveForward = () => {
   return {
     type: MOVE_FORWARD,
+  }
+};
+
+export const clearLocalNavState = () => {
+  return {
+    type: CLEAR_LOCAL_NAV_STATE
   }
 };

@@ -23,6 +23,9 @@ class FitlyHomeView extends Component {
   }
 
   _renderScene(sceneProps) {
+    if (!this.props.isLoggedIn) {
+      return (<View></View>);
+    }
     let Component = LOCAL_ROUTES[sceneProps.scene.route.key];
     let passProps = sceneProps.scene.route.passProps || {};
     return (<Component {...passProps} sceneProps={sceneProps}/>);
@@ -54,7 +57,8 @@ class FitlyHomeView extends Component {
 
  const mapStateToProps = function(state) {
   return {
-    navState: state.navState
+    navState: state.navState,
+    isLoggedIn: state.auth.isLoggedIn
   };
 };
 

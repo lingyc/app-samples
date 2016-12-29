@@ -1,16 +1,10 @@
 import { SET_LOADING_STATE, PRINT_ERROR, CLEAR_ERROR } from '../actions/app.js';
-import Firestack from 'react-native-firestack'
-import firebaseConfig from '../../credentials/firebaseConfig.js'
-
-const firestack = new Firestack({
-  debug: __DEV__ && !!window.navigator.userAgent,
-  ...firebaseConfig
-});
+import {FitlyFirebase} from '../library/firebaseHelpers.js';
 
 const initialState = {
   loading: false,
   error: null,
-  firestack: firestack
+  FitlyFirebase: FitlyFirebase
 };
 
 export default function (state = initialState, action) {

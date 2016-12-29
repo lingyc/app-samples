@@ -17,7 +17,7 @@ class ProfileEntry extends Component {
     }
     // this.otherUID = sceneProps.scene.route.passProps;
     console.log(this.props);
-    this.database = this.props.firestack.database;
+    this.database = this.props.FitlyFirebase.database();
     this.userRef = this.database.ref('users/' + this.props.otherUID + '/public/');
   }
 
@@ -148,7 +148,7 @@ class ProfileEntry extends Component {
 const mapStateToProps = function(state) {
   return {
     uID: state.auth.uID,
-    firestack: state.app.firestack
+    FitlyFirebase: state.app.FitlyFirebase
   };
 };
 

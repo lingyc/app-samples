@@ -1,7 +1,7 @@
 /**
  * @flow
  */
-import { PUSH_ROUTE, POP_ROUTE, SELECT_TAB, RESET_TO } from '../actions/navigation.js';
+import { PUSH_ROUTE, POP_ROUTE, SELECT_TAB, RESET_TO, MOVE_BACK, MOVE_FORWARD, CLEAR_LOCAL_NAV_STATE } from '../actions/navigation.js';
 import { NavigationExperimental } from 'react-native';
 const { StateUtils } = NavigationExperimental;
 
@@ -145,6 +145,10 @@ export default function (state: State = initialState, action): State {
         }
       }
       break;
+    }
+
+    case CLEAR_LOCAL_NAV_STATE: {
+      return initialState;
     }
   }
 

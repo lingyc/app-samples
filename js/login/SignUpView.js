@@ -11,6 +11,7 @@ import { setLoadingState } from '../actions/app.js';
 import { resetTo } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import Firebase from 'firebase';
 const dismissKeyboard = require('dismissKeyboard')
 
 class SignUpView extends Component {
@@ -29,22 +30,22 @@ class SignUpView extends Component {
   _handleEmailSignup() {
     //TODO error reporting for login error
     //TODO validate the email, password and names before sending it out
-    const { firestack, navigation, action } = this.props;
+    const { FitlyFirebase, navigation, action } = this.props;
 
     (async () => {
       try {
         action.setLoadingState(true);
         action.clearAuthError();
-        await firestack.auth.signOut();
-        const user = await firestack.auth.createUserWithEmail(this.state.email, this.state.password)
+        await FitlyFirebase.auth().signOut();
+        const user = await FitlyFirebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
         action.setSignUpMethod('Email');
         action.setFirebaseUID(user.uid);
 
-        //TODO: send verification email, which is not yet available on firestack
-        // firestack.auth.sendEmailVerification();
+        //TODO: send verification email
+        // firebase.auth().sendEmailVerification();
 
-        const userRef = firestack.database.ref('users/' + user.uid);
-        const serverVal = await firestack.ServerValue;
+        const userRef = FitlyFirebase.database().ref('users/' + user.uid);
+        const serverVal = await Firebase.database.ServerValue;
         userRef.set({
           public: {
             first_name: this.state.firstName,
@@ -64,7 +65,7 @@ class SignUpView extends Component {
         navigation.resetTo({ key: 'SetupProfileView', global: true, from: 'Email signup' });
       } catch(error) {
         action.setLoadingState(false);
-        action.printAuthError(error.description);
+        action.printAuthError(error.message);
       }
     })();
   }
@@ -75,11 +76,14 @@ class SignUpView extends Component {
   };
 
   render() {
-    const { firestack } = this.props;
+    const { FitlyFirebase } = this.props;
 
     if (this.props.loading === true) {
       return (
         <View style={loadingStyle.app}>
+          <StatusBar
+            barStyle="default"
+          />
           <ActivityIndicator
             animating={this.state.loading}
             style={{height: 80}}
@@ -100,7 +104,7 @@ class SignUpView extends Component {
                 JOIN US
               </Text>
 
-              <FBloginBtn firestack={firestack} label='Join with Facebook'/>
+              <FBloginBtn FitlyFirebase={FitlyFirebase} label='Join with Facebook'/>
 
               <Text style={loginStyles.textSmall}>
                 or

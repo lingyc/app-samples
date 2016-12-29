@@ -8,7 +8,7 @@ import { headerStyle } from '../styles/styles.js';
 import { asyncFBLogout } from '../library/asyncFBLogin.js';
 import { resetAuthState, printAuthError } from '../actions/auth.js';
 import { clearUserProfile } from '../actions/user.js';
-import { resetTo } from '../actions/navigation.js';
+import { resetTo, clearLocalNavState } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -25,10 +25,10 @@ class LogoutBtn extends Component {
         if (this.props.signInMethod === 'Facebook') {
           await asyncFBLogout();
         }
-          await this.props.firestack.auth.signOut()
+          await this.props.FitlyFirebase.auth().signOut()
+          this.props.navigation.clearLocalNavState();
           this.props.action.resetAuthState();
           this.props.action.clearUserProfile();
-          this.props.navigation.resetTo({key: 'WelcomeView', global: true});
       } catch(err) {
         this.props.action.printAuthError(err);
         console.log('Uh oh... something weird happened', err)
@@ -50,14 +50,14 @@ class LogoutBtn extends Component {
  const mapStateToProps = function(state) {
   return {
     signInMethod: state.auth.signInMethod,
-    firestack: state.app.firestack,
+    FitlyFirebase: state.app.FitlyFirebase,
   };
 };
 
 const mapDispatchToProps = function(dispatch) {
   return {
     action: bindActionCreators({ resetAuthState, printAuthError, clearUserProfile }, dispatch),
-    navigation: bindActionCreators({ resetTo }, dispatch)
+    navigation: bindActionCreators({ resetTo, clearLocalNavState }, dispatch)
   };
 };
 

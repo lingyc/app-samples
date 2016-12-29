@@ -9,6 +9,7 @@ import { storeUserProfile } from '../js/actions/user.js';
 import { setFirebaseUID, updateLogginStatus } from '../js/actions/auth.js';
 import { resetTo } from '../js/actions/navigation.js';
 import { asyncFBLogout } from './library/asyncFBLogin.js';
+import { firebaseGetCurrentUser } from './library/firebaseHelpers.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -24,18 +25,20 @@ class FitlyApp extends Component {
   }
 
   _checkAuth() {
-    const {firestack, action, navigation} = this.props;
+    const {FitlyFirebase, action, navigation} = this.props;
     //consider using the auth status listener instead of getCurrentUser, which listens to change in auth state
     (async () => {
       try {
-        const authData = await firestack.auth.getCurrentUser();
+        // await asyncFBLogout();
+        // await FitlyFirebase.auth().signOut();
+        const authData = await firebaseGetCurrentUser();
         //below code are for redirection, consider refactoring it out
-        action.setFirebaseUID(authData.user.uid);
+        action.setFirebaseUID(authData.uid);
         action.updateLogginStatus(true);
 
-        const firebaseUserData = await firestack.database.ref('users/' + authData.user.uid).once('value');
-        if (firebaseUserData.value === null || firebaseUserData.value.public.profileComplete === false) {
-          if (firebaseUserData.value === null || firebaseUserData.value.public.provider === 'Firebase') {
+        const firebaseUserData = (await FitlyFirebase.database().ref('users/' + authData.uid).once('value')).val();
+        if (firebaseUserData === null || firebaseUserData.public.profileComplete === false) {
+          if (firebaseUserData === null || firebaseUserData.public.provider === 'Firebase') {
             this.setState({ loading: false });
             navigation.resetTo({key: "SetupProfileView", global: true});
           } else {
@@ -43,7 +46,7 @@ class FitlyApp extends Component {
             navigation.resetTo({key: "SetupStatsView", global: true});
           }
         } else {
-          action.storeUserProfile(firebaseUserData.value);
+          action.storeUserProfile(firebaseUserData);
           this.setState({ loading: false });
           navigation.resetTo({key: "FitlyHomeView", global: true});
         }
@@ -56,7 +59,7 @@ class FitlyApp extends Component {
   }
 
   render() {
-      const {firestack} = this.props;
+      const {FitlyFirebase} = this.props;
       //show loading screen while checking auth status
       if (this.state.loading) {
         return (
@@ -69,7 +72,7 @@ class FitlyApp extends Component {
           </View>
         );
       } else {
-        return (<FitlyNavigator firestack={firestack}/>);
+        return (<FitlyNavigator FitlyFirebase={FitlyFirebase}/>);
       }
    }
  }
@@ -84,7 +87,7 @@ class FitlyApp extends Component {
 
 const mapStateToProps = function(state) {
   return {
-    firestack: state.app.firestack,
+    FitlyFirebase: state.app.FitlyFirebase,
   };
 };
 

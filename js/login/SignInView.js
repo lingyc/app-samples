@@ -25,29 +25,29 @@ class SignInView extends Component {
 
   _handleEmailSignin() {
     //TODO: validate the email, password and names before sending it out
-    const { firestack, navigation, action } = this.props;
+    const { FitlyFirebase, navigation, action } = this.props;
     (async () => {
       try {
         action.clearAuthError();
         action.setLoadingState(true);
-        const authData = await firestack.auth.signInWithEmail(this.state.email, this.state.password);
+        const authData = await FitlyFirebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password);
         action.setSignInMethod('Email');
-        action.setFirebaseUID(authData.user.uid);
+        action.setFirebaseUID(authData.uid);
 
         //TODO abstract away check for profile completion, write a isProfileComplete function
-        const userRef = firestack.database.ref('users/' + authData.user.uid);
-        const firebaseUserData = await userRef.once('value');
-        if (firebaseUserData.value.public.profileComplete === false) {
+        const userRef = FitlyFirebase.database().ref('users/' + authData.uid);
+        const firebaseUserData = (await userRef.once('value')).val();
+        if (firebaseUserData.public.profileComplete === false) {
           navigation.resetTo({ key: 'SetupProfileView', global: true, from: 'SetupProfileView, profile incomplete' });
           action.setLoadingState(false);
         } else {
-          action.storeUserProfile(firebaseUserData.value);
+          action.storeUserProfile(firebaseUserData);
           navigation.resetTo({ key: 'FitlyHomeView', global: true, from: 'SigninEmail, profile complete' });
           action.setLoadingState(false);
         }
       } catch(error) {
         action.setLoadingState(false);
-        action.printAuthError(error.description);
+        action.printAuthError(error.message);
       }
     })();
   }
@@ -58,10 +58,13 @@ class SignInView extends Component {
   };
 
   render() {
-    const { firestack } = this.props;
+    const { FitlyFirebase } = this.props;
     if (this.props.loading === true) {
       return (
         <View style={loadingStyle.app}>
+          <StatusBar
+            barStyle="default"
+          />
           <ActivityIndicator
             animating={this.state.loading}
             style={{height: 80}}
@@ -80,7 +83,7 @@ class SignInView extends Component {
             SIGN IN
           </Text>
 
-          <FBloginBtn firestack={firestack} label="Connect With Facebook"/>
+          <FBloginBtn FitlyFirebase={FitlyFirebase} label="Connect With Facebook"/>
           <Text style={loginStyles.textSmall}>
             or
           </Text>

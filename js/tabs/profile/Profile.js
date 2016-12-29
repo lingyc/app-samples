@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { profileStyle } from '../../styles/styles.js';
 import { storeUserProfile } from '../../actions/user.js';
-import { resetTo } from '../../actions/navigation.js';
-import { push } from '../../actions/navigation.js';
+import { push, resetTo } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -15,6 +14,10 @@ class Profile extends Component {
   //register listener to update the feeds, and follower count
   componentDidMount() {
     this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/').on('value', this._handleProfileChange.bind(this));
+  }
+
+  componentWillUnMount() {
+    this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/').off('value');
   }
 
   _handleProfileChange(snapshot) {

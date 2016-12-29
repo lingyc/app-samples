@@ -14,6 +14,7 @@
     "react-native-facebook-login": "^1.4.0",
     "react-native-fm-picker": "0.0.5",
     "react-native-geocoder": "^0.4.5",
+    "react-native-image-crop-picker": "^0.11.0",
     "react-native-vector-icons": "^3.0.0",
     "react-redux": "^4.4.6",
     "redux": "^3.6.0",

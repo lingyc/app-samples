@@ -3,25 +3,56 @@
 ## Installation ##
 1. Run npm install
 2. Add firebase API keys to /credentials/firebaseConfig
-3. Download the firebase iOS config GoogleService-Info.plist from the Firebase console into iOS folder
 
 ## iOS Only Components ##
 React-Native-FMPicker
 
 ## Running the development server ##
-Change host in the to your pc's ip
+Refer to https://facebook.github.io/react-native/docs/running-on-device.html
 
 ## Icons ##
-Get the icon names at http://fontawesome.io/icons/ for the react-native-vector-icons library
+Get the icon names at http://ionicframework.com/docs/v2/ionicons/  or http://fontawesome.io/icons/ for the react-native-vector-icons library
 
 ## TODOs ##
-- [ ] Incomplete task
-    Onboarding:
-    - [ ] validate user input
-    - [ ] upload profile picture
-    - [ ] add carousels to finish the onboarding process
-    - [ ] forget password feature
-    - [ ] stylistic details
-    Navigation:
-    - [ ] Refactor navigation into navigation experimental
-    - [ ] Global nav state for the entire app and local nav state for each tab
+More TODOs can be found in the code. This list will grow.
+
+- [ ] Onboarding
+  - [ ] validate user input
+  - [ ] upload profile picture
+  - [ ] add carousels to finish the onboarding process
+  - [ ] email validation
+  - [ ] forget password feature
+  - [ ] stylistic details
+
+- [ ] Local Storage
+  - [ ] Persist redux store
+
+- [ ] Profile Tab
+  - [ ] let user update profile photo
+  - [ ] let user update summary
+  - [ ] let user write post
+    - [ ] post creation
+  - [ ] let user create workouts
+    - [ ] invite others for workouts
+  - [ ] push notifications
+  - [ ] implement feeds
+
+- [ ] Search Tab
+  - [ ] implement server
+    - [ ] use elasticsearch and index database
+    - [ ] create query API
+  - [ ] figure out the interface
+
+- [ ] Activity Tab
+  - [ ] create activity
+  - [ ] search activity
+
+- [ ] Notification Tab
+
+- [ ] Connect Tab
+  - [ ] implement backend service
+
+- [ ] Groups
+
+- [ ] Settings
+  - [ ] manage notifications

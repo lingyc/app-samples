@@ -19,6 +19,7 @@ class Profile extends Component {
 
   _handleProfileChange(snapshot) {
     const {private: privateData} = this.props.user;
+    // TODO: get push notification for updates in follower and following
     this.props.action.storeUserProfile({private: privateData, public: snapshot.val()});
   }
 

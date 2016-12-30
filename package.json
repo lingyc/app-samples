@@ -12,6 +12,7 @@
     "react-native": "0.39.2",
     "react-native-datepicker": "^1.4.3",
     "react-native-facebook-login": "^1.4.0",
+    "react-native-firestack": "^2.3.5",
     "react-native-fm-picker": "0.0.5",
     "react-native-geocoder": "^0.4.5",
     "react-native-image-crop-picker": "^0.11.0",

@@ -17,10 +17,6 @@ source 'https://github.com/CocoaPods/Specs.git'
 use_frameworks!
 platform :ios, '8.0'
 
-pod 'RSKImageCropper'
-pod 'QBImagePickerController'
-
-
 [
   'Firebase',
   'Firebase/Core',
@@ -33,7 +29,5 @@ pod 'QBImagePickerController'
   pod lib
 end
 
-# react-native-image-crop-picker
-# platform :ios, '8.0'
-# pod 'RSKImageCropper'
-# pod 'QBImagePickerController'
+pod 'RSKImageCropper'
+pod 'QBImagePickerController'

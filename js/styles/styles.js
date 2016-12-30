@@ -1,38 +1,52 @@
 import { StyleSheet } from 'react-native';
-const SCREEN_WIDTH = require('Dimensions').get('window').width;
+
+const centering = {
+    alignItems: 'center',
+    justifyContent: 'center'
+}
+const centeringContainer = {
+  flex: 1,
+  ...centering
+}
+
+const absoluteFullWidth = {
+    position: 'absolute',
+    left: 0,
+    right: 0
+}
+
+const FitlyBlue = '#1D2F7B';
+const headerHight = 80;
+const tabHeight = 70;
+const selectedTabHeight = 80;
+const tabColor = '#3d3d3d';
 
 export const loadingStyle = StyleSheet.create({
   app: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
+    ...centering
   },
 });
 
 export const headerStyle = StyleSheet.create({
   header: {
-    height: 80,
-    width: SCREEN_WIDTH,
-    backgroundColor: '#1D2F7B',
     flex: 0,
+    height: headerHight,
+    backgroundColor: FitlyBlue,
   },
   fakeHeader: {
-    height: 80,
-    width: SCREEN_WIDTH,
-    backgroundColor: '#1D2F7B',
-    position: 'absolute',
-    top: 0,
+    alignSelf: 'stretch',
     flex: 0,
+    height: headerHight,
+    backgroundColor: FitlyBlue,
+    top: 0,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
+    ...centering
   },
   container: {
-    // borderWidth: 1,
     flex: 0,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
+    ...centering
   },
   logoText: {
     position: "absolute",
@@ -99,30 +113,26 @@ export const commonStyle = StyleSheet.create({
 
 export const tabStyle = StyleSheet.create({
   tabBar: {
-    // flex: 0,
-    // backgroundColor: "#3d3d3d",
-    position: 'absolute',
-    height: 80,
+    ...absoluteFullWidth,
     bottom: 0,
+    height: 80,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "flex-end"
   },
   tab: {
-    backgroundColor: "#3d3d3d",
-    height: 70,
-    width: SCREEN_WIDTH / 5,
-    justifyContent: 'center',
-    alignItems: "center"
+    backgroundColor: tabColor,
+    height: tabHeight,
+    flex:1,
+    ...centering,
   },
   selectedTab: {
-    backgroundColor: "#3d3d3d",
+    backgroundColor: tabColor,
     borderTopRightRadius: 7,
     borderTopLeftRadius: 7,
-    height: 80,
-    width: SCREEN_WIDTH / 5,
-    justifyContent: 'center',
-    alignItems: "center",
+    height: selectedTabHeight,
+    flex:1,
+    ...centering,
     shadowColor: "black",
     shadowOpacity: .3,
     shadowOffset: {width: 0, height: 0},
@@ -133,14 +143,15 @@ export const tabStyle = StyleSheet.create({
 
 export const loginStyles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#1D2F7B'
+    backgroundColor: FitlyBlue
   },
   header: {
     textAlign: 'center',
+    alignSelf: 'stretch',
     fontFamily: 'HelveticaNeue',
     fontSize: 40,
     color: 'white',
@@ -169,14 +180,13 @@ export const loginStyles = StyleSheet.create({
     marginBottom: 20
   },
   swipeBtn: {
-    width: SCREEN_WIDTH,
+    alignSelf: 'stretch',
     height: 50,
     borderColor: '#FFFFFF',
     backgroundColor: 'white',
-    borderWidth: .5,
     justifyContent: 'center',
-    position: 'absolute',
-    bottom: 0
+    bottom: 0,
+    ...absoluteFullWidth,
   },
   textMid:{
     fontSize: 15,
@@ -196,7 +206,7 @@ export const loginStyles = StyleSheet.create({
   btnText: {
     fontSize: 18,
     textAlign: 'center',
-    color: '#1D2F7B'
+    color: FitlyBlue
   },
   disclamerText: {
     fontSize: 12,
@@ -210,15 +220,11 @@ export const loginStyles = StyleSheet.create({
 
 export const welcomeStyles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#1D2F7B',
+    ...centeringContainer,
+    backgroundColor: FitlyBlue,
   },
   logoContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    ...centeringContainer,
   },
   buttonContainer: {
     flex: 1,
@@ -257,10 +263,8 @@ export const welcomeStyles = StyleSheet.create({
     marginBottom: 5,
   },
   actionButtonInverted: {
-   flex: 1,
    height: 50,
-   justifyContent: 'center',
-   alignItems: 'center',
+   ...centeringContainer,
    borderColor: '#FFFFFF',
    borderWidth: .5,
  },
@@ -268,7 +272,7 @@ export const welcomeStyles = StyleSheet.create({
    fontSize: 20,
    marginBottom: 0,
    textAlign: 'center',
-   color: '#1D2F7B',
+   color: FitlyBlue,
    marginBottom: 5,
  },
  actionButton: {
@@ -283,15 +287,13 @@ export const welcomeStyles = StyleSheet.create({
 });
 export const composeStyle = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
+    ...centeringContainer,
   },
   category: {
     justifyContent: 'center',
     overflow: 'hidden',
     borderWidth: .5,
-    borderColor: '#1D2F7B',
+    borderColor: FitlyBlue,
     width: 250,
     height: 50,
     borderRadius: 25,
@@ -305,13 +307,13 @@ export const composeStyle = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     textAlign: 'center',
-    color: '#1D2F7B',
+    color: FitlyBlue,
     fontSize: 20
   }
 });
 export const profileStyle = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0,
     alignItems: 'center',
     justifyContent: 'flex-start'
   },
@@ -321,14 +323,14 @@ export const profileStyle = StyleSheet.create({
     width: 100,
     height: 100,
     borderWidth: 2,
-    borderColor: '#1D2F7B',
+    borderColor: FitlyBlue,
     justifyContent: 'center'
   },
   dashboard: {
     flex:0,
     flexDirection: "row",
     justifyContent: "space-around",
-    width: SCREEN_WIDTH,
+    alignSelf: 'stretch',
     borderTopWidth: .5,
     borderBottomWidth: .5,
     paddingTop: 8,
@@ -336,8 +338,7 @@ export const profileStyle = StyleSheet.create({
     borderColor: "#ccc",
   },
   dashboardItem: {
-    justifyContent: "center",
-    alignItems: "center",
+    ...centering,
   },
   centeredText: {
     textAlign: "center",
@@ -363,7 +364,7 @@ export const profileStyle = StyleSheet.create({
   },
   followBtn: {
     borderRadius: 2,
-    backgroundColor: '#1D2F7B',
+    backgroundColor: FitlyBlue,
     width: 170,
     height: 40,
     justifyContent: "center",

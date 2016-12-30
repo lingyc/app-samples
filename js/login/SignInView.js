@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import { StatusBar, TextInput, TouchableHighlight, Text, View, ActivityIndicator, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
+import { StatusBar, TextInput, TouchableHighlight, ScrollView, Text, View, ActivityIndicator, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native';
 import { loginStyles, loadingStyle, commonStyle } from '../styles/styles.js'
 import FBloginBtn from '../common/FBloginBtn.js';
 import { setFirebaseUID, setSignInMethod, printAuthError, clearAuthError } from '../actions/auth.js';
@@ -81,64 +81,69 @@ class SignInView extends Component {
     }
     return (
       <TouchableWithoutFeedback style={{flex:1}} onPress={()=> dismissKeyboard()}>
-        <KeyboardAvoidingView behavior="padding" style={loginStyles.container}>
-          <StatusBar
-            barStyle="light-content"
-          />
-          <Text style={loginStyles.header}>
-            SIGN IN
-          </Text>
+        <View style={{flex: 1, backgroundColor: '#1D2F7B'}}>
+          <ScrollView contentContainerStyle={loginStyles.container}>
+            <KeyboardAvoidingView behavior="padding" style={loginStyles.container}>
+              <StatusBar
+                barStyle="light-content"
+              />
+              <Text style={loginStyles.header}>
+                SIGN IN
+              </Text>
 
-          <FBloginBtn FitlyFirebase={FitlyFirebase} label="Connect With Facebook"/>
-          <Text style={loginStyles.textSmall}>
-            or
-          </Text>
+              <FBloginBtn FitlyFirebase={FitlyFirebase} label="Connect With Facebook"/>
+              <Text style={loginStyles.textSmall}>
+                or
+              </Text>
 
-          <View style={loginStyles.form}>
-            <TextInput
-              returnKeyType="next"
-              maxLength={30}
-              clearButtonMode="always"
-              ref="1"
-              onSubmitEditing={() => this.focusNextField('2')}
-              style={loginStyles.input}
-              onChangeText={(text) => this.setState({email: text})}
-              value={this.state.email}
-              keyboardType="email-address"
-              placeholder="Email"
-              placeholderTextColor="white"
-            />
-          </View>
+              <View style={loginStyles.form}>
+                <TextInput
+                  returnKeyType="next"
+                  maxLength={30}
+                  clearButtonMode="always"
+                  ref="1"
+                  onSubmitEditing={() => this.focusNextField('2')}
+                  style={loginStyles.input}
+                  onChangeText={(text) => this.setState({email: text})}
+                  value={this.state.email}
+                  keyboardType="email-address"
+                  placeholder="Email"
+                  placeholderTextColor="white"
+                />
+              </View>
 
-          <View style={loginStyles.form}>
-            <TextInput
-              returnKeyType="next"
-              maxLength={30}
-              clearButtonMode="always"
-              ref="2"
-              style={loginStyles.input}
-              onSubmitEditing={() => this._handleEmailSignin()}
-              onChangeText={(text) => this.setState({password: text})}
-              value={this.state.password}
-              keyboardType="email-address"
-              secureTextEntry={true}
-              placeholder="Password"
-              placeholderTextColor="white"
-            />
-          </View>
-          {/* TODO: need to implement the forget password and reset password feature */}
-          <TouchableHighlight onPress={() => this._handleEmailSignin()}>
-            <Text style={loginStyles.textMid}>
-              Forgot your password?
-            </Text>
-          </TouchableHighlight>
-          {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
+              <View style={loginStyles.form}>
+                <TextInput
+                  returnKeyType="next"
+                  maxLength={30}
+                  clearButtonMode="always"
+                  ref="2"
+                  style={loginStyles.input}
+                  onSubmitEditing={() => this._handleEmailSignin()}
+                  onChangeText={(text) => this.setState({password: text})}
+                  value={this.state.password}
+                  keyboardType="email-address"
+                  secureTextEntry={true}
+                  placeholder="Password"
+                  placeholderTextColor="white"
+                />
+              </View>
+              {/* TODO: need to implement the forget password and reset password feature */}
+              <TouchableHighlight onPress={() => this._handleEmailSignin()}>
+                <Text style={loginStyles.textMid}>
+                  Forgot your password?
+                </Text>
+              </TouchableHighlight>
+              {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
+            </KeyboardAvoidingView>
+            <Text style={{height: 100}}></Text>
+          </ScrollView>
           <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handleEmailSignin()}>
             <Text style={loginStyles.btnText}>
               SWIPE TO SIGN IN
             </Text>
           </TouchableHighlight>
-        </KeyboardAvoidingView>
+        </View>
       </TouchableWithoutFeedback>
     );
    }

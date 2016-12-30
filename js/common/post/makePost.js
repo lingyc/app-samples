@@ -65,11 +65,9 @@ class MakePost extends Component {
         <TouchableOpacity style={[headerStyle.closeBtn, {position: 'absolute', left: 0, top: 20}]} onPress={() => this.props.navigation.pop({global: true})}>
           <Icon name="ios-close" size={50} color="white"/>
         </TouchableOpacity>
-        <View style={headerStyle.container}>
           <Text style={headerStyle.titleText}>
             Choose a Category
           </Text>
-        </View>
         <TouchableOpacity style={{position: "absolute", right: 20, top: 40}} onPress={
           () => this.props.navigation.push({key: 'CompostPost', global: true,
             passProps:{_saveInputsToState: this._saveInputsToState.bind(this)}
@@ -84,17 +82,21 @@ class MakePost extends Component {
   render() {
     if (this.state.loading) {
       return (
-        <View style={composeStyle.container}>
+        <View style={{flex: 1}}>
           {this._renderFakeHeader()}
-          <ActivityIndicator animating={this.state.loading} style={{height: 30}} size="small"/>
+          <View style={composeStyle.container}>
+            <ActivityIndicator animating={this.state.loading} style={{height: 30}} size="small"/>
+          </View>
         </View>
       );
     } else {
       //select the category
       return (
-        <View style={composeStyle.container}>
+        <View style={{flex: 1}}>
           {this._renderFakeHeader()}
-          {this._renderCategories(['Workout Plan', 'Meal Plan', 'Photos', 'Others'])}
+          <View style={composeStyle.container}>
+            {this._renderCategories(['Workout Plan', 'Meal Plan', 'Photos', 'Others'])}
+          </View>
         </View>
       );
     }

@@ -45,10 +45,7 @@ class Profile extends Component {
       this.setState({loading: true});
       return uploadPhoto('users/' + this.props.uID + '/profilePic/', picture.uri, {profile: true});
     })
-    .then(link => {
-      console.log('link', link);
-      return this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/picture').set(link);
-    })
+    .then(link => this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/picture').set(link))
     .then(snap => this.setState({loading: false}))
     .catch(error => {
       this.setState({loading: false});
@@ -57,14 +54,15 @@ class Profile extends Component {
   }
 
 
+  //this function should be a reusable component
   render() {
-    // console.log('this.props.user', this.props.user);
     const {public: profile} = this.props.user;
     return (
-      <ScrollView contentContainerStyle={profileStyle.container}>
+      <ScrollView style={{flex:1}} contentContainerStyle={profileStyle.container}>
         {/* TODO: add upload photo btn */}
         <TouchableOpacity onPress={() => this._updateProfilePic()}>
-          <Image source={(profile.picture) ? {uri:profile.picture} : require('../../../img/default-user-image.png')} style={profileStyle.profileImg}>
+          <Image source={(profile.picture) ? {uri:profile.picture} : require('../../../img/default-user-image.png')}
+          style={profileStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}>
             {(this.state.loading)
               ? <ActivityIndicator animating={this.state.loading} style={{height: 30}} size="small"/>
               : <View></View>
@@ -113,7 +111,9 @@ class Profile extends Component {
           </TouchableOpacity>
         </View>
 
+        {/* { [1,1,1,1,1,1,1,1,1,1].map((ele, key) => <Text key={key} style={{height: 50}}>{ele}</Text>)} */}
         {/* TODO: create a feed component that renders the feeds in realtime */}
+        <View style={{height: 100}}></View>
       </ScrollView>
     );
   }

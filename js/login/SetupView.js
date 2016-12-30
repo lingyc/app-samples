@@ -12,7 +12,8 @@ import {
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
   Slider,
-  ActivityIndicator
+  ActivityIndicator,
+  ScrollView
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -80,66 +81,70 @@ class SetupProfile extends Component {
 
     return (
       <TouchableWithoutFeedback style={{flex:1}} onPress={() => dismissKeyboard()}>
-        <View style={loginStyles.container}>
-          <StatusBar
-            barStyle="light-content"
-          />
-          <Text style={loginStyles.header}>
-            YOUR PROFILE
-          </Text>
-          <Text style={loginStyles.textMid}>
-            Your stats help us find and suggest goals and workouts for you. This information will never be made public.
-          </Text>
+        <View style={{flex: 1, backgroundColor: '#1D2F7B'}}>
+          <ScrollView contentContainerStyle={loginStyles.container}>
+            <View style={loginStyles.container}>
+              <StatusBar
+                barStyle="light-content"
+              />
+              <Text style={loginStyles.header}>
+                YOUR PROFILE
+              </Text>
+              <Text style={loginStyles.textMid}>
+                Your stats help us find and suggest goals and workouts for you. This information will never be made public.
+              </Text>
 
-          <View style={loginStyles.form}>
-            {genderInput}
-          </View>
+              <View style={loginStyles.form}>
+                {genderInput}
+              </View>
 
-          <FMPicker ref={'genderPicker'}
-            options={options}
-            labels={labels}
-            onSubmit={(option) => this.setState({gender: option})}
-          />
+              <FMPicker ref={'genderPicker'}
+                options={options}
+                labels={labels}
+                onSubmit={(option) => this.setState({gender: option})}
+              />
 
-          <View style={loginStyles.form}>
-            <Text style={loginStyles.input}>
-              I was born on...
-            </Text>
-            <DatePicker
-              style={{width: 200, alignSelf: 'center'}}
-              date={this.state.birthday}
-              mode="date"
-              placeholder="date"
-              format="YYYY-MM-DD"
-              minDate="1800-01-01"
-              maxDate={this.formatDate(new Date())}
-              confirmBtnText="Confirm"
-              cancelBtnText="Cancel"
-              onDateChange={(date) => {this.setState({birthday: date})}}
-              customStyles={{
-                dateIcon: {
-                  position: 'absolute',
-                  left: 0,
-                  top: 4,
-                  marginLeft: 0
-                },
-                dateInput: {
-                  marginLeft: 36,
-                  borderWidth: 0
-                },
-                dateText: {
-                  color: 'white'
-                },
-                btnCancel: {
+              <View style={loginStyles.form}>
+                <Text style={loginStyles.input}>
+                  I was born on...
+                </Text>
+                <DatePicker
+                  style={{width: 200, alignSelf: 'center'}}
+                  date={this.state.birthday}
+                  mode="date"
+                  placeholder="date"
+                  format="YYYY-MM-DD"
+                  minDate="1800-01-01"
+                  maxDate={this.formatDate(new Date())}
+                  confirmBtnText="Confirm"
+                  cancelBtnText="Cancel"
+                  onDateChange={(date) => {this.setState({birthday: date})}}
+                  customStyles={{
+                    dateIcon: {
+                      position: 'absolute',
+                      left: 0,
+                      top: 4,
+                      marginLeft: 0
+                    },
+                    dateInput: {
+                      marginLeft: 36,
+                      borderWidth: 0
+                    },
+                    dateText: {
+                      color: 'white'
+                    },
+                    btnCancel: {
 
-                },
-                btnTextConfirm: {
-                  color: '#007AFF'
-                }
-              }}
-            />
-          </View>
-          {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
+                    },
+                    btnTextConfirm: {
+                      color: '#007AFF'
+                    }
+                  }}
+                />
+              </View>
+              {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
+            </View>
+          </ScrollView>
           <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handlePress()}>
             <Text style={loginStyles.btnText}>
               SAVE & CONTINUE
@@ -184,46 +189,50 @@ class SetupStats extends Component {
    render() {
      return (
        <TouchableWithoutFeedback style={{flex:1}} onPress={()=> dismissKeyboard()}>
-         <View style={loginStyles.container}>
-           <StatusBar barStyle="light-content"/>
-           <Text style={loginStyles.header}>
-             YOUR STATS
-           </Text>
-           <Text style={loginStyles.textMid}>
-             Your stats help us find and suggest goals and workouts for you. This information will never be made public.
-           </Text>
+         <View style={{flex: 1, backgroundColor: '#1D2F7B'}}>
+           <ScrollView contentContainerStyle={loginStyles.container}>
+             <View style={loginStyles.container}>
+               <StatusBar barStyle="light-content"/>
+               <Text style={loginStyles.header}>
+                 YOUR STATS
+               </Text>
+               <Text style={loginStyles.textMid}>
+                 Your stats help us find and suggest goals and workouts for you. This information will never be made public.
+               </Text>
 
-           {/* TODO make picker with feet and inch */}
-           <View style={loginStyles.form}>
-             <TextInput
-               returnKeyType="next"
-               maxLength={30}
-               clearButtonMode="always"
-               ref="1"
-               onSubmitEditing={() => this.focusNextField('2')}
-               style={loginStyles.input}
-               onChangeText={(text) => this.setState({height: text})}
-               value={this.state.height}
-               placeholder="Height"
-               placeholderTextColor="white"
-             />
-           </View>
+               {/* TODO make picker with feet and inch */}
+               <View style={loginStyles.form}>
+                 <TextInput
+                   returnKeyType="next"
+                   maxLength={30}
+                   clearButtonMode="always"
+                   ref="1"
+                   onSubmitEditing={() => this.focusNextField('2')}
+                   style={loginStyles.input}
+                   onChangeText={(text) => this.setState({height: text})}
+                   value={this.state.height}
+                   placeholder="Height"
+                   placeholderTextColor="white"
+                 />
+               </View>
 
-           <View style={loginStyles.form}>
-             <TextInput
-               maxLength={30}
-               returnKeyType="next"
-               clearButtonMode="always"
-               ref="2"
-               onSubmitEditing={() => this._handlePress()}
-               style={loginStyles.input}
-               onChangeText={(text) => this.setState({weight: text})}
-               value={this.state.weight}
-               placeholder="Weight"
-               placeholderTextColor="white"
-             />
-           </View>
-           {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
+               <View style={loginStyles.form}>
+                 <TextInput
+                   maxLength={30}
+                   returnKeyType="next"
+                   clearButtonMode="always"
+                   ref="2"
+                   onSubmitEditing={() => this._handlePress()}
+                   style={loginStyles.input}
+                   onChangeText={(text) => this.setState({weight: text})}
+                   value={this.state.weight}
+                   placeholder="Weight"
+                   placeholderTextColor="white"
+                 />
+               </View>
+               {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
+             </View>
+           </ScrollView>
            <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handlePress()}>
              <Text style={loginStyles.btnText}>
                SAVE & CONTINUE
@@ -262,35 +271,39 @@ class SetupActiveLevel extends Component {
    render() {
      return (
        <TouchableWithoutFeedback style={{flex:1}} onPress={()=> dismissKeyboard()}>
-         <View style={loginStyles.container}>
-           <StatusBar
-             barStyle="light-content"
-           />
-           <Text style={loginStyles.header}>
-             ACTIVITY LEVEL
-           </Text>
-           <Text style={loginStyles.textMid}>
-             Your stats help us find and suggest goals and workouts for you. This information will never be made public.
-           </Text>
+         <View style={{flex: 1, backgroundColor: '#1D2F7B'}}>
+           <ScrollView contentContainerStyle={loginStyles.container}>
+             <View style={loginStyles.container}>
+               <StatusBar
+                 barStyle="light-content"
+               />
+               <Text style={loginStyles.header}>
+                 ACTIVITY LEVEL
+               </Text>
+               <Text style={loginStyles.textMid}>
+                 Your stats help us find and suggest goals and workouts for you. This information will never be made public.
+               </Text>
 
-           <View style={[loginStyles.form, {borderBottomWidth: 0}]}>
-             <Text style={loginStyles.input}>
-                 Choose a level of activity...
-             </Text>
-           </View>
+               <View style={[loginStyles.form, {borderBottomWidth: 0}]}>
+                 <Text style={loginStyles.input}>
+                     Choose a level of activity...
+                 </Text>
+               </View>
 
-           <Slider
-             style={{width: 260, alignSelf: 'center'}}
-             value={this.state.activeLevel}
-             minimumValue={0}
-             maximumValue={10}
-             step={.5}
-             onValueChange={(value) => this.setState({activeLevel: value})} />
+               <Slider
+                 style={{width: 260, alignSelf: 'center'}}
+                 value={this.state.activeLevel}
+                 minimumValue={0}
+                 maximumValue={10}
+                 step={.5}
+                 onValueChange={(value) => this.setState({activeLevel: value})} />
 
-           <Text style={[loginStyles.input, {marginTop: 40, fontSize: 40}]}>
-             {this.state.activeLevel}
-           </Text>
-           {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
+               <Text style={[loginStyles.input, {marginTop: 40, fontSize: 40}]}>
+                 {this.state.activeLevel}
+               </Text>
+               {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
+             </View>
+           </ScrollView>
            <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handlePress()}>
              <Text style={loginStyles.btnText}>
                SAVE & CONTINUE
@@ -374,51 +387,54 @@ class SetupLocation extends Component {
    render() {
      return (
        <TouchableWithoutFeedback style={{flex:1}} onPress={()=> dismissKeyboard()}>
-         <View style={loginStyles.container}>
-           <StatusBar
-             barStyle="light-content"
-           />
-           <Text style={loginStyles.header}>
-             LOCATION
-           </Text>
-           <Text style={loginStyles.textMid}>
-             Plese enter your locations so we can find activities, events, and friends in your area.
-           </Text>
+         <View style={{flex: 1, backgroundColor: '#1D2F7B'}}>
+           <ScrollView contentContainerStyle={loginStyles.container}>
+             <View style={loginStyles.container}>
+               <StatusBar
+                 barStyle="light-content"
+               />
+               <Text style={loginStyles.header}>
+                 LOCATION
+               </Text>
+               <Text style={loginStyles.textMid}>
+                 Plese enter your locations so we can find activities, events, and friends in your area.
+               </Text>
 
-           <TouchableHighlight style={loginStyles.FBbtn} onPress={() => this._getLocation()}>
-             <Text style={loginStyles.btnText}>
-               USE CURRENT LOCATION
-             </Text>
-           </TouchableHighlight>
+               <TouchableHighlight style={loginStyles.FBbtn} onPress={() => this._getLocation()}>
+                 <Text style={loginStyles.btnText}>
+                   USE CURRENT LOCATION
+                 </Text>
+               </TouchableHighlight>
 
-           <Text style={loginStyles.textSmall}>
-             or
-           </Text>
+               <Text style={loginStyles.textSmall}>
+                 or
+               </Text>
 
-           <View style={loginStyles.form}>
-             <TextInput
-               maxLength={30}
-               returnKeyType="search"
-               clearButtonMode="always"
-               onSubmitEditing={() => this._getLocation(this.state.locationInput)}
-               style={loginStyles.input}
-               onChangeText={(text) => this.setState({locationInput: text})}
-               value={this.state.locationInput}
-               placeholder="Enter postal code, or city"
-               placeholderTextColor="white"
-             />
-           </View>
+               <View style={loginStyles.form}>
+                 <TextInput
+                   maxLength={30}
+                   returnKeyType="search"
+                   clearButtonMode="always"
+                   onSubmitEditing={() => this._getLocation(this.state.locationInput)}
+                   style={loginStyles.input}
+                   onChangeText={(text) => this.setState({locationInput: text})}
+                   value={this.state.locationInput}
+                   placeholder="Enter postal code, or city"
+                   placeholderTextColor="white"
+                 />
+               </View>
 
-           <Text style={[loginStyles.input, {marginTop: 40, fontSize: 30}]}>
-             {(this.state.location && this.state.location.place) ? this.state.location.place : '' }
-           </Text>
-           {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
-           <ActivityIndicator
-             animating={this.state.loading}
-             style={{height: 80}}
-             size="large"
-           />
-
+               <Text style={[loginStyles.input, {marginTop: 40, fontSize: 30}]}>
+                 {(this.state.location && this.state.location.place) ? this.state.location.place : '' }
+               </Text>
+               {(this.props.error) ? (<Text style={commonStyle.error}> {this.props.error} </Text>) : <Text style={commonStyle.hidden}> </Text> }
+               <ActivityIndicator
+                 animating={this.state.loading}
+                 style={{height: 80}}
+                 size="large"
+               />
+             </View>
+           </ScrollView>
            <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handlePress()}>
              <Text style={loginStyles.btnText}>
                FINISH

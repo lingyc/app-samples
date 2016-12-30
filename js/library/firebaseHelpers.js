@@ -41,11 +41,14 @@ export const updateCurrentLocationInDB = (uid) => {
   });
 };
 
-export const uploadPhoto = (location, file) => {
-  console.log('image', file);
-
-  var storageRef = firebase.storage().ref(location + guid() + '.jpg');
-}
+export const uploadPhoto = (location, data) => {
+  console.log('location', location);
+  const storageRef = FitlyFirebase.storage().ref(location + guid() + '.jpg');
+  return storageRef.putString(data, 'base64').then(snapshot => {
+    console.log('snapshot', snapshot);
+    return snapshot.downloadURL;
+  });
+};
 
 //generate random id for photos
 function guid() {

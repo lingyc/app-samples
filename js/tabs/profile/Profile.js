@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { profileStyle } from '../../styles/styles.js';
 import { storeUserProfile } from '../../actions/user.js';
 import { push, resetTo } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+// import ImagePicker from 'react-native-image-crop-picker';
+import {selectPicture} from '../../library/pictureHelper.js';
+import {uploadPhoto} from '../../library/firebaseHelpers.js';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      loading: false,
+    }
   }
 
   //register listener to update the feeds, and follower count
@@ -32,13 +38,37 @@ class Profile extends Component {
     );
   }
 
+  _updateProfilePic() {
+    selectPicture()
+    .then(picture => {
+      this.setState({loading: true});
+      return uploadPhoto('users/' + this.props.uID + '/profilePic/', picture.data);
+    })
+    // .then(link => {
+    //   console.log('link', link);
+    //   return this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/picture').set(link);
+    // })
+    // .then(snap => this.setState({loading: false}))
+    .catch(error => {
+      this.setState({loading: false});
+      console.log("update profile pic", error)
+    });
+  }
+
+
   render() {
     // console.log('this.props.user', this.props.user);
     const {public: profile} = this.props.user;
     return (
       <ScrollView contentContainerStyle={profileStyle.container}>
         {/* TODO: add upload photo btn */}
-        <Image source={(profile.picture) ? {uri:profile.picture} : require('../../../img/default-user-image.png')} style={profileStyle.profileImg}/>
+        <TouchableOpacity onPress={() => this._updateProfilePic()}>
+          {(this.state.loading)
+            ? <ActivityIndicator animating={this.state.loading} style={{height: 20}} size="small"/>
+            : <View></View>
+          }
+          <Image source={(profile.picture) ? {uri:profile.picture} : require('../../../img/default-user-image.png')} style={profileStyle.profileImg}/>
+        </TouchableOpacity>
         <Text style={profileStyle.nameText}>{profile.first_name + ' ' + profile.last_name}</Text>
         <Text style={profileStyle.dashboardText}>{profile.location.place}</Text>
         {/* TODO: add edit summary btn */}

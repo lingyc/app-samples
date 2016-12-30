@@ -33,6 +33,10 @@
         </dict>
       </dict>
     </dict>
+    <key>NSCameraUsageDescription</key>
+    <string>We need access to your camera to update your profile image</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photos to update your profile image</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string/>
     <key>UILaunchStoryboardName</key>

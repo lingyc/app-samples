@@ -1,7 +1,15 @@
 import Firebase from 'firebase';
+//Firestack and Firebase have feature missing from each other
+import Firestack from 'react-native-firestack'
 import firebaseConfig from '../../credentials/firebaseConfig.js'
 export const FitlyFirebase = Firebase.initializeApp(firebaseConfig);
 import { getCurrentPlace } from './asyncGeolocation.js';
+
+export const firestack = new Firestack({
+  debug: __DEV__ && !!window.navigator.userAgent,
+  ...firebaseConfig
+});
+
 
 
 export const createUpdateObj = (ref: string, data) => {
@@ -41,13 +49,15 @@ export const updateCurrentLocationInDB = (uid) => {
   });
 };
 
-export const uploadPhoto = (location, data) => {
-  console.log('location', location);
-  const storageRef = FitlyFirebase.storage().ref(location + guid() + '.jpg');
-  return storageRef.putString(data, 'base64').then(snapshot => {
-    console.log('snapshot', snapshot);
-    return snapshot.downloadURL;
-  });
+export const uploadPhoto = (location, data, options) => {
+  location = (options.profile) ? location + 'profile.jpg' : location + guid() + '.jpg';
+  return firestack.storage.uploadFile(location, data, {
+    contentType: 'image/jpeg',
+    contentEncoding: 'base64',
+  })
+  .then(snapshot => {
+    return snapshot.downloadUrl;
+  })
 };
 
 //generate random id for photos

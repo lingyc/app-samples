@@ -280,6 +280,7 @@ export const profileStyle = StyleSheet.create({
     height: 100,
     borderWidth: 2,
     borderColor: '#1D2F7B',
+    justifyContent: 'center'
   },
   dashboard: {
     flex:0,

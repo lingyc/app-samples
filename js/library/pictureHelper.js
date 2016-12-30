@@ -5,9 +5,9 @@ export const selectPicture = () => {
     title: 'Select a Profile Picture',
     cameraType: 'front',
     mediaType: 'photo',
-    maxWidth: '500',
-    maxHeight: '500',
-    quality: .5,
+    maxWidth: '350',
+    maxHeight: '350',
+    quality: .3,
     allowEditing: true
   };
   return new Promise((resolve, reject) => {

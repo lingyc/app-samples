@@ -42,13 +42,13 @@ class Profile extends Component {
     selectPicture()
     .then(picture => {
       this.setState({loading: true});
-      return uploadPhoto('users/' + this.props.uID + '/profilePic/', picture.data);
+      return uploadPhoto('users/' + this.props.uID + '/profilePic/', picture.uri, {profile: true});
     })
-    // .then(link => {
-    //   console.log('link', link);
-    //   return this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/picture').set(link);
-    // })
-    // .then(snap => this.setState({loading: false}))
+    .then(link => {
+      console.log('link', link);
+      return this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/picture').set(link);
+    })
+    .then(snap => this.setState({loading: false}))
     .catch(error => {
       this.setState({loading: false});
       console.log("update profile pic", error)
@@ -63,11 +63,12 @@ class Profile extends Component {
       <ScrollView contentContainerStyle={profileStyle.container}>
         {/* TODO: add upload photo btn */}
         <TouchableOpacity onPress={() => this._updateProfilePic()}>
-          {(this.state.loading)
-            ? <ActivityIndicator animating={this.state.loading} style={{height: 20}} size="small"/>
-            : <View></View>
-          }
-          <Image source={(profile.picture) ? {uri:profile.picture} : require('../../../img/default-user-image.png')} style={profileStyle.profileImg}/>
+          <Image source={(profile.picture) ? {uri:profile.picture} : require('../../../img/default-user-image.png')} style={profileStyle.profileImg}>
+            {(this.state.loading)
+              ? <ActivityIndicator animating={this.state.loading} style={{height: 30}} size="small"/>
+              : <View></View>
+            }
+          </Image>
         </TouchableOpacity>
         <Text style={profileStyle.nameText}>{profile.first_name + ' ' + profile.last_name}</Text>
         <Text style={profileStyle.dashboardText}>{profile.location.place}</Text>

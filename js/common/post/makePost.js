@@ -4,6 +4,7 @@ import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, Ac
 import { push, pop, resetTo } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import HeaderInView from '../../header/HeaderInView.js'
 import Icon from 'react-native-vector-icons/Ionicons';
 
 class MakePost extends Component {
@@ -12,7 +13,6 @@ class MakePost extends Component {
     this.state = {
       category: "Workout Plan",
       loading: false,
-      category: null,
       title: '',
       content: '',
       tags: null,
@@ -22,10 +22,8 @@ class MakePost extends Component {
     this.FitlyFirebase = this.props.FitlyFirebase;
   }
 
-  _saveInputsToState(field, value) {
-    this.setState({
-      [field]: value
-    });
+  _saveInputsToState(value) {
+    this.setState({...value});
   }
 
   _savePhotosToDB() {
@@ -44,8 +42,7 @@ class MakePost extends Component {
     return categories.map((category, index) => {
       let containerStyle = composeStyle.category;
       let textStyle = composeStyle.categoryText;
-      //this function runs before state is initialized, hence we have force the first element to be highlighted at the start
-      if (!this.state.category && index === 0 || this.state.category === category) {
+      if (this.state.category === category) {
         containerStyle = [composeStyle.category, {backgroundColor: '#1D2F7B'}];
         textStyle = [composeStyle.categoryText, {color: 'white'}];
       }
@@ -59,31 +56,33 @@ class MakePost extends Component {
   }
 
   //refactor this out as a reusable component
-  _renderFakeHeader() {
+  _renderHeader() {
     return (
-      <View style={headerStyle.fakeHeader}>
-        <TouchableOpacity style={[headerStyle.closeBtn, {position: 'absolute', left: 0, top: 20}]} onPress={() => this.props.navigation.pop({global: true})}>
-          <Icon name="ios-close" size={50} color="white"/>
-        </TouchableOpacity>
-          <Text style={headerStyle.titleText}>
-            Choose a Category
-          </Text>
-        <TouchableOpacity style={{position: "absolute", right: 20, top: 40}} onPress={
-          () => this.props.navigation.push({key: 'CompostPost', global: true,
-            passProps:{_saveInputsToState: this._saveInputsToState.bind(this)}
-          })}>
-          <Text style={headerStyle.text}>Next</Text>
-        </TouchableOpacity>
-      </View>
+      <HeaderInView
+        leftElement={{icon: "ios-close"}}
+        rightElement={{text: "Next"}}
+        title="Choose a Post Category"
+        _navigation={this.props.navigation}
+        nextRoute={{
+          key: 'ComposePost',
+          global: true,
+          passProps:{
+            user: this.props.user.public,
+            state: this.state,
+            _saveInputsToState: this._saveInputsToState.bind(this),
+            _navigation: this.props.navigation,
+          }
+        }}
+      />
     );
-  }
+  };
 
   //after post creation, push navigator to the post that was just created
   render() {
     if (this.state.loading) {
       return (
         <View style={{flex: 1}}>
-          {this._renderFakeHeader()}
+          {this._renderHeader()}
           <View style={composeStyle.container}>
             <ActivityIndicator animating={this.state.loading} style={{height: 30}} size="small"/>
           </View>
@@ -93,7 +92,7 @@ class MakePost extends Component {
       //select the category
       return (
         <View style={{flex: 1}}>
-          {this._renderFakeHeader()}
+          {this._renderHeader()}
           <View style={composeStyle.container}>
             {this._renderCategories(['Workout Plan', 'Meal Plan', 'Photos', 'Others'])}
           </View>
@@ -105,6 +104,7 @@ class MakePost extends Component {
 
 const mapStateToProps = function(state) {
   return {
+    user: state.user.user,
     uID: state.auth.uID,
     FitlyFirebase: state.app.FitlyFirebase
   };

@@ -34,7 +34,7 @@ export const headerStyle = StyleSheet.create({
     height: headerHight,
     backgroundColor: FitlyBlue,
   },
-  fakeHeader: {
+  inlineHeader: {
     alignSelf: 'stretch',
     flex: 0,
     height: headerHight,
@@ -288,6 +288,19 @@ export const welcomeStyles = StyleSheet.create({
 export const composeStyle = StyleSheet.create({
   container: {
     ...centeringContainer,
+  },
+  scrollContentContainer: {
+    flex: 0,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  input: {
+    height: 40,
+    alignSelf: 'stretch',
+    fontWeight: '100',
+    textAlign: 'center',
+    color: '#FFFFFF'
   },
   category: {
     justifyContent: 'center',

@@ -15,15 +15,16 @@ class FitlyNavigator extends Component {
     super(props);
   }
 
-  _renderScene(props) {
+  _renderScene(sceneProps) {
     const {isLoggedIn, user} = this.props;
-    let Component = GLOBAL_ROUTES[props.scene.route.key];
+    let Component = GLOBAL_ROUTES[sceneProps.scene.route.key];
+    let passProps = sceneProps.scene.route.passProps || {};
     if (isLoggedIn && user && user.public.profileComplete) {
       return (
-        <Component sceneProps={props.scene} FitlyFirebase={this.props.FitlyFirebase}/>
+        <Component sceneProps={sceneProps.scene} {...passProps} FitlyFirebase={this.props.FitlyFirebase}/>
       );
     } else {
-      return (<Component sceneProps={props.scene} FitlyFirebase={this.props.FitlyFirebase}/>);
+      return (<Component sceneProps={sceneProps.scene} {...passProps} FitlyFirebase={this.props.FitlyFirebase}/>);
     }
   }
 

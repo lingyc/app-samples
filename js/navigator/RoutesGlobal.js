@@ -5,6 +5,7 @@ import { SetupProfileView, SetupStatsView, SetupActiveLevelView, SetupLocationVi
 import FitlyHomeView from '../FitlyHomeView.js';
 import SettingsMenu from '../settings/SettingsMenu.js';
 import MakePost from '../common/post/MakePost.js';
+import ComposePost from '../common/post/ComposePost.js';
 
 const ROUTES = {
   WelcomeView: WelcomeView,
@@ -17,6 +18,7 @@ const ROUTES = {
   FitlyHomeView: FitlyHomeView,
   SettingsMenu: SettingsMenu,
   MakePost: MakePost,
+  ComposePost: ComposePost,
 };
 
 export default ROUTES;

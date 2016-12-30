@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { profileStyle } from '../../styles/styles.js';
 import { storeUserProfile } from '../../actions/user.js';
-import { push, resetTo } from '../../actions/navigation.js';
+import { push } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // import ImagePicker from 'react-native-image-crop-picker';
 import {selectPicture} from '../../library/pictureHelper.js';
 import {uploadPhoto} from '../../library/firebaseHelpers.js';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class Profile extends Component {
   constructor(props) {
@@ -74,7 +75,11 @@ class Profile extends Component {
         <Text style={profileStyle.dashboardText}>{profile.location.place}</Text>
         {/* TODO: add edit summary btn */}
         <Text style={profileStyle.summaryText}>{(profile.summary) ? profile.summary : 'I love to workout!'}</Text>
-        {/* TODO: add content creation */}
+
+        <TouchableOpacity onPress={() => this.props.navigation.push({key: "MakePost", global: true})}>
+          <Icon name="ios-create-outline" size={35} color="black"/>
+        </TouchableOpacity>
+
         <View style={profileStyle.dashboard}>
           <TouchableOpacity style={profileStyle.dashboardItem}>
             <View>
@@ -126,7 +131,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
   return {
     action: bindActionCreators({storeUserProfile}, dispatch),
-    navigation: bindActionCreators({ resetTo }, dispatch)
+    navigation: bindActionCreators({ push }, dispatch)
   };
 };
 

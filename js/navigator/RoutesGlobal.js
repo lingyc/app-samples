@@ -4,6 +4,7 @@ import SignInView from '../login/SignInView.js';
 import { SetupProfileView, SetupStatsView, SetupActiveLevelView, SetupLocationView  } from '../login/SetupView.js';
 import FitlyHomeView from '../FitlyHomeView.js';
 import SettingsMenu from '../settings/SettingsMenu.js';
+import MakePost from '../common/post/MakePost.js';
 
 const ROUTES = {
   WelcomeView: WelcomeView,
@@ -15,6 +16,7 @@ const ROUTES = {
   SetupLocationView: SetupLocationView,
   FitlyHomeView: FitlyHomeView,
   SettingsMenu: SettingsMenu,
+  MakePost: MakePost,
 };
 
 export default ROUTES;

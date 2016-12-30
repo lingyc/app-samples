@@ -7,7 +7,7 @@ import { NavigationExperimental, View, Text, TouchableOpacity } from 'react-nati
 const { Header } = NavigationExperimental;
 import Icon from 'react-native-vector-icons/Ionicons';
 import { headerStyle } from '../styles/styles.js';
-import { pop } from '../actions/navigation.js';
+import { pop, push } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import LogoutBtn from '../common/LogoutBtn.js';
@@ -19,6 +19,7 @@ class HeaderGlobal extends Component {
   }
 
   _renderTitleComponent(sceneProps) {
+    console.log('sceneProps', sceneProps);
     if (sceneProps.scene.route.key === "SettingsMenu") {
       return (
         <View style={headerStyle.container}>
@@ -27,7 +28,7 @@ class HeaderGlobal extends Component {
           </Text>
           <LogoutBtn/>
         </View>
-      )
+      );
     }
   };
 
@@ -63,7 +64,7 @@ class HeaderGlobal extends Component {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    navigation: bindActionCreators({ pop }, dispatch)
+    navigation: bindActionCreators({ pop, push }, dispatch)
   };
 };
 

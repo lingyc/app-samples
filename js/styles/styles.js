@@ -16,6 +16,17 @@ export const headerStyle = StyleSheet.create({
     backgroundColor: '#1D2F7B',
     flex: 0,
   },
+  fakeHeader: {
+    height: 80,
+    width: SCREEN_WIDTH,
+    backgroundColor: '#1D2F7B',
+    position: 'absolute',
+    top: 0,
+    flex: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   container: {
     // borderWidth: 1,
     flex: 0,
@@ -61,6 +72,10 @@ export const headerStyle = StyleSheet.create({
   },
   closeBtn: {
     paddingLeft: 20,
+  },
+  text: {
+    color: 'white',
+    fontSize: 15
   }
 });
 
@@ -266,7 +281,34 @@ export const welcomeStyles = StyleSheet.create({
   borderWidth: .5,
  }
 });
-
+export const composeStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  category: {
+    justifyContent: 'center',
+    overflow: 'hidden',
+    borderWidth: .5,
+    borderColor: '#1D2F7B',
+    width: 250,
+    height: 50,
+    borderRadius: 25,
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  categoryText: {
+    fontFamily: 'HelveticaNeue',
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+    textAlign: 'center',
+    color: '#1D2F7B',
+    fontSize: 20
+  }
+});
 export const profileStyle = StyleSheet.create({
   container: {
     flex: 1,

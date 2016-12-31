@@ -196,6 +196,7 @@ class SignUpView extends Component {
               </Text>
               <Text style={{height: 100}}></Text>
             </ScrollView>
+            {/* TODO: use SwipeableListView? */}
             <TouchableHighlight style={loginStyles.swipeBtn} onPress={() => this._handleEmailSignup()}>
               <Text style={loginStyles.btnText}>
                 SWIPE TO JOIN

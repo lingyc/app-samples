@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const HeaderInView = (props) => {
-  const { leftElement, title, rightElement, _navigation, nextRoute } = props;
+  const { leftElement, title, rightElement, _onPressLeft, _onPressRight } = props;
   let left, right, leftBtn, rightBtn;
   if (leftElement && leftElement.icon) {
     left = (<Icon name={leftElement.icon} size={50} color="white"/>);
@@ -20,7 +20,7 @@ const HeaderInView = (props) => {
 
   if (left) {
     leftBtn = (
-      <TouchableOpacity style={[headerStyle.closeBtn, {position: 'absolute', left: 0, top: 20}]} onPress={() => _navigation.pop({global: true})}>
+      <TouchableOpacity style={[headerStyle.closeBtn, {position: 'absolute', left: 0, top: 20}]} onPress={() => _onPressLeft()}>
         {left}
       </TouchableOpacity>
     );
@@ -28,7 +28,7 @@ const HeaderInView = (props) => {
 
   if (right) {
     rightBtn = (
-      <TouchableOpacity style={{position: "absolute", right: 20, top: 40}} onPress={() => _navigation.push(nextRoute)}>
+      <TouchableOpacity style={{position: "absolute", right: 20, top: 40}} onPress={() => _onPressRight()}>
         {right}
       </TouchableOpacity>
     );

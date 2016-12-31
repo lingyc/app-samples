@@ -296,11 +296,24 @@ export const composeStyle = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
+    fontSize: 16,
     height: 40,
     alignSelf: 'stretch',
     fontWeight: '100',
-    textAlign: 'center',
-    color: '#FFFFFF'
+    textAlign: 'left',
+    color: 'black',
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 10,
+  },
+  inputBox: {
+    flex: 0,
+    alignSelf: 'stretch',
+    borderColor: 'grey',
+    borderBottomWidth: .5,
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 10,
   },
   category: {
     justifyContent: 'center',
@@ -322,6 +335,15 @@ export const composeStyle = StyleSheet.create({
     textAlign: 'center',
     color: FitlyBlue,
     fontSize: 20
+  },
+  profilePic: {
+    marginTop: 10,
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    borderWidth: .5,
+    borderColor: FitlyBlue,
+    justifyContent: 'center'
   }
 });
 export const profileStyle = StyleSheet.create({

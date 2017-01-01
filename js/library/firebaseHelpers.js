@@ -60,31 +60,37 @@ export const uploadPhoto = (location, data, options) => {
 //uploads the photos and return a list of firebase database paths
 export const savePhotoToDB = (photos, uid, contentlink) => {
   let linkPromises = photos.map(photo => {
-    return Promise.resolve(uploadPhoto('/photos/', photo.path));
+    return Promise.resolve(uploadPhoto('/photos/' + contentlink + '/', photo.path));
   });
 
-  let refPromises =  Promise.all(linkPromises).then(links => {
+  return Promise.all(linkPromises).then(links => {
+    console.log('links', links);
     return links.map((link, index) => {
-      let photoTags = photos[index].tags.reduce((tagObj, tag) => {
+      console.log('photos[index].tags', photos[index].tags);
+      let photoTagsArray = photos[index].tags || [];
+      let photoTags = photoTagsArray.reduce((tagObj, tag) => {
         tagObj[tag] = true;
         return tagObj;
-      }, {})
+      }, {});
 
       let photoObj = {
         link: link,
         likeCount: 0,
-        description: photos[index].description,
+        description: photos[index].description || '',
         author: uid,
         tags: photoTags,
         contentlink: contentlink,
         timestamp: Firebase.database.ServerValue
-      }
-      return FitlyFirebase.database().ref('/photos/').push(photoObj).then(snap => snap.key);
-    })
-  }).then(
-
-  )
-  return Promise.all(refPromise).then(photoRefs => photoRefs);
+      };
+      return Promise.resolve(FitlyFirebase.database().ref('photos').push(photoObj).then(snap => snap.key));
+    });
+  }).then(refPromise => {
+    console.log('refPromise', refPromise);
+    return Promise.all(refPromise);
+  }).then(photoRefs => {
+    console.log('photoRefs', photoRefs);
+    return photoRefs;
+  });
 };
 
 //generate random id for photos

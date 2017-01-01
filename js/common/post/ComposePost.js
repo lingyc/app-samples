@@ -10,7 +10,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImagePicker from 'react-native-image-crop-picker';
 import TagInput from 'react-native-tag-input';
-import {savePhotoToDB, Firebase} from '../../library/firebaseHelpers.js'
+import {savePhotoToDB} from '../../library/firebaseHelpers.js'
+import Firebase from 'firebase';
 
 //TODO: input validation??
 const hashTagRegex = (/^\w+$/g);
@@ -27,7 +28,7 @@ class ComposePost extends Component {
     this.setDraftState = this.props.draftsAction.save.bind(this, this.props.draftRef);
     this.clearState = this.props.draftsAction.clear.bind(this, this.props.draftRef);
     this.user = this.props.user;
-    this.uid = this.props.uid;
+    this.uID = this.props.uID;
     this.FitlyFirebase = this.props.FitlyFirebase;
   };
 
@@ -38,17 +39,19 @@ class ComposePost extends Component {
         this.setState({loading: true});
         let draftState = this.props.drafts[this.props.draftRef];
         let postKey = this.FitlyFirebase.database().ref().child('posts').push().key;
-        let photoRefs = await savePhotoToDB(draftState.photos, this.props.uid, '/posts/' + postKey)
+        let photoRefs = await savePhotoToDB(draftState.photos, this.uID, '/posts/' + postKey);
+        console.log('photoRefs', photoRefs);
         let photoRefObject = photoRefs.reduce((refObj, photoRef) => {
             refObj[photoRef] = true;
             return refObj;
-          }, {})
-        let tagObj = draftState.tags.reduce((tags, tag) => {
+          }, {});
+        let tagsArray = draftState.tags || [];
+        let tagObj = tagsArray.reduce((tags, tag) => {
             tags[tag] = true;
             return tags;
-          }, {})
+          }, {});
         let postObj = {
-          author: this.uid,
+          author: this.uID,
           title: draftState.title,
           content: draftState.content,
           category: draftState.category,
@@ -58,9 +61,9 @@ class ComposePost extends Component {
           createdAt: Firebase.database.ServerValue,
           photos: photoRefObject,
         };
-        let newlySavedPost = await this.FitlyFirebase.database().ref('/posts/' + postKey).set(postObj);
+        console.log('postObj', postObj);
+        this.props.FitlyFirebase.database().ref('/posts/' + postKey).set(postObj);
         this.setState({loading: false});
-        console.log(newlySavedPost)
         //TODO: reset route to the newly created post
           //create entry in userUpdatesGeneral table
           //create entry in userPosts table
@@ -218,7 +221,7 @@ class ComposePost extends Component {
         <StatusBar barStyle={this.state.contentType}/>
         {this._renderImgModal(draftState)}
         {this._renderHeader()}
-        <KeyboardAvoidingView behavior="position" style={{flex: 0}}>
+        {/* <KeyboardAvoidingView behavior="position" style={{flex: 0}}> */}
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={composeStyle.scrollContentContainer}>
             <Image style={composeStyle.profilePic} source={(this.user.picture) ? {uri:this.user.picture} : require('../../../img/default-user-image.png')}
               defaultSource={require('../../../img/default-user-image.png')}/>
@@ -260,7 +263,7 @@ class ComposePost extends Component {
             </View>
             {this._renderPhotoSection(draftState, true)}
           </ScrollView>
-        </KeyboardAvoidingView>
+        {/* </KeyboardAvoidingView> */}
       </View>
     );
   }

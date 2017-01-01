@@ -40,6 +40,7 @@ export const headerStyle = StyleSheet.create({
     height: headerHight,
     backgroundColor: FitlyBlue,
     top: 0,
+    zIndex: 3,
     flexDirection: 'row',
     ...centering
   },

@@ -4,7 +4,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const HeaderInView = (props) => {
-  const { leftElement, title, rightElement, _onPressLeft, _onPressRight } = props;
+  const { leftElement, title, rightElement, _onPressLeft, _onPressRight, customStyles } = props;
   let left, right, leftBtn, rightBtn;
   if (leftElement && leftElement.icon) {
     left = (<Icon name={leftElement.icon} size={50} color="white"/>);
@@ -35,7 +35,7 @@ const HeaderInView = (props) => {
   }
 
   return (
-    <View style={headerStyle.inlineHeader}>
+    <View style={[headerStyle.inlineHeader, customStyles || {}]}>
       {leftBtn}
       <Text style={headerStyle.titleText}>
         {title}

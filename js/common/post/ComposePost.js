@@ -40,7 +40,6 @@ class ComposePost extends Component {
         let draftState = this.props.drafts[this.props.draftRef];
         let postKey = this.FitlyFirebase.database().ref().child('posts').push().key;
         let photoRefs = await savePhotoToDB(draftState.photos, this.uID, '/posts/' + postKey);
-        console.log('photoRefs', photoRefs);
         let photoRefObject = photoRefs.reduce((refObj, photoRef) => {
             refObj[photoRef] = true;
             return refObj;
@@ -61,12 +60,21 @@ class ComposePost extends Component {
           createdAt: Firebase.database.ServerValue,
           photos: photoRefObject,
         };
-        console.log('postObj', postObj);
-        this.props.FitlyFirebase.database().ref('/posts/' + postKey).set(postObj);
+
+        this.FitlyFirebase.database().ref('/posts/' + postKey).set(postObj)
+        .then(post => {
+          this.FitlyFirebase.database().ref('/userPosts/' + this.uID).push({postKey: true});
+          this.FitlyFirebase.database().ref('/userUpdatesGeneral/' + this.uID).push({
+            type: "post",
+            contentID: postKey,
+            contentlink: '/posts/' + postKey,
+            description: `new ${draftState.category.toLowerCase()} post`,
+            timestamp: Firebase.database.ServerValue
+          })
+        });
+
         this.setState({loading: false});
         //TODO: reset route to the newly created post
-          //create entry in userUpdatesGeneral table
-          //create entry in userPosts table
       } catch(error) {
         this.setState({loading: false});
         console.log('create post error', error);

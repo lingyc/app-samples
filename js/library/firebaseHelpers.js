@@ -84,14 +84,63 @@ export const savePhotoToDB = (photos, uid, contentlink) => {
       };
       return Promise.resolve(FitlyFirebase.database().ref('photos').push(photoObj).then(snap => snap.key));
     });
-  }).then(refPromise => {
-    console.log('refPromise', refPromise);
-    return Promise.all(refPromise);
+  }).then(refPromises => {
+    console.log('refPromise', refPromises);
+    return Promise.all(refPromises);
   }).then(photoRefs => {
     console.log('photoRefs', photoRefs);
     return photoRefs;
   });
 };
+
+//this function is work in progress, the intend is to skip waiting for picture upload and load the local files directly
+// export const noWaitSavePhotoToDB = (photos, uid, contentlink) => {
+//   //transform the photos objects into the correct format
+//   let imagesObjLocal = {};
+//   let linkPromises = [];
+//   let imagesObjDB = {};
+//
+//   photos.each(photo => {
+//     linkPromises.push(Promise.resolve(uploadPhoto('/photos/' + contentlink + '/', photo.path)));
+//     let photoTagsArray = photo.tags || [];
+//     let photoTags = photoTagsArray.reduce((tagObj, tag) => {
+//       tagObj[tag] = true;
+//       return tagObj;
+//     }, {});
+//
+//     let photoObj = {
+//       //this temp object uses the local path, this will be changed to the actual URL in the next code block
+//       link: photo.path,
+//       likeCount: 0,
+//       description: photo.description || '',
+//       author: uid,
+//       tags: photoTags,
+//       contentlink: contentlink,
+//       timestamp: Firebase.database.ServerValue
+//     };
+//     imagesObjLocal.push(photoObj);
+//   });
+//
+//   Promise.all(linkPromises).then(links => {
+//     console.log('links', links);
+//     return links.map((link, index) => {
+//       let photoObj = imagesObjLocal[index];
+//       photoObj.link = link;
+//       return Promise.resolve(FitlyFirebase.database().ref('photos').push(photoObj).then(snap => {
+//         imagesObjDB[snap.key] = true;
+//         return snap.key;
+//       }));
+//     });
+//   }).then(refPromises => {
+//     console.log('refPromise', refPromises);
+//     return Promise.all(refPromises);
+//   }).then(photoRefs => {
+//     console.log('photoRefs', photoRefs);
+//     return FitlyFirebase.database().ref('/posts/photos').set(imagesObjDB);
+//   });
+//
+//   return imagesObjLocal;
+// };
 
 //generate random id for photos
 export const guid = () => {

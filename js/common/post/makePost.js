@@ -27,7 +27,7 @@ class MakePost extends Component {
         category: "Workout Plan",
         title: '',
         content: '',
-        tags: null,
+        tags: [],
         photos: [],
         photoRefs: null,
       })

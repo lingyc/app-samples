@@ -10,8 +10,6 @@ export const firestack = new Firestack({
   ...firebaseConfig
 });
 
-
-
 export const createUpdateObj = (ref: string, data) => {
   let updateObj = {};
   for (key in data) {
@@ -20,7 +18,6 @@ export const createUpdateObj = (ref: string, data) => {
   console.log(updateObj);
   return updateObj;
 };
-
 
 export const firebaseGetCurrentUser = () => {
   return new Promise(function(resolve, reject) {
@@ -50,7 +47,7 @@ export const updateCurrentLocationInDB = (uid) => {
 };
 
 export const uploadPhoto = (location, data, options) => {
-  location = (options.profile) ? location + 'profile.jpg' : location + guid() + '.jpg';
+  location = (options && options.profile) ? location + 'profile.jpg' : location + guid() + '.jpg';
   return firestack.storage.uploadFile(location, data, {
     contentType: 'image/jpeg',
     contentEncoding: 'base64',
@@ -58,6 +55,36 @@ export const uploadPhoto = (location, data, options) => {
   .then(snapshot => {
     return snapshot.downloadUrl;
   })
+};
+
+//uploads the photos and return a list of firebase database paths
+export const savePhotoToDB = (photos, uid, contentlink) => {
+  let linkPromises = photos.map(photo => {
+    return Promise.resolve(uploadPhoto('/photos/', photo.path));
+  });
+
+  let refPromises =  Promise.all(linkPromises).then(links => {
+    return links.map((link, index) => {
+      let photoTags = photos[index].tags.reduce((tagObj, tag) => {
+        tagObj[tag] = true;
+        return tagObj;
+      }, {})
+
+      let photoObj = {
+        link: link,
+        likeCount: 0,
+        description: photos[index].description,
+        author: uid,
+        tags: photoTags,
+        contentlink: contentlink,
+        timestamp: Firebase.database.ServerValue
+      }
+      return FitlyFirebase.database().ref('/photos/').push(photoObj).then(snap => snap.key);
+    })
+  }).then(
+
+  )
+  return Promise.all(refPromise).then(photoRefs => photoRefs);
 };
 
 //generate random id for photos

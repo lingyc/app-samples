@@ -172,7 +172,7 @@ export const loginStyles = StyleSheet.create({
     width: 270,
     fontWeight: '100',
     textAlign: 'center',
-    color: '#FFFFFF'
+    color: '#FFFFFF',
   },
   form: {
     borderColor: 'white',
@@ -327,12 +327,23 @@ export const composeStyle = StyleSheet.create({
     paddingRight: 20,
   },
   imgLarge: {
-    height: 500,
-    width: 500,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    marginBottom: 5,
+    backgroundColor: 'white',
+    // alignItems: 'center',
+    shadowColor: "black",
+    shadowOpacity: .1,
+    shadowOffset: {width: 0, height: 1},
+    shadowRadius: 1,
   },
   closeBtn: {
-    height: 50,
-    width: 50,
+    zIndex: 2,
+    position: 'absolute',
+    right: 20,
+    top: 10,
+    backgroundColor: 'rgba(0,0,0,0)',
   },
   photoThumbnail: {
     borderWidth: .5,
@@ -378,6 +389,22 @@ export const composeStyle = StyleSheet.create({
     borderWidth: .5,
     borderColor: FitlyBlue,
     justifyContent: 'center'
+  },
+  hashTagInput: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    flexDirection: 'row',
+    flex: 0,
+    justifyContent: 'flex-start',
+    borderColor: '#ccc',
+    borderBottomWidth: .5,
+  },
+  hashTag: {
+    backgroundColor: 'rgba(255,255,255,0)',
+    fontSize: 20,
+    color: '#bbb',
+    marginTop: 5,
+    marginRight: 5
   }
 });
 export const profileStyle = StyleSheet.create({

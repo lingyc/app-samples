@@ -80,7 +80,7 @@ export const savePhotoToDB = (photos, uid, contentlink) => {
         author: uid,
         tags: photoTags,
         contentlink: contentlink,
-        timestamp: Firebase.database.ServerValue
+        timestamp: Firebase.database.ServerValue.TIMESTAMP
       };
       return Promise.resolve(FitlyFirebase.database().ref('photos').push(photoObj).then(snap => snap.key));
     });

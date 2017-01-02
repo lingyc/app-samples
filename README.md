@@ -37,10 +37,8 @@ More TODOs can be found in the code. This list will grow.
 
 
 - [ ] Profile Tab
-  - [ ] let user update profile photo
+  - [ ] disallow photo duplication for uploads
   - [ ] let user update summary
-  - [ ] let user write post
-    - [ ] post creation
   - [ ] let user create workouts
     - [ ] invite others for workouts
   - [ ] push notifications

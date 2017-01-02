@@ -5,7 +5,6 @@ import { storeUserProfile } from '../../actions/user.js';
 import { push } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-// import ImagePicker from 'react-native-image-crop-picker';
 import {selectPicture} from '../../library/pictureHelper.js';
 import {uploadPhoto} from '../../library/firebaseHelpers.js';
 import Icon from 'react-native-vector-icons/Ionicons';

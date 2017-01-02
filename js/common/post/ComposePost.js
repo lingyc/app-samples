@@ -57,7 +57,7 @@ class ComposePost extends Component {
           replyCount: 0,
           tags: tagObj,
           likeCount: 0,
-          createdAt: Firebase.database.ServerValue,
+          createdAt: Firebase.database.ServerValue.TIMESTAMP,
           photos: photoRefObject,
         };
 
@@ -70,7 +70,7 @@ class ComposePost extends Component {
             contentlink: '/posts/' + postKey,
             owner: this.uID,
             description: `new ${draftState.category.toLowerCase()} post`,
-            timestamp: Firebase.database.ServerValue
+            timestamp: Firebase.database.ServerValue.TIMESTAMP
           };
           this.FitlyFirebase.database().ref('/userUpdatesMajor/' + this.uID).push(updateObj);
           this.FitlyFirebase.database().ref('/userUpdatesAll/' + this.uID).push(updateObj);

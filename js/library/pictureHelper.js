@@ -8,7 +8,6 @@ export const selectPicture = () => {
     maxWidth: '350',
     maxHeight: '350',
     quality: .3,
-    allowEditing: true
   };
   return new Promise((resolve, reject) => {
     ImagePicker.showImagePicker(options, (response) => {

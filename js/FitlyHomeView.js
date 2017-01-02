@@ -30,11 +30,13 @@ class FitlyHomeView extends Component {
 
   _turnOnfeedService() {
     const feedDistributor = (newUpdate) => {
+      const updateObj = newUpdate.val();
+      const updateKey = newUpdate.key;
       this.FitlyFirebase.database().ref(`/followers/${this.props.uID}`).once('value')
       .then(followersObj => {
         let updateFanOut = {};
-        for (let follower in followersObj) {
-          fanOutObj[`/followingNotifications/${follower}`] = newUpdate;
+        for (let follower in followersObj.val()) {
+          updateFanOut[`/followingNotifications/${follower}/${updateKey}`] = updateObj;
         }
         this.FitlyFirebase.database().ref().update(updateFanOut);
       })
@@ -42,7 +44,7 @@ class FitlyHomeView extends Component {
         console.log('feed distribution error', error);
       });
     };
-    this.userUpdateRef.endAt().limit(1).on('child_added', feedDistributor.bind(this));
+    this.userUpdateRef.orderByChild('timestamp').startAt(Date.now()).on('child_added', feedDistributor.bind(this));
   }
 
 
@@ -78,8 +80,6 @@ class FitlyHomeView extends Component {
           onNavigateBack={this.props.navigation.pop.bind(this)}
           navigationState={localNavState}
           renderScene={this._renderScene.bind(this)}
-          // renderHeader={this._ renderHeader}
-          // style={styles.navigatorCardStack}
         />
         <TabBar/>
       </View>

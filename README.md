@@ -37,6 +37,7 @@ More TODOs can be found in the code. This list will grow.
 
 
 - [ ] Profile Tab
+  - [ ] show list of followers, followings and sessions when they are clicked
   - [ ] disallow photo duplication for uploads
   - [ ] let user update summary
   - [ ] let user create workouts

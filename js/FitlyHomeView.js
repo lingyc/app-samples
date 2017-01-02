@@ -21,14 +21,14 @@ class FitlyHomeView extends Component {
   }
 
   componentDidMount() {
-    this._turnOnfeedService();
+    this._turnOnfeedDistService();
   }
 
   componentWillUnMount() {
-    this._turnOffFeedService();
+    this._turnOffFeedDistService();
   }
 
-  _turnOnfeedService() {
+  _turnOnfeedDistService() {
     const feedDistributor = (newUpdate) => {
       const updateObj = newUpdate.val();
       const updateKey = newUpdate.key;
@@ -48,7 +48,7 @@ class FitlyHomeView extends Component {
   }
 
 
-  _turnOffFeedService() {
+  _turnOffFeedDistService() {
     this.userUpdateRef.off('child_added');
   }
 

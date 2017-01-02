@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Alert, View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { profileStyle } from '../../styles/styles.js';
 import { storeUserProfile } from '../../actions/user.js';
 import { push } from '../../actions/navigation.js';
@@ -8,35 +8,73 @@ import { bindActionCreators } from 'redux';
 import {selectPicture} from '../../library/pictureHelper.js';
 import {uploadPhoto} from '../../library/firebaseHelpers.js';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
+      feeds: [],
     }
   }
 
   //register listener to update the feeds, and follower count
   componentDidMount() {
-    this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/').on('value', this._handleProfileChange.bind(this));
+    this._turnOnProfileWatcher();
+    this._turnOnfeedService();
   }
-
   componentWillUnMount() {
+    this._turnOffProfileWatcher();
+    this._turnOfffeedService();
+  };
+
+  _turnOnProfileWatcher() {
+    this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/').on('value', this._handleProfileChange.bind(this));
+  };
+
+  _turnOffProfileWatcher() {
     this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/').off('value');
-  }
+  };
+
+  _turnOnfeedService() {
+    const followingNotifications = this.props.FitlyFirebase.database().ref('followingNotifications/' + this.props.uID);
+    const appendToFeed = (feedEntry) => {
+      Alert.alert(feedEntry.val().description);
+      this.setState({
+        feeds: this.state.feeds.concat([feedEntry.val()])
+      });
+    };
+
+    followingNotifications.orderByChild('timestamp').limitToLast(10).once('value')
+    .then(feeds => {
+      let feedsArray = [];
+      feeds.forEach(feed => {
+        feedsArray.push(feed.val())
+      });
+      this.setState({feeds: feedsArray})
+      console.log('feeds', this.state.feeds);
+    }).catch(error => console.log(error));
+
+    followingNotifications.orderByChild('timestamp').startAt(Date.now()).on('child_added', appendToFeed.bind(this));
+  };
+
+  _turnOfffeedService() {
+    this.props.FitlyFirebase.database().ref('followingNotifications/' + this.props.uID).off('child_added');
+  };
+
 
   _handleProfileChange(snapshot) {
     const {private: privateData} = this.props.user;
     // TODO: get push notification for updates in follower and following
     this.props.action.storeUserProfile({private: privateData, public: snapshot.val()});
-  }
+  };
 
   _renderCenteredText(text, styles) {
     return (
       <Text style={[profileStyle.centeredText, styles]}>{text}</Text>
     );
-  }
+  };
 
   _updateProfilePic() {
     selectPicture()
@@ -50,7 +88,7 @@ class Profile extends Component {
       this.setState({loading: false});
       console.log("update profile pic", error)
     });
-  }
+  };
 
 
   //this function should be a reusable component
@@ -76,6 +114,7 @@ class Profile extends Component {
           <Icon name="ios-create-outline" size={35} color="black"/>
         </TouchableOpacity>
 
+        {/* below is the same as ProfileEntryView */}
         <View style={profileStyle.dashboard}>
           <TouchableOpacity style={profileStyle.dashboardItem}>
             <View>
@@ -100,6 +139,7 @@ class Profile extends Component {
         </View>
 
         <View style={[profileStyle.dashboard, {borderTopWidth: 0, paddingTop: 17, paddingBottom: 17}]}>
+
           <TouchableOpacity>
             <Text>FEED</Text>
           </TouchableOpacity>
@@ -113,7 +153,7 @@ class Profile extends Component {
         <View style={{height: 100}}></View>
       </ScrollView>
     );
-  }
+  };
 };
 
 const mapStateToProps = function(state) {

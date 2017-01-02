@@ -17,6 +17,7 @@
     "react-native-geocoder": "^0.4.5",
     "react-native-image-crop-picker": "^0.11.0",
     "react-native-image-picker": "^0.24.1",
+    "react-native-scrollable-tab-view": "^0.7.0",
     "react-native-tag-input": "0.0.13",
     "react-native-vector-icons": "^3.0.0",
     "react-redux": "^4.4.6",

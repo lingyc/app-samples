@@ -41,7 +41,10 @@ class ComposePost extends Component {
         let postKey = this.FitlyFirebase.database().ref().child('posts').push().key;
         let photoRefs = await savePhotoToDB(draftState.photos, this.uID, '/posts/' + postKey);
         let photoRefObject = photoRefs.reduce((refObj, photoRef) => {
-            refObj[photoRef] = true;
+            refObj[photoRef.key] = {
+              link: photoRef.link,
+              timestamp: Firebase.database.ServerValue.TIMESTAMP,
+            };
             return refObj;
           }, {});
         let tagsArray = draftState.tags || [];
@@ -68,7 +71,10 @@ class ComposePost extends Component {
             type: "post",
             contentID: postKey,
             contentlink: '/posts/' + postKey,
-            owner: this.uID,
+            ownerID: this.uID,
+            ownerName: this.user.public.first_name + ' ' + this.user.public.last_name,
+            contentTitle: draftState.title,
+            photos: photoRefObject,
             description: `new ${draftState.category.toLowerCase()} post`,
             timestamp: Firebase.database.ServerValue.TIMESTAMP
           };

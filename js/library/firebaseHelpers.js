@@ -66,14 +66,13 @@ export const savePhotoToDB = (photos, uid, contentlink) => {
   return Promise.all(linkPromises).then(links => {
     console.log('links', links);
     return links.map((link, index) => {
-      console.log('photos[index].tags', photos[index].tags);
-      let photoTagsArray = photos[index].tags || [];
-      let photoTags = photoTagsArray.reduce((tagObj, tag) => {
+      const photoTagsArray = photos[index].tags || [];
+      const photoTags = photoTagsArray.reduce((tagObj, tag) => {
         tagObj[tag] = true;
         return tagObj;
       }, {});
 
-      let photoObj = {
+      const photoObj = {
         link: link,
         likeCount: 0,
         description: photos[index].description || '',
@@ -82,10 +81,12 @@ export const savePhotoToDB = (photos, uid, contentlink) => {
         contentlink: contentlink,
         timestamp: Firebase.database.ServerValue.TIMESTAMP
       };
-      return Promise.resolve(FitlyFirebase.database().ref('photos').push(photoObj).then(snap => snap.key));
+
+      const photoKey = FitlyFirebase.database().ref('photos').push().key;
+      FitlyFirebase.database().ref(`userPhotos/${uid}/${photoKey}`).set({link: link, timestamp: Firebase.database.ServerValue.TIMESTAMP})
+      return Promise.resolve(FitlyFirebase.database().ref(`photos/${photoKey}`).set(photoObj).then(snap => { return {key: photoKey, link: link}; }));
     });
   }).then(refPromises => {
-    console.log('refPromise', refPromises);
     return Promise.all(refPromises);
   }).then(photoRefs => {
     console.log('photoRefs', photoRefs);

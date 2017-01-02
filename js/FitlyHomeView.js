@@ -11,11 +11,43 @@ import TabBar from './tabs/TabBar.js';
 import { pop } from './actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
+import Firebase from 'firebase';
 
 class FitlyHomeView extends Component {
   constructor(props) {
     super(props);
+    this.FitlyFirebase = this.props.FitlyFirebase;
+    this.userUpdateRef = this.FitlyFirebase.database().ref(`/userUpdatesMajor/${this.props.uID}`);
+  }
+
+  componentDidMount() {
+    this._turnOnfeedService();
+  }
+
+  componentWillUnMount() {
+    this._turnOffFeedService();
+  }
+
+  _turnOnfeedService() {
+    const feedDistributor = (newUpdate) => {
+      this.FitlyFirebase.database().ref(`/followers/${this.props.uID}`).once('value')
+      .then(followersObj => {
+        let updateFanOut = {};
+        for (let follower in followersObj) {
+          fanOutObj[`/followingNotifications/${follower}`] = newUpdate;
+        }
+        this.FitlyFirebase.database().ref().update(updateFanOut);
+      })
+      .catch(error => {
+        console.log('feed distribution error', error);
+      });
+    };
+    this.userUpdateRef.endAt().limit(1).on('child_added', feedDistributor.bind(this));
+  }
+
+
+  _turnOffFeedService() {
+    this.userUpdateRef.off('child_added');
   }
 
   _renderHeader(sceneProps) {
@@ -58,7 +90,9 @@ class FitlyHomeView extends Component {
  const mapStateToProps = function(state) {
   return {
     navState: state.navState,
-    isLoggedIn: state.auth.isLoggedIn
+    isLoggedIn: state.auth.isLoggedIn,
+    FitlyFirebase: state.app.FitlyFirebase,
+    uID: state.auth.uID
   };
 };
 

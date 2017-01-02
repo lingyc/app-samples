@@ -64,13 +64,16 @@ class ComposePost extends Component {
         this.FitlyFirebase.database().ref('/posts/' + postKey).set(postObj)
         .then(post => {
           this.FitlyFirebase.database().ref('/userPosts/' + this.uID).push({postKey: true});
-          this.FitlyFirebase.database().ref('/userUpdatesGeneral/' + this.uID).push({
+          const updateObj = {
             type: "post",
             contentID: postKey,
             contentlink: '/posts/' + postKey,
+            owner: this.uID,
             description: `new ${draftState.category.toLowerCase()} post`,
             timestamp: Firebase.database.ServerValue
-          })
+          };
+          this.FitlyFirebase.database().ref('/userUpdatesMajor/' + this.uID).push(updateObj);
+          this.FitlyFirebase.database().ref('/userUpdatesAll/' + this.uID).push(updateObj);
         });
 
         this.setState({loading: false});

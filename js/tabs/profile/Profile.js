@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
-import Feeds from '../../common/Feeds.js'
+// import Feeds from '../../common/Feeds.js'
+import FeedTabs from '../../common/FeedTabs.js'
 import { profileStyle } from '../../styles/styles.js';
 import { storeUserProfile } from '../../actions/user.js';
 import { push } from '../../actions/navigation.js';
@@ -9,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import {selectPicture} from '../../library/pictureHelper.js';
 import {uploadPhoto, turnOnfeedService, turnOffeedService} from '../../library/firebaseHelpers.js';
 import Icon from 'react-native-vector-icons/Ionicons';
-import ScrollableTabView from 'react-native-scrollable-tab-view';
+
 
 
 class Profile extends Component {
@@ -115,7 +116,7 @@ class Profile extends Component {
           </TouchableOpacity>
         </View>
 
-        <View style={[profileStyle.dashboard, {borderTopWidth: 0, paddingTop: 17, paddingBottom: 17}]}>
+        {/* <View style={[profileStyle.dashboard, {borderTopWidth: 0, paddingTop: 17, paddingBottom: 17}]}>
 
           <TouchableOpacity>
             <Text>FEED</Text>
@@ -124,9 +125,9 @@ class Profile extends Component {
           <TouchableOpacity>
             <Text>PHOTOS</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
-        <Feeds feeds={this.state.feeds}/>
+        <FeedTabs feeds={this.state.feeds}/>
         <View style={{height: 100}}></View>
       </ScrollView>
     );

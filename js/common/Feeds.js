@@ -13,6 +13,10 @@ class Feeds extends Component {
     //TODO: settings will dictate what kind of feed should trigger a push notification and should be rendered
   }
 
+  shouldComponentUpdate(nextProps) {
+    return this.props !== nextProps;
+  }
+
   _renderUpdateMsg(feed) {
     if (feed.type === 'post') {
       return (<Text style={feedEntryStyle.description}>{`posted a new ${feed.description}`}</Text>);

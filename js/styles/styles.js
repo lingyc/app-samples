@@ -15,11 +15,12 @@ const absoluteFullWidth = {
     right: 0
 }
 
-const FitlyBlue = '#1D2F7B';
+export const FitlyBlue = '#1D2F7B';
 const headerHight = 80;
 const tabHeight = 70;
 const selectedTabHeight = 80;
-const tabColor = '#3d3d3d';
+export const tabColor = 'rgba(61,61,61,.97)';
+export const alternateBlue = '#326fd1';
 
 export const loadingStyle = StyleSheet.create({
   app: {
@@ -388,7 +389,7 @@ export const composeStyle = StyleSheet.create({
     width: 30,
     height: 30,
     borderWidth: .5,
-    borderColor: FitlyBlue,
+    borderColor: alternateBlue,
     justifyContent: 'center'
   },
   hashTagInput: {
@@ -421,7 +422,7 @@ export const profileStyle = StyleSheet.create({
     width: 100,
     height: 100,
     borderWidth: 2,
-    borderColor: FitlyBlue,
+    borderColor: alternateBlue,
     justifyContent: 'center'
   },
   dashboard: {
@@ -451,7 +452,7 @@ export const profileStyle = StyleSheet.create({
     paddingBottom: 10
   },
   dashboardTextColor: {
-    color: "#326fd1",
+    color: alternateBlue,
     fontSize: 20,
     paddingBottom: 10
   },

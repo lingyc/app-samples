@@ -16,7 +16,6 @@ class ProfileEntry extends Component {
       userProfile: null,
     }
     // this.otherUID = sceneProps.scene.route.passProps;
-    console.log(this.props);
     this.database = this.props.FitlyFirebase.database();
     this.userRef = this.database.ref('users/' + this.props.otherUID + '/public/');
   }
@@ -41,7 +40,6 @@ class ProfileEntry extends Component {
   }
 
   _handleFollowingChange(following) {
-    console.log('following.val()', following.val());
     this.setState({
       following: !!(following.val())
     })
@@ -89,52 +87,62 @@ class ProfileEntry extends Component {
   render() {
     const profile = this.state.userProfile;
     // TODO: create a local dummy profile and load it while the profile is being fetched from the database
-    return (
-      <ScrollView contentContainerStyle={profileStyle.container}>
-        <Image source={(profile.picture) ? {uri:profile.picture} : require('../../img/default-user-image.png')} style={profileStyle.profileImg}/>
-        <Text style={profileStyle.nameText}>{profile.first_name + ' ' + profile.last_name}</Text>
-        <Text style={profileStyle.dashboardText}>{profile.location.place}</Text>
-        <Text>{(profile.summary) ? profile.summary : 'I love to workout!'}</Text>
-        {this._renderFollowBtn()}
+    if (this.state.loading) {
+      return (
+        <ActivityIndicator
+          animating={this.state.loading}
+          style={{height: 80}}
+          size="large"
+        />
+      );
+    } else {
+      return (
+        <ScrollView contentContainerStyle={profileStyle.container}>
+          <Image source={(profile.picture) ? {uri:profile.picture} : require('../../img/default-user-image.png')} style={profileStyle.profileImg}/>
+          <Text style={profileStyle.nameText}>{profile.first_name + ' ' + profile.last_name}</Text>
+          <Text style={profileStyle.dashboardText}>{profile.location.place}</Text>
+          <Text>{(profile.summary) ? profile.summary : 'I love to workout!'}</Text>
+          {this._renderFollowBtn()}
 
-        {/* below is the same as ProfileView */}
-        <View style={profileStyle.dashboard}>
-          <TouchableOpacity style={profileStyle.dashboardItem}>
-            <View>
-              {this._renderCenteredText(profile.sessionCount, profileStyle.dashboardTextColor)}
-              {this._renderCenteredText('SESSIONS', profileStyle.dashboardText)}
-            </View>
-          </TouchableOpacity>
+          {/* below is the same as ProfileView */}
+          <View style={profileStyle.dashboard}>
+            <TouchableOpacity style={profileStyle.dashboardItem}>
+              <View>
+                {this._renderCenteredText(profile.sessionCount, profileStyle.dashboardTextColor)}
+                {this._renderCenteredText('SESSIONS', profileStyle.dashboardText)}
+              </View>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={profileStyle.dashboardItem}>
-            <View>
-              {this._renderCenteredText(profile.followerCount, profileStyle.dashboardTextColor)}
-              {this._renderCenteredText('FOLLOWERS', profileStyle.dashboardText)}
-            </View>
-          </TouchableOpacity>
+            <TouchableOpacity style={profileStyle.dashboardItem}>
+              <View>
+                {this._renderCenteredText(profile.followerCount, profileStyle.dashboardTextColor)}
+                {this._renderCenteredText('FOLLOWERS', profileStyle.dashboardText)}
+              </View>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={profileStyle.dashboardItem}>
-            <View>
-              {this._renderCenteredText(profile.followingCount, profileStyle.dashboardTextColor)}
-              {this._renderCenteredText('FOLLOWING', profileStyle.dashboardText)}
-            </View>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity style={profileStyle.dashboardItem}>
+              <View>
+                {this._renderCenteredText(profile.followingCount, profileStyle.dashboardTextColor)}
+                {this._renderCenteredText('FOLLOWING', profileStyle.dashboardText)}
+              </View>
+            </TouchableOpacity>
+          </View>
 
-        <View style={[profileStyle.dashboard, {borderTopWidth: 0, paddingTop: 20, paddingBottom: 20}]}>
-          <TouchableOpacity>
-            <Text>FEED</Text>
-          </TouchableOpacity>
+          <View style={[profileStyle.dashboard, {borderTopWidth: 0, paddingTop: 20, paddingBottom: 20}]}>
+            <TouchableOpacity>
+              <Text>FEED</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity>
-            <Text>PHOTOS</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity>
+              <Text>PHOTOS</Text>
+            </TouchableOpacity>
+          </View>
 
-        {/* TODO: create a feed component that renders the feeds in realtime */}
-        <View style={{height: 100}}></View>
-      </ScrollView>
-    );
+          {/* TODO: create a feed component that renders the feeds in realtime */}
+          <View style={{height: 100}}></View>
+        </ScrollView>
+      );
+    }
   }
 }
 

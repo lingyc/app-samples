@@ -73,9 +73,10 @@ class ComposePost extends Component {
             contentlink: '/posts/' + postKey,
             ownerID: this.uID,
             ownerName: this.user.public.first_name + ' ' + this.user.public.last_name,
+            ownerPicture: this.user.public.picture,
             contentTitle: draftState.title,
             photos: photoRefObject,
-            description: `new ${draftState.category.toLowerCase()} post`,
+            description: draftState.category.toLowerCase(),
             timestamp: Firebase.database.ServerValue.TIMESTAMP
           };
           this.FitlyFirebase.database().ref('/userUpdatesMajor/' + this.uID).push(updateObj);

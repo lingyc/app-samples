@@ -412,7 +412,8 @@ export const profileStyle = StyleSheet.create({
   container: {
     flex: 0,
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    backgroundColor: 'white'
   },
   profileImg: {
     marginTop: 20,
@@ -471,5 +472,51 @@ export const profileStyle = StyleSheet.create({
     shadowOpacity: .6,
     shadowOffset: {width: 0, height: 0},
     shadowRadius: 2,
+  }
+});
+export const feedEntryStyle = StyleSheet.create({
+  container: {
+    flex: 0,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 10,
+    alignSelf: 'stretch',
+    borderBottomWidth: .5,
+    borderColor: '#ccc',
+  },
+  imgContainer: {
+    flex: 0,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  images: {
+    marginRight: 12,
+    marginBottom: 12,
+    width: 71,
+    height: 71,
+    borderWidth: .5,
+    borderColor: "#ccc"
+  },
+  profileRow: {
+    flex: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  username: {
+    marginLeft: 10,
+  },
+  description: {
+    marginLeft: 10,
+    fontSize: 10,
+    color: 'grey',
+  },
+  profileImg: {
+    borderRadius: 23,
+    width: 46,
+    height: 46,
+    borderWidth: 1,
+    borderColor: FitlyBlue,
+    justifyContent: 'center'
   }
 });

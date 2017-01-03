@@ -241,12 +241,12 @@ class ComposePost extends Component {
         {this._renderHeader()}
         {/* <KeyboardAvoidingView behavior="position" style={{flex: 0}}> */}
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={composeStyle.scrollContentContainer}>
-            <Image style={composeStyle.profilePic} source={(this.user.picture) ? {uri:this.user.picture} : require('../../../img/default-user-image.png')}
+            <Image style={composeStyle.profilePic} source={(this.user.public.picture) ? {uri:this.user.public.picture} : require('../../../img/default-user-image.png')}
               defaultSource={require('../../../img/default-user-image.png')}/>
               <ActivityIndicator
                 animating={this.state.loading}
                 style={{position:'absolute', top: 0, right: 0, height: 80}}
-                size="large"
+                size="small"
               />
             <View style={composeStyle.inputBox}>
               <TextInput

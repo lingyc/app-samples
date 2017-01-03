@@ -49,16 +49,16 @@ class Feeds extends Component {
      );
    } else if (feed.type === 'follow') {
      return (
-       <TouchableOpacity
-         onPress={() => this.navigation.push({
+       <TouchableOpacity style={[feedEntryStyle.profileRow, {flexDirection: 'row', justifyContent: 'flex-end'}]}
+         onPress={() => this.props.navigation.push({
            key: "ProfileEntry",
            passProps: {
              otherUID: feed.followingID,
            }
        })}>
+         <Text style={[feedEntryStyle.username, {marginRight: 10}]}>{feed.followingName}</Text>
          <Image source={(feed.followingPicture) ? {uri:feed.followingPicture} : require('../../img/default-user-image.png')}
-         style={feedEntryStyle.profileImg} defaultSource={require('../../img/default-user-image.png')}/>
-         <Text style={feedEntryStyle.username}>{feed.followingName}</Text>
+         style={[feedEntryStyle.profileImg, {borderRadius: 25, width: 50, height: 50,}]} defaultSource={require('../../img/default-user-image.png')}/>
        </TouchableOpacity>
      )
    }
@@ -71,7 +71,12 @@ class Feeds extends Component {
           {this.props.feeds.map((feed, index) => {
             return (
               <View style={feedEntryStyle.container} key={"feed" + index}>
-                <View style={feedEntryStyle.profileRow}>
+                <TouchableOpacity onPress={() => this.props.navigation.push({
+                  key: "ProfileEntry",
+                  passProps: {
+                    otherUID: feed.ownerID,
+                  }
+                })} style={feedEntryStyle.profileRow}>
                   <Image source={(feed.ownerPicture) ? {uri:feed.ownerPicture} : require('../../img/default-user-image.png')}
                   style={feedEntryStyle.profileImg} defaultSource={require('../../img/default-user-image.png')}/>
                   <View>
@@ -79,7 +84,7 @@ class Feeds extends Component {
                     {this._renderUpdateMsg(feed)}
                   </View>
                   <TimeAgo style={feedEntryStyle.timestamp} time={feed.timestamp}/>
-                </View>
+                </TouchableOpacity>
                 {this._renderFeedEntryContent(feed)}
               </View>
             );
@@ -89,7 +94,7 @@ class Feeds extends Component {
     } else {
       return (
         <View style={{flex: 0}}>
-          <Text style={{textAlign: 'center', color: '#ccc'}}>Your feeds are empty, let's find someone you want to follow</Text>
+          <Text style={{textAlign: 'center', color: '#ccc', marginTop: 30, marginLeft: 30, marginRight: 30}}>Your feeds are empty, let's find someone you want to follow</Text>
         </View>
       );
     }

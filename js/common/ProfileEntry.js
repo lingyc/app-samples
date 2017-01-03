@@ -5,6 +5,7 @@ import { push } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {saveUpdateToDB} from '../library/firebaseHelpers.js'
+import Firebase from 'firebase';
 
 class ProfileEntry extends Component {
   constructor(props) {
@@ -17,8 +18,10 @@ class ProfileEntry extends Component {
       userProfile: null,
     }
     this.otherUID = this.props.otherUID;
-    this.database = this.props.FitlyFirebase.database();
+    this.FitlyFirebase = this.props.FitlyFirebase;
+    this.database = this.FitlyFirebase.database();
     this.userRef = this.database.ref('users/' + this.props.otherUID + '/public/');
+    this.user = this.props.user;
     this.uID = this.props.uID;
 
     //when the current user follows another user, a notification entry will be created in the other user's notifications,

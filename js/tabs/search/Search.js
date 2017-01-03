@@ -10,11 +10,11 @@ class Search extends Component {
     super(props);
   }
 
-  _openProfile() {
+  _openProfile(id) {
     this.props.navigation.push({
       key: "ProfileEntry",
       passProps: {
-        otherUID: "CcVODIpufJhEGLIufy0ApdsuXYm1"
+        otherUID: id
       }
     })
   }
@@ -23,7 +23,13 @@ class Search extends Component {
     return (
       <View style={{flex: 1}}>
         <Text>Hello from Search!</Text>
-        <TouchableHighlight onPress={() => this._openProfile()}>
+        <TouchableHighlight onPress={() => this._openProfile('CcVODIpufJhEGLIufy0ApdsuXYm1')}>
+          <Text>open up a profile</Text>
+        </TouchableHighlight>
+        <TouchableHighlight onPress={() => this._openProfile('LxYypUAFR6Ugk1EqvhdgBecaPcQ2')}>
+          <Text>open up a profile</Text>
+        </TouchableHighlight>
+        <TouchableHighlight onPress={() => this._openProfile('AYlNbqhTDTXx1uEohfbke24KTDC2')}>
           <Text>open up a profile</Text>
         </TouchableHighlight>
       </View>

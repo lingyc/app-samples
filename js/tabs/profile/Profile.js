@@ -7,7 +7,7 @@ import { push } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {selectPicture} from '../../library/pictureHelper.js';
-import {uploadPhoto} from '../../library/firebaseHelpers.js';
+import {uploadPhoto, turnOnfeedService, turnOffeedService} from '../../library/firebaseHelpers.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 
@@ -24,69 +24,28 @@ class Profile extends Component {
   //register listener to update the feeds, and follower count
   componentDidMount() {
     this._turnOnProfileWatcher();
-    this._turnOnfeedService();
+    turnOnfeedService(this.props.uID, {self: true},
+      (feeds) => this.setState({feeds: feeds.reverse()}),
+      (newFeeds) => this.setState({feeds: [feedObject].concat(this.state.feeds)})
+    );
   }
+
   componentWillUnMount() {
     this._turnOffProfileWatcher();
-    this._turnOfffeedService();
+    turnOffeedService(this.props.uID, {self: true});
   };
 
   _turnOnProfileWatcher() {
-    this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/').on('value', this._handleProfileChange.bind(this));
+    const handleProfileChange = (snapshot) => {
+      const {private: privateData} = this.props.user;
+      // TODO: get push notification for updates in follower and following
+      this.props.action.storeUserProfile({private: privateData, public: snapshot.val()});
+    };
+    this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/').on('value', handleProfileChange.bind(this));
   };
 
   _turnOffProfileWatcher() {
     this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/').off('value');
-  };
-
-  _turnOnfeedService() {
-    const followingNotifications = this.props.FitlyFirebase.database().ref('followingNotifications/' + this.props.uID);
-    const appendToFeed = (feedEntry) => {
-      let feedObject = feedEntry.val();
-      let feedPictures = [];
-      feedEntry.child('photos').forEach(photo => {
-        let photoObj = photo.val();
-        photoObj.key = photo.key;
-        feedPictures.push(photoObj);
-      });
-      feedObject.photos = feedPictures;
-      this.setState({
-        feeds: [feedObject].concat(this.state.feeds)
-      });
-    };
-
-    followingNotifications.orderByChild('timestamp').limitToLast(10).once('value')
-    .then(feeds => {
-      //the forEach below is from Firebase API not native JS firebase data come back as objects,
-      //which needs to convert back to array for interating in the correct order
-      let feedsArray = [];
-      feeds.forEach(feed => {
-        let feedObject = feed.val();
-        let feedPictures = [];
-        feed.child('photos').forEach(photo => {
-          let photoObj = photo.val();
-          photoObj.key = photo.key;
-          feedPictures.push(photoObj);
-        });
-        feedObject.photos = feedPictures;
-        feedsArray.push(feedObject);
-      });
-      feedsArray = feedsArray.reverse();
-      this.setState({feeds: feedsArray})
-    }).catch(error => console.log(error));
-
-    followingNotifications.orderByChild('timestamp').startAt(Date.now()).on('child_added', appendToFeed.bind(this));
-  };
-
-  _turnOfffeedService() {
-    this.props.FitlyFirebase.database().ref('followingNotifications/' + this.props.uID).off('child_added');
-  };
-
-
-  _handleProfileChange(snapshot) {
-    const {private: privateData} = this.props.user;
-    // TODO: get push notification for updates in follower and following
-    this.props.action.storeUserProfile({private: privateData, public: snapshot.val()});
   };
 
   _renderCenteredText(text, styles) {
@@ -108,7 +67,6 @@ class Profile extends Component {
       console.log("update profile pic", error)
     });
   };
-
 
   //this function should be a reusable component
   render() {
@@ -169,8 +127,6 @@ class Profile extends Component {
         </View>
 
         <Feeds feeds={this.state.feeds}/>
-
-        {/* TODO: create a feed component that renders the feeds in realtime */}
         <View style={{height: 100}}></View>
       </ScrollView>
     );

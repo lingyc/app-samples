@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, TouchableHighlight, ActivityIndicator } from 'react-native';
+import Feeds from '../common/Feeds.js'
 import { profileStyle } from '../styles/styles.js';
 import { push } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {saveUpdateToDB} from '../library/firebaseHelpers.js'
+import {saveUpdateToDB, turnOnfeedService, turnOffeedService} from '../library/firebaseHelpers.js'
 import Firebase from 'firebase';
 
 class ProfileEntry extends Component {
@@ -16,6 +17,7 @@ class ProfileEntry extends Component {
       following: null,
       // TODO: create a local dummy profile and load it while the profile is being fetched from the database
       userProfile: null,
+      feeds: []
     }
     this.otherUID = this.props.otherUID;
     this.FitlyFirebase = this.props.FitlyFirebase;
@@ -31,13 +33,24 @@ class ProfileEntry extends Component {
   };
 
   componentWillMount() {
-    //register listener to update the feeds and profile changes
+    this._turnOnProfileWatcher();
+    turnOnfeedService(this.otherUID, {self: false},
+      (feeds) => this.setState({feeds: feeds.reverse()}),
+      (newFeeds) => this.setState({feeds: [feedObject].concat(this.state.feeds)})
+    );
+  };
+
+  componentWillUnmount() {
+    this._turnOffProfileWatcher();
+    turnOffeedService(this.otherUID, {self: false});
+  };
+
+  _turnOnProfileWatcher() {
     this.userRef.on('value', this._handleProfileChange.bind(this));
     this.database.ref('/followings/' + this.uID + '/' + this.otherUID).on('value', this._handleFollowingChange.bind(this));
   };
 
-  componentWillUnmount() {
-    //unregister the listener
+  _turnOffProfileWatcher() {
     this.userRef.off('value');
     this.database.ref('/followings/' + this.uID + '/' + this.otherUID).off('value');
   };
@@ -162,7 +175,7 @@ class ProfileEntry extends Component {
             </TouchableOpacity>
           </View>
 
-          {/* TODO: create a feed component that renders the feeds in realtime */}
+          <Feeds feeds={this.state.feeds}/>
           <View style={{height: 100}}></View>
         </ScrollView>
       );

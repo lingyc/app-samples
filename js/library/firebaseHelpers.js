@@ -148,6 +148,56 @@ export const saveUpdateToDB = (update, uid) => {
 //   return imagesObjLocal;
 // };
 
+export const turnOnfeedService = (uid, options, initialCallback, subsequentCallback) => {
+  let notificationSource = (options.self === true)
+    ? FitlyFirebase.database().ref('followingNotifications/' + uid)
+    : notificationSource = FitlyFirebase.database().ref('userUpdatesAll/' + uid)
+
+  const appendToFeed = (feedEntry) => {
+    let feedObject = feedEntry.val();
+    let feedPictures = [];
+    feedEntry.child('photos').forEach(photo => {
+      let photoObj = photo.val();
+      photoObj.key = photo.key;
+      feedPictures.push(photoObj);
+    });
+    feedObject.photos = feedPictures;
+    subsequentCallback(feedObject);
+  };
+
+  notificationSource.orderByChild('timestamp').limitToLast(10).once('value')
+  .then(feeds => {
+    //the forEach below is from Firebase API not native JS firebase data come back as objects,
+    //which needs to convert back to array for interating in the correct order
+    let feedsArray = [];
+    feeds.forEach(feed => {
+      let feedObject = feed.val();
+      let feedPictures = [];
+      feed.child('photos').forEach(photo => {
+        let photoObj = photo.val();
+        photoObj.key = photo.key;
+        feedPictures.push(photoObj);
+      });
+      feedObject.photos = feedPictures;
+      feedsArray.push(feedObject);
+    });
+    initialCallback(feedsArray);
+  }).catch(error => console.log(error));
+
+  notificationSource.orderByChild('timestamp').startAt(Date.now()).on('child_added', appendToFeed);
+};
+
+export const turnOffeedService = (uid, options) => {
+  let notificationSource;
+  if (options.self === true) {
+    notificationSource = FitlyFirebase.database().ref('followingNotifications/' + uid);
+  } else {
+    notificationSource = FitlyFirebase.database().ref('userUpdatesAll/' + uid);
+  }
+  notificationSource.off('child_added');
+};
+
+
 //generate random id for photos
 export const guid = () => {
   function s4() {

@@ -4,6 +4,7 @@ import { profileStyle } from '../styles/styles.js';
 import { push } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import {saveUpdateToDB} from '../library/firebaseHelpers.js'
 
 class ProfileEntry extends Component {
   constructor(props) {
@@ -15,55 +16,76 @@ class ProfileEntry extends Component {
       // TODO: create a local dummy profile and load it while the profile is being fetched from the database
       userProfile: null,
     }
-    // this.otherUID = sceneProps.scene.route.passProps;
+    this.otherUID = this.props.otherUID;
     this.database = this.props.FitlyFirebase.database();
     this.userRef = this.database.ref('users/' + this.props.otherUID + '/public/');
-  }
+    this.uID = this.props.uID;
+
+    //when the current user follows another user, a notification entry will be created in the other user's notifications,
+    //we dont want the users to spam notifications by constantly toggling the follow/unfollow button,
+    //this marker will solve that by setting to true when the other user is notified
+    this.hasSentFollowerUpdate = false;
+  };
 
   componentWillMount() {
     //register listener to update the feeds and profile changes
     this.userRef.on('value', this._handleProfileChange.bind(this));
-    this.database.ref('/followings/' + this.props.uID + '/' + this.props.otherUID).on('value', this._handleFollowingChange.bind(this));
-  }
+    this.database.ref('/followings/' + this.uID + '/' + this.otherUID).on('value', this._handleFollowingChange.bind(this));
+  };
 
   componentWillUnmount() {
     //unregister the listener
     this.userRef.off('value');
-    this.database.ref('/followings/' + this.props.uID + '/' + this.props.otherUID).off('value');
-  }
+    this.database.ref('/followings/' + this.uID + '/' + this.otherUID).off('value');
+  };
 
   _handleProfileChange(userProfile) {
     this.setState({
       loading: false,
       userProfile: userProfile.val()
     });
-  }
+  };
 
   _handleFollowingChange(following) {
     this.setState({
       following: !!(following.val())
     })
-  }
+  };
 
   _toggleFollow() {
     if (this.state.following) {
-      this.database.ref('/followings/' + this.props.uID + '/' + this.props.otherUID).set(null);
-      this.database.ref('/followers/' + this.props.otherUID + '/' + this.props.uID).set(null);
-      this.database.ref('users/' + this.props.otherUID + '/public/followerCount').transaction(currentFollowerCount => currentFollowerCount - 1);
-      this.database.ref('users/' + this.props.uID + '/public/followingCount').transaction(currentFollowingCount => currentFollowingCount - 1);
+      this.database.ref('/followings/' + this.uID + '/' + this.otherUID).set(null);
+      this.database.ref('/followers/' + this.otherUID + '/' + this.uID).set(null);
+      this.database.ref('/users/' + this.otherUID + '/public/followerCount').transaction(currentFollowerCount => currentFollowerCount - 1);
+      this.database.ref('/users/' + this.uID + '/public/followingCount').transaction(currentFollowingCount => currentFollowingCount - 1);
+      if (!this.hasSentFollowerUpdate) {
+        const updateObj = {
+          type: "follow",
+          ownerID: this.uID,
+          ownerName: this.user.public.first_name + ' ' + this.user.public.last_name,
+          ownerPicture: this.user.public.picture,
+          followingID: this.otherUID,
+          followingName: this.state.userProfile.first_name + ' ' + this.state.userProfile.last_name,
+          followingPicture: this.state.userProfile.picture,
+          timestamp: Firebase.database.ServerValue.TIMESTAMP
+        };
+        saveUpdateToDB(updateObj, this.uID);
+        this.FitlyFirebase.database().ref('/followerNotifications/' + this.otherUID).push(updateObj);
+        this.hasSentFollowerUpdate = true;
+      }
     } else {
-      this.database.ref('/followings/' + this.props.uID + '/' + this.props.otherUID).set(true);
-      this.database.ref('/followers/' + this.props.otherUID + '/' + this.props.uID).set(true);
-      this.database.ref('users/' + this.props.otherUID + '/public/followerCount').transaction(currentFollowerCount => currentFollowerCount + 1);
-      this.database.ref('users/' + this.props.uID + '/public/followingCount').transaction(currentFollowingCount => currentFollowingCount + 1);
+      this.database.ref('/followings/' + this.uID + '/' + this.otherUID).set(true);
+      this.database.ref('/followers/' + this.otherUID + '/' + this.uID).set(true);
+      this.database.ref('/users/' + this.otherUID + '/public/followerCount').transaction(currentFollowerCount => currentFollowerCount + 1);
+      this.database.ref('/users/' + this.uID + '/public/followingCount').transaction(currentFollowingCount => currentFollowingCount + 1);
     }
-  }
+  };
 
   _renderCenteredText(text, styles) {
     return (
       <Text style={[profileStyle.centeredText, styles]}>{text}</Text>
     );
-  }
+  };
 
   _renderFollowBtn() {
     const profile = this.state.userProfile;
@@ -80,8 +102,7 @@ class ProfileEntry extends Component {
         </TouchableHighlight>
       );
     }
-
-  }
+  };
 
 
   render() {
@@ -148,6 +169,7 @@ class ProfileEntry extends Component {
 
 const mapStateToProps = function(state) {
   return {
+    user: state.user.user,
     uID: state.auth.uID,
     FitlyFirebase: state.app.FitlyFirebase
   };

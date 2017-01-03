@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImagePicker from 'react-native-image-crop-picker';
 import TagInput from 'react-native-tag-input';
-import {savePhotoToDB} from '../../library/firebaseHelpers.js'
+import {savePhotoToDB, saveUpdateToDB} from '../../library/firebaseHelpers.js'
 import Firebase from 'firebase';
 
 //TODO: input validation??
@@ -76,11 +76,11 @@ class ComposePost extends Component {
             ownerPicture: this.user.public.picture,
             contentTitle: draftState.title,
             photos: photoRefObject,
+            contentSnipet: draftState.content.slice(0, 60),
             description: draftState.category.toLowerCase(),
             timestamp: Firebase.database.ServerValue.TIMESTAMP
           };
-          this.FitlyFirebase.database().ref('/userUpdatesMajor/' + this.uID).push(updateObj);
-          this.FitlyFirebase.database().ref('/userUpdatesAll/' + this.uID).push(updateObj);
+          saveUpdateToDB(updateObj, this.uID);
         });
 
         this.setState({loading: false});

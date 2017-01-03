@@ -51,7 +51,7 @@ class Profile extends Component {
       });
       feedObject.photos = feedPictures;
       this.setState({
-        feeds: this.state.feeds.concat(feedObject)
+        feeds: [feedObject].concat(this.state.feeds)
       });
     };
 
@@ -71,6 +71,7 @@ class Profile extends Component {
         feedObject.photos = feedPictures;
         feedsArray.push(feedObject);
       });
+      feedsArray = feedsArray.reverse();
       this.setState({feeds: feedsArray})
     }).catch(error => console.log(error));
 

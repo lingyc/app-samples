@@ -490,6 +490,10 @@ export const feedEntryStyle = StyleSheet.create({
     flexWrap: 'wrap',
   },
   images: {
+    width: 71,
+    height: 71,
+  },
+  imagesTouchable: {
     marginRight: 12,
     marginBottom: 12,
     width: 71,
@@ -505,6 +509,13 @@ export const feedEntryStyle = StyleSheet.create({
   },
   username: {
     marginLeft: 10,
+  },
+  timestamp: {
+    color: 'grey',
+    fontSize: 10,
+    right: 0,
+    top: 10,
+    position: 'absolute'
   },
   description: {
     marginLeft: 10,

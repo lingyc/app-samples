@@ -94,9 +94,13 @@ export const savePhotoToDB = (photos, uid, contentlink) => {
   });
 };
 
-export const saveUpdateToDB = (update, uid) => {
-  FitlyFirebase.database().ref('/userUpdatesMajor/' + uid).push(update);
-  FitlyFirebase.database().ref('/userUpdatesAll/' + uid).push(update);
+export const saveUpdateToDB = (update, uid, type = {minor: false}) => {
+  if (type.minor) {
+    FitlyFirebase.database().ref('/userUpdatesAll/' + uid).push(update);
+  } else {
+    FitlyFirebase.database().ref('/userUpdatesMajor/' + uid).push(update);
+    FitlyFirebase.database().ref('/userUpdatesAll/' + uid).push(update);
+  }
 };
 
 //this function is work in progress, the intend is to skip waiting for picture upload and load the local files directly

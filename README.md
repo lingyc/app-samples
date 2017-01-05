@@ -43,7 +43,8 @@ More TODOs can be found in the code. This list will grow.
   - [ ] let user create workouts
     - [ ] invite others for workouts
   - [ ] push notifications
-  - [ ] implement feeds
+  - [ ] feeds
+    - [ ] refactor feeds to use listView
 
 
 - [ ] Search Tab

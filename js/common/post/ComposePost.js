@@ -34,6 +34,7 @@ class ComposePost extends Component {
 
   //TODO: when hit summit does the view redirects to the post display view directly?
   _savePostToDB() {
+    //tables to update: posts, userPosts, userUpdatesMajor, userUpdatesAll
     (async () => {
       try {
         this.setState({loading: true});
@@ -54,7 +55,7 @@ class ComposePost extends Component {
           }, {});
         let postObj = {
           author: this.uID,
-          authorPicture: this.user.public.picture, 
+          authorPicture: this.user.public.picture,
           title: draftState.title,
           content: draftState.content,
           category: draftState.category,

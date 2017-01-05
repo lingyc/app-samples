@@ -46,8 +46,8 @@ class Feeds extends Component {
    if (feed.type === 'post') {
      return (
        <View style={{flex: 0}}>
-         {(feed.contentTitle) ? <Text style={{marginBottom: 5}} onPress={() => console.log('direct to post with post key ', feed.contentID)}>{feed.contentTitle}</Text> : null}
-         {(feed.contentSnipet) ? <Text style={{marginBottom: 5}} onPress={() => console.log('direct to post with post key ', feed.contentSnipet)}>{feed.contentSnipet + '...'}</Text> : null}
+         {(feed.contentTitle) ? <TouchableOpacity onPress={() => this.props.navigation.push({key: 'PostView', passProps:{postID: feed.contentID}})}><Text style={{marginBottom: 5}}>{feed.contentTitle}</Text></TouchableOpacity> : null}
+         {(feed.contentSnipet) ? <TouchableOpacity onPress={() => this.props.navigation.push({key: 'PostView', passProps:{postID: feed.contentID}})}><Text style={{marginBottom: 5}}>{feed.contentSnipet + '...'}</Text></TouchableOpacity> : null}
          {this._renderPhotos(feed)}
        </View>
      );

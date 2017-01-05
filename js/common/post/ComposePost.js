@@ -54,6 +54,7 @@ class ComposePost extends Component {
           }, {});
         let postObj = {
           author: this.uID,
+          authorPicture: this.user.public.picture, 
           title: draftState.title,
           content: draftState.content,
           category: draftState.category,
@@ -76,7 +77,7 @@ class ComposePost extends Component {
             ownerPicture: this.user.public.picture,
             contentTitle: draftState.title,
             photos: photoRefObject,
-            contentSnipet: draftState.content.slice(0, 60),
+            contentSnipet: draftState.content.slice(0, 200),
             description: draftState.category.toLowerCase(),
             timestamp: Firebase.database.ServerValue.TIMESTAMP
           };

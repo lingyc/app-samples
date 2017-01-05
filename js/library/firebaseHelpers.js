@@ -197,6 +197,15 @@ export const turnOffeedService = (uid, options) => {
   notificationSource.off('child_added');
 };
 
+export const convertFBObjToArray = (collectionObj) => {
+  let array = [];
+  collectionObj.forEach(item => {
+    let itemObj = item.val();
+    itemObj.key = item.key;
+    array.push(itemObj);
+  })
+  return array;
+};
 
 //generate random id for photos
 export const guid = () => {

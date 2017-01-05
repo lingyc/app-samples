@@ -116,17 +116,6 @@ class Profile extends Component {
           </TouchableOpacity>
         </View>
 
-        {/* <View style={[profileStyle.dashboard, {borderTopWidth: 0, paddingTop: 17, paddingBottom: 17}]}>
-
-          <TouchableOpacity>
-            <Text>FEED</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-            <Text>PHOTOS</Text>
-          </TouchableOpacity>
-        </View> */}
-
         <FeedTabs feeds={this.state.feeds}/>
         <View style={{height: 100}}></View>
       </ScrollView>

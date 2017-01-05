@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, TouchableHighlight, ActivityIndicator } from 'react-native';
-import { profileStyle, feedEntryStyle } from '../styles/styles.js';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { feedEntryStyle } from '../styles/styles.js';
 import { push } from '../actions/navigation.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Text, Dimensions } from 'react-native';
 import { TabViewAnimated, TabBarTop } from 'react-native-tab-view';
 import Feeds from './Feeds.js';
+import PhotoFeeds from './PhotoFeeds.js';
 let screenWidth = Dimensions.get('window').width;
 
 
@@ -15,7 +16,7 @@ export default class FeedTabs extends Component {
         { key: '2', title: 'Photos' },
       ],
     };
-  }
+  };
 
   _handleChangeTab = (index) => {
     this.setState({ index });
@@ -26,7 +27,6 @@ export default class FeedTabs extends Component {
     let marginleft = screenWidth / 4 - indicatorWidth / 2;
     return <TabBarTop {...props} style={{backgroundColor: 'white'}}
       labelStyle={{fontSize: 12, color: "grey"}}
-      // labelHighligtedStyle={{fontSize: 12, color: "black"}}
       indicatorStyle={{backgroundColor: '#326fd1', alignSelf: 'center', marginLeft: marginleft, width: indicatorWidth}} />;
   };
 
@@ -35,7 +35,7 @@ export default class FeedTabs extends Component {
     case '1':
       return <Feeds feeds={this.props.feeds} />;
     case '2':
-      return <Text>Photo tab</Text>;
+      return <PhotoFeeds feeds={this.props.feeds} />;
     default:
       return null;
     }

@@ -17,7 +17,7 @@ class MakePost extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (!this.props.draftRef) {
       const draftRef = guid();
       this.setState({

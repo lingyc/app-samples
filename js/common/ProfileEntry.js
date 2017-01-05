@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, TouchableHighlight, ActivityIndicator } from 'react-native';
-import Feeds from '../common/Feeds.js'
+import FeedTabs from '../common/FeedTabs.js'
 import { profileStyle } from '../styles/styles.js';
 import { push } from '../actions/navigation.js';
 import { connect } from 'react-redux';
@@ -164,18 +164,7 @@ class ProfileEntry extends Component {
               </View>
             </TouchableOpacity>
           </View>
-
-          <View style={[profileStyle.dashboard, {borderTopWidth: 0, paddingTop: 20, paddingBottom: 20}]}>
-            <TouchableOpacity>
-              <Text>FEED</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity>
-              <Text>PHOTOS</Text>
-            </TouchableOpacity>
-          </View>
-
-          <Feeds feeds={this.state.feeds}/>
+          <FeedTabs feeds={this.state.feeds}/>
           <View style={{height: 100}}></View>
         </ScrollView>
       );

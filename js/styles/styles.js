@@ -512,10 +512,19 @@ export const feedEntryStyle = StyleSheet.create({
     marginLeft: 10,
   },
   timestamp: {
+    backgroundColor: 'rgba(255,255,255,0)',
     color: 'grey',
     fontSize: 10,
     right: 0,
     top: 10,
+    position: 'absolute'
+  },
+  smallDescription: {
+    backgroundColor: 'rgba(255,255,255,0)',
+    color: 'grey',
+    fontSize: 9,
+    left: 10,
+    paddingBottom: 10,
     position: 'absolute'
   },
   description: {
@@ -530,5 +539,14 @@ export const feedEntryStyle = StyleSheet.create({
     borderWidth: 1,
     borderColor: FitlyBlue,
     justifyContent: 'center'
+  },
+  photoFeedContainer: {
+    marginTop: 1,
+    flex:0,
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  photoFeedEntry: {
   }
 });

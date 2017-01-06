@@ -3,17 +3,25 @@ import { StyleSheet } from 'react-native';
 const centering = {
     alignItems: 'center',
     justifyContent: 'center'
-}
+};
+
 const centeringContainer = {
   flex: 1,
   ...centering
-}
+};
 
 const absoluteFullWidth = {
     position: 'absolute',
     left: 0,
     right: 0
-}
+};
+
+const scrollContentContainer = {
+  flex: 0,
+  flexDirection: 'column',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+};
 
 export const FitlyBlue = '#1D2F7B';
 const headerHight = 80;
@@ -292,11 +300,7 @@ export const composeStyle = StyleSheet.create({
     ...centeringContainer,
   },
   scrollContentContainer: {
-    flex: 0,
-    // top: 20,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    ...scrollContentContainer
   },
   input: {
     fontSize: 20,
@@ -475,6 +479,7 @@ export const profileStyle = StyleSheet.create({
     shadowRadius: 2,
   }
 });
+
 export const feedEntryStyle = StyleSheet.create({
   container: {
     flex: 0,
@@ -550,3 +555,67 @@ export const feedEntryStyle = StyleSheet.create({
   photoFeedEntry: {
   }
 });
+
+export const postStyle = StyleSheet.create({
+  scrollContentContainer: {
+    ...scrollContentContainer,
+    marginTop: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 20,
+  },
+  postContent: {
+    marginLeft: 30,
+    marginRight: 30,
+  },
+  imgContainer: {
+    flex: 0,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  imagesTouchable: {
+    marginRight: 10,
+    marginBottom: 10,
+    width: 80,
+    height: 80,
+    borderWidth: .5,
+    borderColor: "#ccc"
+  },
+  images: {
+    width: 80,
+    height: 80,
+  },
+  title: {
+    alignSelf: 'flex-start',
+    fontSize: 16,
+    fontWeight: "600",
+    paddingBottom: 10
+  },
+  textContent: {
+    fontSize: 13,
+    paddingBottom: 20
+  },
+  socialBtns: {
+    flexDirection: "row",
+    justifyContent: "flex-end"
+  },
+  iconText: {
+    color: "grey",
+    fontSize: 10,
+  },
+  socialIcon: {
+    paddingRight: 10,
+    alignItems: 'center'
+  },
+  tagsRow: {
+    flex: 0,
+    marginTop: 10,
+    flexDirection: "row",
+    flexWrap: "wrap"
+  },
+  tags: {
+    fontSize: 13,
+    color: "grey",
+    paddingRight: 10
+  }
+})

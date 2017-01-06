@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { composeStyle, headerStyle } from '../../styles/styles.js';
 import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator } from 'react-native';
 // import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
-import { feedEntryStyle } from '../../styles/styles.js';
+import { postStyle, feedEntryStyle } from '../../styles/styles.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { push, pop, resetTo } from '../../actions/navigation.js';
 import { connect } from 'react-redux';
@@ -165,8 +165,10 @@ class PostView extends Component {
 
   _renderPostBody() {
     //like, share, save
+    const iconSize = 20;
+    const iconColor = 'grey';
     const {post} = this.state;
-    return <View>
+    return <View style={postStyle.postContainer}>
       <TouchableOpacity onPress={() => this.props.navigation.push({
         key: "ProfileEntry",
         passProps: {
@@ -177,46 +179,50 @@ class PostView extends Component {
         style={feedEntryStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}/>
         <Text style={feedEntryStyle.username}>{post.authorName}</Text>
       </TouchableOpacity>
-      <Text>{post.title}</Text>
-      <Text>{post.content}</Text>
-      {this._renderPhotos(post.photos)}
-      {this._renderTags(post.tags)}
-      <Text>{post.likeCount} likes</Text>
       <TimeAgo style={feedEntryStyle.timestamp} time={post.createdAt}/>
-      <TouchableOpacity onPress={() => this._toggleLike()} style={feedEntryStyle.profileRow}>
-        {(this.state.like)
-          ? <Icon name="ios-heart" size={50} color="black"/>
-          : <Icon name="ios-heart-outline" size={50} color="black"/>
-        }
-      </TouchableOpacity>
-      {(this.state.shared)
-        ? <View>
-            <Icon name="ios-share" size={50} color="black"/>
-            <Text>shared</Text>
-          </View>
-        : <TouchableOpacity onPress={() => this._sharePost()} style={feedEntryStyle.profileRow}>
-          <Icon name="ios-share-outline" size={50} color="black"/>
+      <View style={postStyle.postContent}>
+        <Text style={postStyle.title}>{post.title}</Text>
+        <Text style={postStyle.textContent}>{post.content}</Text>
+        {this._renderPhotos(post.photos)}
+        {this._renderTags(post.tags)}
+      </View>
+      <View style={postStyle.socialBtns}>
+        <TouchableOpacity style={postStyle.socialIcon} onPress={() => this._toggleLike()}>
+          {(this.state.like)
+            ? <Icon name="ios-heart" size={iconSize} color={iconColor}/>
+            : <Icon name="ios-heart-outline" size={iconSize} color={iconColor}/>
+          }
+          <Text style={postStyle.iconText}>{post.likeCount} likes</Text>
         </TouchableOpacity>
-      }
-      {(this.state.saved)
-        ? <View>
-            <Icon name="ios-bookmark" size={50} color="black"/>
-            <Text>saved</Text>
+        {(this.state.shared)
+          ? <View style={postStyle.socialIcon}>
+            <Icon name="ios-share" size={iconSize} color={iconColor}/>
+            <Text style={postStyle.iconText}>shared</Text>
           </View>
-        : <TouchableOpacity onPress={() => this._savePost()} style={feedEntryStyle.profileRow}>
-            <Icon name="ios-bookmark-outline" size={50} color="black"/>
+          : <TouchableOpacity style={postStyle.socialIcon} onPress={() => this._sharePost()}>
+            <Icon name="ios-share-outline" size={iconSize} color={iconColor}/>
           </TouchableOpacity>
-      }
+        }
+        {(this.state.saved)
+          ? <View style={postStyle.socialIcon}>
+            <Icon name="ios-bookmark" size={iconSize} color={iconColor}/>
+            <Text style={postStyle.iconText}>saved</Text>
+          </View>
+          : <TouchableOpacity style={postStyle.socialIcon} onPress={() => this._savePost()}>
+            <Icon name="ios-bookmark-outline" size={iconSize} color={iconColor}/>
+          </TouchableOpacity>
+        }
+      </View>
     </View>
   }
 
   _renderPhotos(photos) {
     return (
-      <View style={feedEntryStyle.imgContainer}>
+      <View style={postStyle.imgContainer}>
         {photos.map((photo, index) => {
           return (
-            <TouchableOpacity style={feedEntryStyle.imagesTouchable}  key={'postPhotos' + index} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
-              <Image style={feedEntryStyle.images} source={{uri: photo.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
+            <TouchableOpacity style={postStyle.imagesTouchable}  key={'postPhotos' + index} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
+              <Image style={postStyle.images} source={{uri: photo.link}} defaultSource={require('../../../img/default-photo-image.png')}/>
             </TouchableOpacity>
           );
         })}
@@ -225,11 +231,13 @@ class PostView extends Component {
   }
 
   _renderTags(tags) {
-    return tags.map((tag, index) => {
-      return (
-        <Text key={'tag' + index}>{tags.key}</Text>
-      );
-    });
+    return <View style={postStyle.tagsRow}>
+      {tags.map((tag, index) => {
+        return (
+          <Text style={postStyle.tags} key={'tag' + index}>#{tag}</Text>
+        );
+      })}
+    </View>
   }
 
   _renderComments() {
@@ -240,7 +248,7 @@ class PostView extends Component {
     if (this.state.loading) {
       return <ActivityIndicator animating={this.state.loading} style={{height: 80}} size="large"/>
     } else {
-      return <ScrollView style={{flex: 0}}>
+      return <ScrollView keyboardDismissMode="on-drag" style={{backgroundColor: 'white'}} contentContainerStyle={postStyle.scrollContentContainer}>
         {(this.state.postLoading)
           ? <ActivityIndicator animating={this.state.postLoading} style={{height: 80}} size="large"/>
           : this._renderPostBody()

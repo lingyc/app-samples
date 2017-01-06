@@ -24,7 +24,7 @@ class PostView extends Component {
       like: null,
       shared: null,
       saved: null,
-    }
+    };
     this.FitlyFirebase = this.props.FitlyFirebase;
     this.database = this.FitlyFirebase.database();
     this.uID = this.props.uID;
@@ -128,6 +128,7 @@ class PostView extends Component {
               ownerPicture: this.user.public.picture,
               postCategory: this.state.post.category,
               contentTitle: this.state.post.title,
+              contentSnipet: this.state.post.content,
               photos: this.state.post.photos,
               timestamp: Firebase.database.ServerValue.TIMESTAMP
             };

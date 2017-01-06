@@ -27,7 +27,7 @@ class Profile extends Component {
     this._turnOnProfileWatcher();
     turnOnfeedService(this.props.uID, {self: true},
       (feeds) => this.setState({feeds: feeds.reverse()}),
-      (newFeeds) => this.setState({feeds: [feedObject].concat(this.state.feeds)})
+      (newFeed) => this.setState({feeds: [newFeed].concat(this.state.feeds)})
     );
   }
 

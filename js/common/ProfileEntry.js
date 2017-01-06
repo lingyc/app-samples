@@ -36,7 +36,7 @@ class ProfileEntry extends Component {
     this._turnOnProfileWatcher();
     turnOnfeedService(this.otherUID, {self: false},
       (feeds) => this.setState({feeds: feeds.reverse()}),
-      (newFeeds) => this.setState({feeds: [feedObject].concat(this.state.feeds)})
+      (newFeed) => this.setState({feeds: [newFeed].concat(this.state.feeds)})
     );
   };
 
@@ -74,6 +74,11 @@ class ProfileEntry extends Component {
       this.database.ref('/followers/' + this.otherUID + '/' + this.uID).set(null);
       this.database.ref('/users/' + this.otherUID + '/public/followerCount').transaction(currentFollowerCount => currentFollowerCount - 1);
       this.database.ref('/users/' + this.uID + '/public/followingCount').transaction(currentFollowingCount => currentFollowingCount - 1);
+    } else {
+      this.database.ref('/followings/' + this.uID + '/' + this.otherUID).set(true);
+      this.database.ref('/followers/' + this.otherUID + '/' + this.uID).set(true);
+      this.database.ref('/users/' + this.otherUID + '/public/followerCount').transaction(currentFollowerCount => currentFollowerCount + 1);
+      this.database.ref('/users/' + this.uID + '/public/followingCount').transaction(currentFollowingCount => currentFollowingCount + 1);
       if (!this.hasSentFollowerUpdate) {
         const updateObj = {
           type: "follow",
@@ -89,11 +94,6 @@ class ProfileEntry extends Component {
         this.FitlyFirebase.database().ref('/followerNotifications/' + this.otherUID).push(updateObj);
         this.hasSentFollowerUpdate = true;
       }
-    } else {
-      this.database.ref('/followings/' + this.uID + '/' + this.otherUID).set(true);
-      this.database.ref('/followers/' + this.otherUID + '/' + this.uID).set(true);
-      this.database.ref('/users/' + this.otherUID + '/public/followerCount').transaction(currentFollowerCount => currentFollowerCount + 1);
-      this.database.ref('/users/' + this.uID + '/public/followingCount').transaction(currentFollowingCount => currentFollowingCount + 1);
     }
   };
 

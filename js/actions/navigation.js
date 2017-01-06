@@ -10,7 +10,16 @@ export const MOVE_BACK = 'MOVE_BACK';
 export const MOVE_FORWARD = 'MOVE_FORWARD';
 export const CLEAR_LOCAL_NAV_STATE = 'CLEAR_LOCAL_NAV_STATE';
 
-export const push = (route: object) => {
+export const push = (route: object, option = {general: false}) => {
+  //navigator forbid key duplications for push, thus we need to create unique keys unless specified
+  if (option.general) {
+    let routeCopy = Object.assign({}, route);
+    routeCopy.key = routeCopy.key + Date.now();
+    return {
+      type: PUSH_ROUTE,
+      route: routeCopy
+    }
+  }
   return {
     type: PUSH_ROUTE,
     route: route

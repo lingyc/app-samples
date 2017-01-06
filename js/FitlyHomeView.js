@@ -60,7 +60,11 @@ class FitlyHomeView extends Component {
     if (!this.props.isLoggedIn) {
       return (<View></View>);
     }
-    let Component = LOCAL_ROUTES[sceneProps.scene.route.key];
+
+    //sceneProps.scene.route.key aka the route key needs to be unique, so for scenes that are reused we add an additional content key to the normal route key
+    //the convention is [route key]@[content key], which is why we are spliting by '@' symbol
+    let componentKey = sceneProps.scene.route.key.split('@')[0];
+    let Component = LOCAL_ROUTES[componentKey];
     let passProps = sceneProps.scene.route.passProps || {};
     return (<Component {...passProps} sceneProps={sceneProps}/>);
   }

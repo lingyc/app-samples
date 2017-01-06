@@ -37,11 +37,12 @@ class HeaderLocal extends Component {
         </View>
       )
     } else {
+      let componentKey = sceneProps.scene.route.key.split('@')[0];
       return (
         //header for the profile home view
         <View style={headerStyle.container}>
           <Text style={headerStyle.titleText}>
-            {sceneProps.scene.route.key}
+            {componentKey}
           </Text>
         </View>
       )

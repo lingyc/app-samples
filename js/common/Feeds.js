@@ -18,20 +18,24 @@ class Feeds extends Component {
   }
 
   _renderUpdateMsg(feed) {
+    let description;
     if (feed.type === 'post') {
-      return (<Text style={feedEntryStyle.description}>{`posted a new ${feed.description}`}</Text>);
+      description = `posted a new ${feed.description}`;
     } else if (feed.type === 'follow') {
-      return (
-        <Text style={feedEntryStyle.description}>{'just followed'}</Text>
-      );
+      description = 'followed';
+    } else if (feed.type === 'shared') {
+      if (feed.contentType === 'post') {
+        description = 'shared a post';
+      }
     }
     //TODO: more types of updates to add
+    return <Text style={feedEntryStyle.description}>{description}</Text>
   };
 
-  _renderPhotos(feed) {
+  _renderPhotos(photos) {
     return (
       <View style={feedEntryStyle.imgContainer}>
-        {feed.photos.map((photo, index) => {
+        {photos.map((photo, index) => {
           return (
             <TouchableOpacity style={feedEntryStyle.imagesTouchable}  key={'feedPhotos' + index} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
               <Image style={feedEntryStyle.images} source={{uri: photo.link}} style={feedEntryStyle.images} defaultSource={require('../../img/default-photo-image.png')}/>
@@ -42,29 +46,43 @@ class Feeds extends Component {
     );
   };
 
+_renderPostFeedEntry(feed) {
+  return (
+    <View style={{flex: 0}}>
+      <TouchableOpacity onPress={() => this.props.navigation.push({key: 'PostView@' + feed.contentID, passProps:{postID: feed.contentID}}, {general: true})}>
+        {(feed.contentTitle) ? <Text style={{marginBottom: 5}}>{feed.contentTitle}</Text> : null}
+        {(feed.contentSnipet) ? <Text style={{marginBottom: 5}}>{feed.contentSnipet + '...'}</Text> : null}
+      </TouchableOpacity>
+      {this._renderPhotos(feed.photos)}
+    </View>
+  );
+};
+
  _renderFeedEntryContent(feed) {
    if (feed.type === 'post') {
-     return (
-       <View style={{flex: 0}}>
-         {(feed.contentTitle) ? <TouchableOpacity onPress={() => this.props.navigation.push({key: 'PostView', passProps:{postID: feed.contentID}})}><Text style={{marginBottom: 5}}>{feed.contentTitle}</Text></TouchableOpacity> : null}
-         {(feed.contentSnipet) ? <TouchableOpacity onPress={() => this.props.navigation.push({key: 'PostView', passProps:{postID: feed.contentID}})}><Text style={{marginBottom: 5}}>{feed.contentSnipet + '...'}</Text></TouchableOpacity> : null}
-         {this._renderPhotos(feed)}
-       </View>
-     );
+     return this._renderPostFeedEntry(feed);
    } else if (feed.type === 'follow') {
      return (
        <TouchableOpacity style={[feedEntryStyle.profileRow, {flexDirection: 'row', justifyContent: 'flex-end'}]}
          onPress={() => this.props.navigation.push({
-           key: "ProfileEntry",
+           key: "ProfileEntry@" + feed.followingID,
            passProps: {
              otherUID: feed.followingID,
            }
-       })}>
+       }, {general: true})}>
          <Text style={[feedEntryStyle.username, {marginRight: 10}]}>{feed.followingName}</Text>
          <Image source={(feed.followingPicture) ? {uri:feed.followingPicture} : require('../../img/default-user-image.png')}
          style={[feedEntryStyle.profileImg, {borderRadius: 25, width: 50, height: 50,}]} defaultSource={require('../../img/default-user-image.png')}/>
        </TouchableOpacity>
      )
+   } else if (feed.type === 'shared') {
+     if (feed.contentType === 'post') {
+       return (
+         <View style={{flex: 0, marginLeft: 30}}>
+           {this._renderPostFeedEntry(feed)}
+         </View>
+       );
+     }
    }
  }
 
@@ -76,11 +94,11 @@ class Feeds extends Component {
             return (
               <View style={feedEntryStyle.container} key={"feed" + index}>
                 <TouchableOpacity onPress={() => this.props.navigation.push({
-                  key: "ProfileEntry",
+                  key: "ProfileEntry@" + feed.ownerID,
                   passProps: {
                     otherUID: feed.ownerID,
                   }
-                })} style={feedEntryStyle.profileRow}>
+                }, {general: true})} style={feedEntryStyle.profileRow}>
                   <Image source={(feed.ownerPicture) ? {uri:feed.ownerPicture} : require('../../img/default-user-image.png')}
                   style={feedEntryStyle.profileImg} defaultSource={require('../../img/default-user-image.png')}/>
                   <View>

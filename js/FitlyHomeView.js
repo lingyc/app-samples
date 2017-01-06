@@ -25,6 +25,7 @@ class FitlyHomeView extends Component {
   }
 
   componentWillUnMount() {
+    console.log('unmounting homeview');
     this._turnOffFeedDistService();
   }
 

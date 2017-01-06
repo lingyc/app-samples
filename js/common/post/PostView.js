@@ -14,7 +14,6 @@ import Firebase from 'firebase';
 class PostView extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       message: '',
       post: null,
@@ -40,14 +39,14 @@ class PostView extends Component {
     //turn on listener for the replies
   }
 
-  componentWillUnMount() {
+  componentWillUnmount() {
     console.log('unmounting postView');
     this._turnOffPostListener();
     this._turnOffLikeListener();
     this.database.ref('userShared/' + this.uID + '/' + this.props.postID).off('value');
     this.database.ref('userCollections/' + this.uID + '/' + this.props.postID).off('value');
     //turn off listener for the replies
-  }
+  };
 
   _turnOnPostListener() {
     const handlePostUpdates = (postSnap) => {

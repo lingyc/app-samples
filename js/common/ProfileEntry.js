@@ -41,6 +41,7 @@ class ProfileEntry extends Component {
   };
 
   componentWillUnmount() {
+    console.log('profileView unmounting');
     this._turnOffProfileWatcher();
     turnOffeedService(this.otherUID, {self: false});
   };

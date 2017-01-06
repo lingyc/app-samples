@@ -35,15 +35,17 @@ class PostView extends Component {
   componentDidMount() {
     this._turnOnPostListener();
     this._turnOnLikeListener();
+    this.database.ref('userShared/' + this.uID + '/' + this.props.postID).on('value', (snap) => this.setState({shared: snap.val()}));
+    this.database.ref('userCollections/' + this.uID + '/' + this.props.postID).on('value', (snap) => this.setState({saved: snap.val()}));
     //turn on listener for the replies
-    this.database.ref('userShared/' + this.uID + '/' + this.props.postID).once('value', (snap) => this.setState({shared: snap.val()}));
-    this.database.ref('userCollections/' + this.uID + '/' + this.props.postID).once('value', (snap) => this.setState({saved: snap.val()}));
   }
 
   componentWillUnMount() {
     console.log('unmounting postView');
     this._turnOffPostListener();
     this._turnOffLikeListener();
+    this.database.ref('userShared/' + this.uID + '/' + this.props.postID).off('value');
+    this.database.ref('userCollections/' + this.uID + '/' + this.props.postID).off('value');
     //turn off listener for the replies
   }
 
@@ -105,17 +107,56 @@ class PostView extends Component {
           this.database.ref('userLikes/' + this.uID + '/' + this.props.postID).set(null);
         }
       } catch(error) {
-        console.log('toggleLike error ', error)
+        console.log('toggleLike error ', error);
       }
     })();
   };
 
   _sharePost() {
-
+    // TODO: deeplinking
+    //sent out a deeplink for the particular post to all contacts??
+    //for now we will send out the feed to the follower
+    (async () => {
+        try {
+          if (!this.state.shared) {
+            const updateObj = {
+              type: "shared",
+              contentType: 'post',
+              contentID: this.props.postID,
+              ownerID: this.uID,
+              ownerName: this.user.public.first_name + ' ' + this.user.public.last_name,
+              ownerPicture: this.user.public.picture,
+              postCategory: this.state.post.category,
+              contentTitle: this.state.post.title,
+              photos: this.state.post.photos,
+              timestamp: Firebase.database.ServerValue.TIMESTAMP
+            };
+            this.database.ref('userShared/' + this.uID + '/' + this.props.postID).set(true);
+            saveUpdateToDB(updateObj, this.uID);
+          } else {
+            console.log('you have already shared the post');
+          }
+      } catch(error) {
+        conosle.log('share post', error);
+      }
+    })();
   };
 
   _savePost() {
-
+    (async () => {
+      try {
+        if (!this.state.saved) {
+          const newCollection = {
+            contentType: 'post',
+            contentID: this.props.postID,
+            timestamp: Firebase.database.ServerValue.TIMESTAMP
+          };
+          this.database.ref('/userCollections/' + this.uID + '/' + this.props.postID).set(newCollection);
+        }
+      } catch(error) {
+        conosle.log('save post', error);
+      }
+    })();
   };
 
   _renderInputBar() {
@@ -148,8 +189,24 @@ class PostView extends Component {
           : <Icon name="ios-heart-outline" size={50} color="black"/>
         }
       </TouchableOpacity>
-      {/* TODO: render share button: sharing will propagate the post to feeds of followers */}
-      {/* render save button: this will save a post reference to the userCollections table */}
+      {(this.state.shared)
+        ? <View>
+            <Icon name="ios-share" size={50} color="black"/>
+            <Text>shared</Text>
+          </View>
+        : <TouchableOpacity onPress={() => this._sharePost()} style={feedEntryStyle.profileRow}>
+          <Icon name="ios-share-outline" size={50} color="black"/>
+        </TouchableOpacity>
+      }
+      {(this.state.saved)
+        ? <View>
+            <Icon name="ios-bookmark" size={50} color="black"/>
+            <Text>saved</Text>
+          </View>
+        : <TouchableOpacity onPress={() => this._savePost()} style={feedEntryStyle.profileRow}>
+            <Icon name="ios-bookmark-outline" size={50} color="black"/>
+          </TouchableOpacity>
+      }
     </View>
   }
 
@@ -188,6 +245,7 @@ class PostView extends Component {
           ? <ActivityIndicator animating={this.state.postLoading} style={{height: 80}} size="large"/>
           : this._renderPostBody()
         }
+        <View style={{height: 100}}></View>
       </ScrollView>
     }
   };

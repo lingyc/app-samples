@@ -166,7 +166,6 @@ class ComposePost extends Component {
         onRemoveImage={(index) => removeImg(index)}
         onCaptionChange={(text, index) => {
           let newPhotos = draftState.photos.slice();
-          console.log(newPhotos, index);
           newPhotos[index].description = text;
           this.setDraftState({photos: newPhotos});
         }}

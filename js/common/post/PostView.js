@@ -11,6 +11,7 @@ import { bindActionCreators } from 'redux';
 import {convertFBObjToArray, saveUpdateToDB, guid} from '../../library/firebaseHelpers.js'
 import TimeAgo from 'react-native-timeago';
 import Firebase from 'firebase';
+import ComposeReply from './ComposeReply.js'
 
 class PostView extends Component {
   constructor(props) {
@@ -166,26 +167,6 @@ class PostView extends Component {
     })();
   };
 
-  _goToComment() {
-    //create a localized draft state inside store
-    const draftRef = guid();
-    this.props.draftsAction.save(draftRef,{
-      content: '',
-      tags: [],
-      photos: [],
-      photoRefs: null,
-    });
-
-    this.props.navigation.push({
-      key: 'ComposeReply',
-      global: true,
-      passProps:{
-        draftRef: draftRef,
-        postID: this.props.postID
-      }
-    });
-  }
-
   _goToProfile(id) {
     if (id === this.uID) {
       this.props.navigation.push({key: "Profile@"}, {general: true});
@@ -203,24 +184,32 @@ class PostView extends Component {
   };
 
   _renderPostBody() {
+    const {post} = this.state;
+    return (
+      <View>
+        <TouchableOpacity onPress={() => this._goToProfile(post.author)} style={feedEntryStyle.profileRow}>
+          <Image source={(post.authorPicture) ? {uri:post.authorPicture} : require('../../../img/default-user-image.png')}
+          style={feedEntryStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}/>
+          <Text style={feedEntryStyle.username}>{post.authorName}</Text>
+        </TouchableOpacity>
+        <TimeAgo style={feedEntryStyle.timestamp} time={post.createdAt}/>
+        <View style={postStyle.postContent}>
+          <Text style={postStyle.title}>{post.title}</Text>
+          <Text style={postStyle.textContent}>{post.content}</Text>
+          {this._renderPhotos(post.photos)}
+          {this._renderTags(post.tags)}
+        </View>
+      </View>
+    )
+  };
+
+  _renderSocialBtns() {
     const iconSize = 20;
     const iconColor = 'grey';
     const {post} = this.state;
-    return <View style={postStyle.postContainer}>
-      <TouchableOpacity onPress={() => this._goToProfile(post.author)} style={feedEntryStyle.profileRow}>
-        <Image source={(post.authorPicture) ? {uri:post.authorPicture} : require('../../../img/default-user-image.png')}
-        style={feedEntryStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}/>
-        <Text style={feedEntryStyle.username}>{post.authorName}</Text>
-      </TouchableOpacity>
-      <TimeAgo style={feedEntryStyle.timestamp} time={post.createdAt}/>
-      <View style={postStyle.postContent}>
-        <Text style={postStyle.title}>{post.title}</Text>
-        <Text style={postStyle.textContent}>{post.content}</Text>
-        {this._renderPhotos(post.photos)}
-        {this._renderTags(post.tags)}
-      </View>
+    return (
       <View style={postStyle.socialBtns}>
-        <TouchableOpacity style={[postStyle.socialIcon, {width: 55, alignSelf: 'flex-start'}]} onPress={() => this._goToComment()}>
+        <TouchableOpacity style={[postStyle.socialIcon, {width: 55, alignSelf: 'flex-start'}]} onPress={() => this.setState({replyModalVisible: true})}>
           <Icon name="ios-undo" size={iconSize} color={iconColor}/>
           <Text onPress={() => this.setState({replyModalVisible: true})} style={postStyle.iconText}>comment</Text>
         </TouchableOpacity>
@@ -250,6 +239,13 @@ class PostView extends Component {
           </TouchableOpacity>
         }
       </View>
+    )
+  }
+
+  _renderPost() {
+    return <View style={postStyle.postContainer}>
+      {this._renderPostBody()}
+      {this._renderSocialBtns()}
     </View>
   }
 
@@ -284,13 +280,15 @@ class PostView extends Component {
   _renderReplyModal() {
     return (
       <Modal
-        animationType={"slide"}
+        animationType={"fade"}
         transparent={false}
         visible={this.state.replyModalVisible}
-        onRequestClose={() => this.setState({modalVisible: false})}>
-        <View style={{flex:1}}>
-
-        </View>
+        onRequestClose={() => this.setState({replyModalVisible: false})}>
+        <ComposeReply
+          postID={this.props.postID}
+          renderPost={this._renderPostBody.bind(this)}
+          closeModal={() => this.setState({replyModalVisible: false})}
+        />
       </Modal>
     )
   }
@@ -302,7 +300,7 @@ class PostView extends Component {
       return <ScrollView keyboardDismissMode="on-drag" style={{backgroundColor: 'white'}} contentContainerStyle={postStyle.scrollContentContainer}>
         {(this.state.postLoading)
           ? <ActivityIndicator animating={this.state.postLoading} style={{height: 80}} size="large"/>
-          : this._renderPostBody()
+          : this._renderPost()
         }
         {this._renderReplyModal()}
         <View style={{height: 100}}></View>

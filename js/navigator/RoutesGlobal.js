@@ -6,7 +6,7 @@ import FitlyHomeView from '../FitlyHomeView.js';
 import SettingsMenu from '../settings/SettingsMenu.js';
 import MakePost from '../common/post/MakePost.js';
 import ComposePost from '../common/post/ComposePost.js';
-import ComposeReply from '../common/ComposeReply.js';
+import ComposeReply from '../common/post/ComposeReply.js';
 
 const ROUTES = {
   WelcomeView: WelcomeView,

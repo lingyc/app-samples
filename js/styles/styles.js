@@ -300,7 +300,7 @@ export const composeStyle = StyleSheet.create({
     ...centeringContainer,
   },
   scrollContentContainer: {
-    ...scrollContentContainer
+    ...scrollContentContainer,
   },
   input: {
     fontSize: 20,
@@ -510,7 +510,6 @@ export const feedEntryStyle = StyleSheet.create({
   profileRow: {
     flex: 0,
     left: 0,
-    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
@@ -568,6 +567,9 @@ export const postStyle = StyleSheet.create({
   },
   postContainer: {
     alignSelf: "stretch",
+    borderBottomWidth: .5,
+    borderColor: '#eee',
+    paddingBottom: 15,
   },
   postContent: {
     marginLeft: 30,
@@ -628,5 +630,36 @@ export const postStyle = StyleSheet.create({
   },
   comment: {
 
+  },
+  inputBar: {
+    flex: 0,
+    backgroundColor: '#eee',
+    borderWidth: .5,
+    borderColor: '#ddd',
+    ...absoluteFullWidth,
+    bottom: 0,
+    justifyContent: 'center'
+  },
+  replyInput: {
+    paddingLeft: 10,
+    paddingTop: 2,
+    marginTop: 7,
+    marginBottom: 7,
+    alignSelf: 'stretch',
+    fontWeight: '100',
+    textAlign: 'left',
+    color: 'black',
+    marginLeft: 20,
+    marginRight: 60,
+    borderWidth: .5,
+    borderColor: '#ddd',
+    borderRadius: 4,
+    fontSize: 16,
+    backgroundColor: 'white'
+  },
+  cameraBtn: {
+    position: 'absolute',
+    right: 16,
+    top: 6
   }
 })

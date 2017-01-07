@@ -5,9 +5,11 @@ import Geocoder from 'react-native-geocoder';
 export const getCurrentPosition = () => {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
-      (location) => resolve(location),
+      (location) => {
+        resolve(location)
+      },
       (error) => reject(error.message),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+      {enableHighAccuracy: true, timeout: 2000, maximumAge: 1000}
     );
   })
 };

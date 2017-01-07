@@ -33,7 +33,7 @@ class FBloginBtn extends Component {
         const userFBprofile = await fetchFBProfile(data.credentials.token);
         const credential = Firebase.auth.FacebookAuthProvider.credential(data.credentials.token);
         const user = await FitlyFirebase.auth().signInWithCredential(credential);
-        await updateCurrentLocationInDB(user.uid);
+        // await updateCurrentLocationInDB(user.uid);
         const userRef = FitlyFirebase.database().ref('users/' + user.uid + '/');
         action.setFirebaseUID(user.uid);
         //update user's Facebook friends everytime they login with Facebook

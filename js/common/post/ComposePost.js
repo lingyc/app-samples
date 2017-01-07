@@ -1,16 +1,17 @@
 import React, {Component} from 'react';
 import { composeStyle, headerStyle } from '../../styles/styles.js';
-import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
+import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
-import Icon from 'react-native-vector-icons/Ionicons';
 import HeaderInView from '../../header/HeaderInView.js'
-import { push, pop, resetTo } from '../../actions/navigation.js';
+import TagInput from 'react-native-tag-input';
+import ImageEditModal from './ImageEditModal.js';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { pop, resetTo } from '../../actions/navigation.js';
 import { save, clear } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import ImagePicker from 'react-native-image-crop-picker';
-import TagInput from 'react-native-tag-input';
 import {savePhotoToDB, saveUpdateToDB} from '../../library/firebaseHelpers.js'
+import {getImageFromCam, getImageFromLib} from '../../library/pictureHelper.js'
 import Firebase from 'firebase';
 
 //TODO: input validation??
@@ -69,6 +70,18 @@ class ComposePost extends Component {
 
         this.FitlyFirebase.database().ref('/posts/' + postKey).set(postObj)
         .then(post => {
+          this.setState({loading: false});
+
+          this.props.navigation.resetTo({
+            key: "FitlyHomeView", global: true
+          });
+
+          this.props.navigation.resetTo({
+            key: 'PostView@' + postKey,
+            passProps:{
+              postID: postKey
+            }
+          });
           this.FitlyFirebase.database().ref('/userPosts/' + this.uID).push({postKey: true});
           const updateObj = {
             type: "post",
@@ -86,8 +99,7 @@ class ComposePost extends Component {
           saveUpdateToDB(updateObj, this.uID);
         });
 
-        this.setState({loading: false});
-        //TODO: reset route to the newly created post
+
       } catch(error) {
         this.setState({loading: false});
         console.log('create post error', error);
@@ -97,29 +109,19 @@ class ComposePost extends Component {
 
   _getImageFromCam() {
     let draftState = this.props.drafts[this.props.draftRef];
-    ImagePicker.openCamera({
-      compressImageQuality: .6
-    }).then(image => {
+    getImageFromCam(image => {
       let newPhotos = draftState.photos;
       newPhotos.push(image);
       this.setDraftState({photos: newPhotos});
-    }).catch(error => {
-      console.log('image picker', error);
     });
   };
 
   _getImageFromLib() {
     let draftState = this.props.drafts[this.props.draftRef];
-    ImagePicker.openPicker({
-      cropping: true,
-      multiple: true,
-      compressImageQuality: .6
-    }).then(images => {
+    getImageFromLib(images => {
       let newPhotos = draftState.photos.concat(images);
       this.setDraftState({photos: newPhotos});
-    }).catch(error => {
-      console.log('image picker', error);
-    });
+    })
   };
 
   _renderHeader() {
@@ -146,74 +148,34 @@ class ComposePost extends Component {
     });
   };
 
-  _removeImg(index) {
-    let draftState = this.props.drafts[this.props.draftRef];
-    let newPhotos = draftState.photos.slice();
-    newPhotos.splice(index, 1);
-    this.setDraftState({photos: newPhotos});
-  };
-
-  _renderFullSizeImgs(draftState) {
-    return draftState.photos.map((photo, index) => {
-      return (
-        <View key={index} style={composeStyle.imgLarge}>
-          <TouchableOpacity style={composeStyle.closeBtn} onPress={() => this._removeImg(index)}>
-            <Icon name="ios-close-outline" size={50} color='rgba(255,255,255,.7)'/>
-          </TouchableOpacity>
-          <Image style={{width: null, height: 400}} source={{uri: photo.path, isStatic:true}}/>
-          <AutoExpandingTextInput
-            clearButtonMode="always"
-            onChangeText={(text) => {
-              let newPhotos = draftState.photos.slice();
-              newPhotos[index].description = text;
-              this.setDraftState({photos: newPhotos});
-            }}
-            style={[composeStyle.input, {fontSize: 16}]}
-            multiline={true}
-            value={(photo.description) ? photo.description : ''}
-            placeholder="caption"
-            placeholderTextColor="grey"
-          />
-          <View style={[composeStyle.hashTagInput, {borderWidth: 0}]}>
-            <Text style={composeStyle.hashTag}>#</Text>
-            <TagInput
-              value={(photo.tags) ? photo.tags : []}
-              onChange={(tags) => {
-                let newPhotos = draftState.photos.slice();
-                newPhotos[index].tags = tags;
-                this.setDraftState({photos: newPhotos})
-              }}
-              regex={hashTagRegex}
-            />
-          </View>
-        </View>
-      );
-    });
-  };
-
   _renderImgModal(draftState) {
-    return (
-      <Modal
-        animationType={"slide"}
-        transparent={false}
-        visible={this.state.modalVisible}
-        onRequestClose={() => this.setState({modalVisible: false})}>
-        <KeyboardAvoidingView behavior="position" style={{flex: 0}}>
-          <Text style={{marginTop: 30, marginRight:20, marginBottom:15, fontSize: 20, alignSelf:'flex-end', color:'#1D2F7B'}} onPress={() => this.setState({modalVisible: false, contentType:'light-content'})}>back</Text>
-          <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={{flex: 0}}>
-            {this._renderFullSizeImgs(draftState)}
+    const removeImg = (index) => {
+      let newPhotos = draftState.photos.slice();
+      newPhotos.splice(index, 1);
+      this.setDraftState({photos: newPhotos});
+    };
 
-            <View style={[composeStyle.photosSection, {paddingTop: 15, paddingBottom: 15}]}>
-              <TouchableOpacity style={composeStyle.photoThumbnail} onPress={() => this._getImageFromLib()}>
-                <Icon name="ios-image-outline" size={30} color="#bbb"/>
-              </TouchableOpacity>
-              <TouchableOpacity style={composeStyle.photoThumbnail} onPress={() => this._getImageFromCam()}>
-                <Icon name="ios-camera-outline" size={30} color="#bbb"/>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </Modal>
+    return (
+      <ImageEditModal
+        draftState={draftState}
+        visible={this.state.modalVisible}
+        onBack={() => this.setState({modalVisible: false, contentType:'light-content'})}
+        onRequestClose={() => this.setState({modalVisible: false})}
+        getImageFromLib={() => this._getImageFromLib()}
+        getImageFromCam={() => this._getImageFromCam()}
+        onRemoveImage={(index) => removeImg(index)}
+        onCaptionChange={(text, index) => {
+          let newPhotos = draftState.photos.slice();
+          console.log(newPhotos, index);
+          newPhotos[index].description = text;
+          this.setDraftState({photos: newPhotos});
+        }}
+        onTagChange={(tags, index) => {
+          let newPhotos = draftState.photos.slice();
+          newPhotos[index].tags = tags;
+          this.setDraftState({photos: newPhotos})
+        }}
+      />
     );
   };
 
@@ -299,7 +261,7 @@ const mapStateToProps = function(state) {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    navigation: bindActionCreators({ push, pop, resetTo }, dispatch),
+    navigation: bindActionCreators({ pop, resetTo }, dispatch),
     draftsAction: bindActionCreators({ save, clear }, dispatch)
   };
 };

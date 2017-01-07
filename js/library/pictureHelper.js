@@ -1,4 +1,5 @@
 import ImagePicker from 'react-native-image-picker';
+import ImageCropPicker from 'react-native-image-crop-picker';
 
 export const selectPicture = () => {
   let options = {
@@ -17,4 +18,26 @@ export const selectPicture = () => {
       resolve(response);
     });
   })
+};
+
+export const getImageFromCam = (callback) => {
+  ImageCropPicker.openCamera({
+    compressImageQuality: .6
+  }).then(images => {
+    callback(images);
+  }).catch(error => {
+    console.log('image picker', error);
+  });
+};
+
+export const getImageFromLib = (callback) => {
+  ImageCropPicker.openPicker({
+    cropping: true,
+    multiple: true,
+    compressImageQuality: .6
+  }).then(images => {
+    callback(images);
+  }).catch(error => {
+    console.log('image picker', error);
+  });
 };

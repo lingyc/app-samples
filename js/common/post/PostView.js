@@ -60,7 +60,7 @@ class PostView extends Component {
     const handlePostUpdates = (postSnap) => {
       let postObj = postSnap.val();
       postObj.photos = convertFBObjToArray(postSnap.child('photos'));
-      postObj.tags = Object.keys(postObj.tags);
+      postObj.tags = Object.keys(postObj.tags || {});
       this.setState({
         post: postObj,
         postLoading: false,
@@ -186,22 +186,28 @@ class PostView extends Component {
     });
   }
 
-  _renderInputBar() {
-    //this will render the input box that always sticks to the bottom
+  _goToProfile(id) {
+    if (id === this.uID) {
+      this.props.navigation.push({key: "Profile@"}, {general: true});
+    } else {
+      this.props.navigation.push({
+        key: "ProfileEntry@" + id,
+        passProps: {
+          otherUID: id,
+        }
+      },
+      {
+        general: true
+      })
+    }
   };
 
   _renderPostBody() {
-    //like, share, save
     const iconSize = 20;
     const iconColor = 'grey';
     const {post} = this.state;
     return <View style={postStyle.postContainer}>
-      <TouchableOpacity onPress={() => this.props.navigation.push({
-        key: "ProfileEntry@" + post.author,
-        passProps: {
-          otherUID: post.author,
-        }
-      }, {general: true})} style={feedEntryStyle.profileRow}>
+      <TouchableOpacity onPress={() => this._goToProfile(post.author)} style={feedEntryStyle.profileRow}>
         <Image source={(post.authorPicture) ? {uri:post.authorPicture} : require('../../../img/default-user-image.png')}
         style={feedEntryStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}/>
         <Text style={feedEntryStyle.username}>{post.authorName}</Text>

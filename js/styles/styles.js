@@ -509,6 +509,8 @@ export const feedEntryStyle = StyleSheet.create({
   },
   profileRow: {
     flex: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
@@ -563,6 +565,9 @@ export const postStyle = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     marginBottom: 20,
+  },
+  postContainer: {
+    alignSelf: "stretch",
   },
   postContent: {
     marginLeft: 30,

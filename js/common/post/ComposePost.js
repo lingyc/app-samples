@@ -6,7 +6,7 @@ import HeaderInView from '../../header/HeaderInView.js'
 import TagInput from 'react-native-tag-input';
 import ImageEditModal from './ImageEditModal.js';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { pop, resetTo } from '../../actions/navigation.js';
+import { pop, push, resetTo } from '../../actions/navigation.js';
 import { save, clear } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -76,7 +76,7 @@ class ComposePost extends Component {
             key: "FitlyHomeView", global: true
           });
 
-          this.props.navigation.resetTo({
+          this.props.navigation.push({
             key: 'PostView@' + postKey,
             passProps:{
               postID: postKey
@@ -261,7 +261,7 @@ const mapStateToProps = function(state) {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    navigation: bindActionCreators({ pop, resetTo }, dispatch),
+    navigation: bindActionCreators({ pop, push, resetTo }, dispatch),
     draftsAction: bindActionCreators({ save, clear }, dispatch)
   };
 };

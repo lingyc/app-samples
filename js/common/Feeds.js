@@ -86,6 +86,22 @@ _renderPostFeedEntry(feed) {
    }
  }
 
+ _goToProfile(id) {
+   if (id === this.props.uID) {
+     this.props.navigation.push({key: "Profile@"}, {general: true});
+   } else {
+     this.props.navigation.push({
+       key: "ProfileEntry@" + id,
+       passProps: {
+         otherUID: id,
+       }
+     },
+     {
+       general: true
+     })
+   }
+ };
+
   render() {
     if (this.props.feeds.length > 0) {
       return (
@@ -93,12 +109,7 @@ _renderPostFeedEntry(feed) {
           {this.props.feeds.map((feed, index) => {
             return (
               <View style={feedEntryStyle.container} key={"feed" + index}>
-                <TouchableOpacity onPress={() => this.props.navigation.push({
-                  key: "ProfileEntry@" + feed.ownerID,
-                  passProps: {
-                    otherUID: feed.ownerID,
-                  }
-                }, {general: true})} style={feedEntryStyle.profileRow}>
+                <TouchableOpacity onPress={() => this._goToProfile(feed.ownerID)} style={feedEntryStyle.profileRow}>
                   <Image source={(feed.ownerPicture) ? {uri:feed.ownerPicture} : require('../../img/default-user-image.png')}
                   style={feedEntryStyle.profileImg} defaultSource={require('../../img/default-user-image.png')}/>
                   <View>

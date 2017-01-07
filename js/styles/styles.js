@@ -601,9 +601,12 @@ export const postStyle = StyleSheet.create({
   },
   iconText: {
     color: "grey",
-    fontSize: 10,
+    fontSize: 9,
+    textAlign: "center"
   },
   socialIcon: {
+    width: 40,
+    marginTop: 15,
     paddingRight: 10,
     alignItems: 'center'
   },
@@ -617,5 +620,8 @@ export const postStyle = StyleSheet.create({
     fontSize: 13,
     color: "grey",
     paddingRight: 10
+  },
+  comment: {
+
   }
 })

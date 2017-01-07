@@ -15,7 +15,7 @@ class MakePost extends Component {
     this.state = {
       loading: false,
     }
-  }
+  };
 
   componentDidMount() {
     if (!this.props.draftRef) {
@@ -36,11 +36,11 @@ class MakePost extends Component {
         draftRef: this.props.draftRef
       })
     }
-  }
+  };
 
-  componentWillUnMount() {
+  componentWillUnmount() {
     this.props.draftsAction.clear(this.state.draftRef);
-  }
+  };
 
   _renderCategories(categories) {
     return categories.map((category, index) => {
@@ -57,7 +57,7 @@ class MakePost extends Component {
         </TouchableHighlight>
       );
     });
-  }
+  };
 
   _onPressRight() {
     this.props.navigation.push({
@@ -67,7 +67,7 @@ class MakePost extends Component {
         draftRef: this.state.draftRef
       }
     });
-  }
+  };
 
   _onPressLeft() {
     this.props.navigation.pop();
@@ -91,7 +91,7 @@ class MakePost extends Component {
   render() {
     if (!this.props.drafts[this.state.draftRef]) {
       return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: 'white'}}>
           <ActivityIndicator
             animating={true}
             style={{height: 80}}
@@ -102,7 +102,7 @@ class MakePost extends Component {
     } else {
       // console.log(this.props.drafts[this.state.draftRef]);
       return (
-        <View style={{flex: 1}}>
+        <View style={{flex: 1, backgroundColor: 'white'}}>
           {this._renderHeader()}
           <View style={composeStyle.container}>
             {this._renderCategories(['Workout Plan', 'Meal Plan', 'Photos', 'Others'])}

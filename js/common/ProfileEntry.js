@@ -19,6 +19,7 @@ class ProfileEntry extends Component {
       userProfile: null,
       feeds: []
     }
+    
     this.otherUID = this.props.otherUID;
     this.FitlyFirebase = this.props.FitlyFirebase;
     this.database = this.FitlyFirebase.database();
@@ -41,7 +42,6 @@ class ProfileEntry extends Component {
   };
 
   componentWillUnmount() {
-    console.log('profileView unmounting');
     this._turnOffProfileWatcher();
     turnOffeedService(this.otherUID, {self: false});
   };

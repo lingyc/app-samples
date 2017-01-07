@@ -31,7 +31,7 @@ class Profile extends Component {
     );
   }
 
-  componentWillUnMount() {
+  componentWillUnmount() {
     this._turnOffProfileWatcher();
     turnOffeedService(this.props.uID, {self: true});
   };

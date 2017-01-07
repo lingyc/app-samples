@@ -117,6 +117,17 @@ export default function (state: State = initialState, action): State {
           ...state,
           tabs
         };
+      } else {
+        const {tabs} = state;
+        const tabKey = tabs.routes[tabIndex].key;
+        const scenes = state[tabKey];
+        const nextScenes = initialState[tabKey];
+        if (scenes !== nextScenes) {
+          return {
+            ...state,
+            [tabKey]: nextScenes
+          };
+        }
       }
       break;
     }

@@ -5,9 +5,10 @@ import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, KeyboardAvo
 import { postStyle, feedEntryStyle } from '../../styles/styles.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { push, pop, resetTo } from '../../actions/navigation.js';
+import { save } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {convertFBObjToArray, saveUpdateToDB} from '../../library/firebaseHelpers.js'
+import {convertFBObjToArray, saveUpdateToDB, guid} from '../../library/firebaseHelpers.js'
 import TimeAgo from 'react-native-timeago';
 import Firebase from 'firebase';
 
@@ -23,28 +24,35 @@ class PostView extends Component {
       like: null,
       shared: null,
       saved: null,
+      replyModalVisible: false,
     };
     this.FitlyFirebase = this.props.FitlyFirebase;
     this.database = this.FitlyFirebase.database();
     this.uID = this.props.uID;
     this.user = this.props.user;
     this.hasSentLike = false;
+
+    this.postRef = this.database.ref('posts/' + this.props.postID);
+    this.shareRef = this.database.ref('userShared/' + this.uID + '/' + this.props.postID);
+    this.likeRef = this.database.ref('postLikes/' + this.props.postID + '/' + this.uID);
+    this.postLikesRef = this.database.ref('postLikes/' + this.props.postID + '/' + this.uID)
+    this.userCollectionsRef = this.database.ref('userCollections/' + this.uID + '/' + this.props.postID);
+    this.userLikesRef = this.database.ref('userLikes/' + this.uID + '/' + this.props.postID);
   };
 
   componentDidMount() {
     this._turnOnPostListener();
     this._turnOnLikeListener();
-    this.database.ref('userShared/' + this.uID + '/' + this.props.postID).on('value', (snap) => this.setState({shared: snap.val()}));
-    this.database.ref('userCollections/' + this.uID + '/' + this.props.postID).on('value', (snap) => this.setState({saved: snap.val()}));
+    this.shareRef.on('value', (snap) => this.setState({shared: snap.val()}));
+    this.userCollectionsRef.on('value', (snap) => this.setState({saved: snap.val()}));
     //turn on listener for the replies
   }
 
   componentWillUnmount() {
-    console.log('unmounting postView');
     this._turnOffPostListener();
     this._turnOffLikeListener();
-    this.database.ref('userShared/' + this.uID + '/' + this.props.postID).off('value');
-    this.database.ref('userCollections/' + this.uID + '/' + this.props.postID).off('value');
+    this.shareRef.off('value');
+    this.userCollectionsRef.off('value');
     //turn off listener for the replies
   };
 
@@ -58,22 +66,21 @@ class PostView extends Component {
         postLoading: false,
       })
     };
-    this.database.ref('posts/' + this.props.postID).on('value',handlePostUpdates);
+    this.postRef.on('value', handlePostUpdates);
   };
 
   _turnOffPostListener() {
-    this.database.ref('posts/' + this.props.postID).off('value');
+    this.postRef.off('value');
   };
 
   _turnOnLikeListener() {
-    this.database.ref('postLikes/' + this.props.postID + '/' + this.uID)
-    .on('value', (snap) => {
+    this.likeRef.on('value', (snap) => {
       this.setState({like: snap.val()});
     });
   };
 
   _turnOffLikeListener() {
-    this.database.ref('postsLikes/' + this.props.postID + '/' + this.uID).off('value');
+    this.likeRef.off('value');
   };
 
   _toggleLike() {
@@ -97,13 +104,13 @@ class PostView extends Component {
             this.hasSentLike = true;
           }
           //tables to update: userLikes, postLikes, userUpdatesAll(only once)
-          this.database.ref('/posts/' + this.props.postID + '/likeCount').transaction(currentLikeCount => currentLikeCount + 1);
-          this.database.ref('postLikes/' + this.props.postID + '/' + this.uID).set(true);
-          this.database.ref('userLikes/' + this.uID + '/' + this.props.postID).set(updateObj);
+          this.postRef.child('likeCount').transaction(currentLikeCount => currentLikeCount + 1);
+          this.postLikesRef.set(true);
+          this.userLikesRef.set(updateObj);
         } else {
-          this.database.ref('/posts/' + this.props.postID + '/likeCount').transaction(currentLikeCount => currentLikeCount - 1);
-          this.database.ref('postLikes/' + this.props.postID + '/' + this.uID).set(null);
-          this.database.ref('userLikes/' + this.uID + '/' + this.props.postID).set(null);
+          this.postRef.child('likeCount').transaction(currentLikeCount => currentLikeCount - 1);
+          this.postLikesRef.set(null);
+          this.userLikesRef.set(null);
         }
       } catch(error) {
         console.log('toggleLike error ', error);
@@ -131,7 +138,7 @@ class PostView extends Component {
               photos: this.state.post.photos,
               timestamp: Firebase.database.ServerValue.TIMESTAMP
             };
-            this.database.ref('userShared/' + this.uID + '/' + this.props.postID).set(true);
+            this.shareRef.set(true);
             saveUpdateToDB(updateObj, this.uID);
           } else {
             console.log('you have already shared the post');
@@ -151,13 +158,33 @@ class PostView extends Component {
             contentID: this.props.postID,
             timestamp: Firebase.database.ServerValue.TIMESTAMP
           };
-          this.database.ref('/userCollections/' + this.uID + '/' + this.props.postID).set(newCollection);
+          this.userCollectionsRef.set(newCollection);
         }
       } catch(error) {
         conosle.log('save post', error);
       }
     })();
   };
+
+  _goToComment() {
+    //create a localized draft state inside store
+    const draftRef = guid();
+    this.props.draftsAction.save(draftRef,{
+      content: '',
+      tags: [],
+      photos: [],
+      photoRefs: null,
+    });
+
+    this.props.navigation.push({
+      key: 'ComposeReply',
+      global: true,
+      passProps:{
+        draftRef: draftRef,
+        postID: this.props.postID
+      }
+    });
+  }
 
   _renderInputBar() {
     //this will render the input box that always sticks to the bottom
@@ -170,11 +197,11 @@ class PostView extends Component {
     const {post} = this.state;
     return <View style={postStyle.postContainer}>
       <TouchableOpacity onPress={() => this.props.navigation.push({
-        key: "ProfileEntry",
+        key: "ProfileEntry@" + post.author,
         passProps: {
           otherUID: post.author,
         }
-      })} style={feedEntryStyle.profileRow}>
+      }, {general: true})} style={feedEntryStyle.profileRow}>
         <Image source={(post.authorPicture) ? {uri:post.authorPicture} : require('../../../img/default-user-image.png')}
         style={feedEntryStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}/>
         <Text style={feedEntryStyle.username}>{post.authorName}</Text>
@@ -187,6 +214,10 @@ class PostView extends Component {
         {this._renderTags(post.tags)}
       </View>
       <View style={postStyle.socialBtns}>
+        <TouchableOpacity style={[postStyle.socialIcon, {width: 55, alignSelf: 'flex-start'}]} onPress={() => this._goToComment()}>
+          <Icon name="ios-undo" size={iconSize} color={iconColor}/>
+          <Text onPress={() => this.setState({replyModalVisible: true})} style={postStyle.iconText}>comment</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={postStyle.socialIcon} onPress={() => this._toggleLike()}>
           {(this.state.like)
             ? <Icon name="ios-heart" size={iconSize} color={iconColor}/>
@@ -244,6 +275,20 @@ class PostView extends Component {
 
   }
 
+  _renderReplyModal() {
+    return (
+      <Modal
+        animationType={"slide"}
+        transparent={false}
+        visible={this.state.replyModalVisible}
+        onRequestClose={() => this.setState({modalVisible: false})}>
+        <View style={{flex:1}}>
+
+        </View>
+      </Modal>
+    )
+  }
+
   render() {
     if (this.state.loading) {
       return <ActivityIndicator animating={this.state.loading} style={{height: 80}} size="large"/>
@@ -253,6 +298,7 @@ class PostView extends Component {
           ? <ActivityIndicator animating={this.state.postLoading} style={{height: 80}} size="large"/>
           : this._renderPostBody()
         }
+        {this._renderReplyModal()}
         <View style={{height: 100}}></View>
       </ScrollView>
     }
@@ -267,6 +313,7 @@ const mapStateToProps = function(state) {
   return {
     user: state.user.user,
     uID: state.auth.uID,
+    drafts: state.drafts.drafts,
     FitlyFirebase: state.app.FitlyFirebase
   };
 };
@@ -274,6 +321,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
   return {
     navigation: bindActionCreators({ push, pop, resetTo }, dispatch),
+    draftsAction: bindActionCreators({ save }, dispatch),
   };
 };
 

@@ -12,7 +12,7 @@ export const selectPicture = () => {
   };
   return new Promise((resolve, reject) => {
     ImagePicker.showImagePicker(options, (response) => {
-      if (response.error) {
+      if (response.error || response.didCancel) {
         reject(response.error);
       }
       resolve(response);

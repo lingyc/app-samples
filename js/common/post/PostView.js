@@ -286,6 +286,7 @@ class PostView extends Component {
         onRequestClose={() => this.setState({replyModalVisible: false})}>
         <ComposeReply
           postID={this.props.postID}
+          post={this.state.post}
           renderPost={this._renderPostBody.bind(this)}
           closeModal={() => this.setState({replyModalVisible: false})}
         />

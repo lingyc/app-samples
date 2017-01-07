@@ -11,7 +11,7 @@ import { save, clear } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {savePhotoToDB, saveUpdateToDB} from '../../library/firebaseHelpers.js'
-import {getImageFromCam, getImageFromLib} from '../../library/pictureHelper.js'
+import {selectPicture} from '../../library/pictureHelper.js'
 import Firebase from 'firebase';
 
 //TODO: input validation??
@@ -25,25 +25,19 @@ class ComposeReply extends Component {
       modalVisible: false,
       contentType: 'light-content',
       content: '',
-      photos: [],
+      photo: null,
       tags: [],
     };
 
-    this.state = {
-      loading: false,
-      modalVisible: false,
-      contentType: 'light-content',
-      content: '',
-      photos: [],
-      tags: [],
-    };
+    this.state = {...this.initialState};
+
     this.user = this.props.user;
     this.uID = this.props.uID;
     this.FitlyFirebase = this.props.FitlyFirebase;
     this.postRef = this.FitlyFirebase.database().ref('/posts/' + this.props.postID);
     this.msgRef = this.FitlyFirebase.database().ref('/messages/');
-    this.postReplyRef = this.FitlyFirebase.database().ref('/postReplies/');
-    this.notificationRef = this.FitlyFirebase.database().ref('/otherNotifications/');
+    this.postReplyRef = this.FitlyFirebase.database().ref('/postReplies/' + this.props.postID);
+    this.notificationRef = this.FitlyFirebase.database().ref('/otherNotifications/' + this.props.post.author);
   };
 
   //TODO: when hit summit does the view redirects to the post display view directly?
@@ -52,12 +46,12 @@ class ComposeReply extends Component {
     //tables to update: posts, userPosts, userUpdatesMajor, userUpdatesAll
     (async () => {
       try {
+        this.setState({loading: true});
         let draftState = this.state;
         let msgKey = this.msgRef.push().key;
+
         let msgObj = {
           author: this.uID,
-          authorName: this.user.public.first_name + this.user.public.last_name,
-          authorPicture: this.user.public.picture,
           content: draftState.content,
           replyCount: 0,
           likeCount: 0,
@@ -69,8 +63,22 @@ class ComposeReply extends Component {
         //increase replyCount, lastMsg, lastReplied of the post,
         //sent update to the post owner that someone reply to his post
 
+        if (this.state.photo) {
+          let photoRefs = await savePhotoToDB([photo], this.uID, msgKey);
+          // {photoKey, link} = photoRefs[0];
+          msgObj = {
+            author: this.uID,
+            replyCount: 0,
+            likeCount: 0,
+            createdAt: Firebase.database.ServerValue.TIMESTAMP,
+            photo: {
+              ...photoRefs[0]
+            }
+          };
+        }
+
         this.msgRef.child(msgKey).set(msgObj);
-        this.postReplyRef.child(msgKey).set(Firebase.database.ServerValue.TIMESTAMP);
+        this.postReplyRef.child(msgKey).set({timestamp: Firebase.database.ServerValue.TIMESTAMP});
         this.postRef.child('replyCount').transaction(count => count + 1);
         this.postRef.child('lastRepliedAt').set(Firebase.database.ServerValue.TIMESTAMP);
         this.postRef.child('lastMsg').set(this.state.content);
@@ -88,7 +96,7 @@ class ComposeReply extends Component {
         };
 
       this.notificationRef.push(updateObj);
-
+      this.setState({...this.initialState})
 
       } catch(error) {
         this.setState({loading: false});
@@ -96,6 +104,16 @@ class ComposeReply extends Component {
       }
     })();
   };
+
+  _sendPhotoMsg() {
+    selectPicture()
+    .then(photo => {
+      this.setState({photo: photo.uri});
+      this._sendMsg();
+    }).catch(error => {
+      console.log('error getting photo')
+    })
+  }
 
   _renderHeader() {
     let draftState = this.props.drafts[this.props.draftRef];
@@ -115,15 +133,22 @@ class ComposeReply extends Component {
           clearButtonMode="always"
           onChangeText={(text) => this.setState({content: text})}
           style={postStyle.replyInput}
-          multiline={true}
           value={this.state.content}
           placeholderTextColor="grey"
           autoFocus={true}
           returnKeyType='send'
+          onSubmitEditing={() => this._sendMsg()}
         />
-        <TouchableOpacity style={postStyle.cameraBtn}>
-          <Icon name="ios-camera-outline" size={35} color='#888'/>
-        </TouchableOpacity>
+          {(this.state.loading)
+            ? <ActivityIndicator
+              animating={this.state.loading}
+              // style={{position:'absolute', top: 0, right: 0, height: 80}}
+              size="small"
+            />
+            : <TouchableOpacity style={postStyle.cameraBtn} onPress={() => this._sendPhotoMsg()}>
+               <Icon name="ios-camera-outline" size={35} color='#888'/>
+            </TouchableOpacity>
+          }
       </KeyboardAvoidingView>
     );
   }

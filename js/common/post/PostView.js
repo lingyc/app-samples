@@ -11,7 +11,8 @@ import {convertFBObjToArray, saveUpdateToDB, turnOnCommentListener, turnOffComme
 import TimeAgo from 'react-native-timeago';
 import Firebase from 'firebase';
 import ComposeComment from './ComposeComment.js';
-import SocialBtns from '../SocialBtns.js'
+import SocialBtns from '../SocialBtns.js';
+import CommentsView from '../CommentsView.js';
 
 class PostView extends Component {
   constructor(props) {
@@ -24,7 +25,7 @@ class PostView extends Component {
       like: null,
       shared: null,
       saved: null,
-      replyModalVisible: false,
+      modalVisible: false,
     };
     this.FitlyFirebase = this.props.FitlyFirebase;
     this.database = this.FitlyFirebase.database();
@@ -120,47 +121,6 @@ class PostView extends Component {
     })();
   };
 
-  _toggleMsgLike(index, comment) {
-    const msgRef = this.FitlyFirebase.database().ref('messages' + commentID)
-    (async () => {
-      try {
-        let updatedMsg;
-        if (comment.likeMembers[this.uID]) {
-          await msgRef.child('likeMembers').child(this.uID).set(null);
-          await msgRef.child('likeCount').transaction(count => count - 1);
-        } else {
-          let photo = null;
-          if (comment.photo) {
-            photo = {
-              [comment.photo.key]: {
-                link: comment.photo.link
-              }
-            }
-          }
-          const updateObj = {
-            type: "like",
-            contentType: 'message',
-            contentID: comment.key,
-            ownerID: this.uID,
-            ownerName: this.user.public.first_name + ' ' + this.user.public.last_name,
-            ownerPicture: this.user.public.picture,
-            photos: photo,
-            timestamp: Firebase.database.ServerValue.TIMESTAMP
-          };
-          saveUpdateToDB(updateObj, this.uID, {minor: true});
-          await msgRef.child('likeMembers').child(this.uID).set(true);
-          await msgRef.child('likeCount').transaction(count => count + 1);
-
-        }
-        updatedMsg = (await msgRef.once('value')).val();
-        let commentsCopy = this.state.comments.slice();
-        commentsCopy[index] = updatedMsg;
-        this.setState({comments: commentsCopy});
-      } catch(error) {
-        console.log(error);
-      }
-    })();
-  }
 
   _sharePost() {
     // TODO: deeplinking
@@ -260,7 +220,7 @@ class PostView extends Component {
         toggleLike={this._toggleLike.bind(this)}
         onShare={this._sharePost.bind(this)}
         onSave={this._savePost.bind(this)}
-        onComment={() => this.setState({replyModalVisible: true})}
+        onComment={() => this.setState({modalVisible: true})}
       />
     )
   };
@@ -269,6 +229,20 @@ class PostView extends Component {
     return <View style={postStyle.postContainer}>
       {this._renderPostBody()}
       {this._renderSocialBtns()}
+      <CommentsView
+        root={true}
+        modalVisible={this.state.modalVisible}
+        renderParent={() => this._renderPostBody()}
+        closeModal={() => this.setState({modalVisible: false})}
+        contentType='post'
+        contentID={this.props.postID}
+        parentAuthor={this.state.post.author}
+        commentRef={this.postCommentRef}
+        FitlyFirebase={this.props.FitlyFirebase}
+        uID={this.props.uID}
+        user={this.props.user}
+        navigation={this.props.navigation}
+      />
     </View>
   };
 
@@ -296,60 +270,6 @@ class PostView extends Component {
     </View>
   };
 
-  _renderComments(comments) {
-    return comments.map((comment, index) => {
-      if (comment) {
-        return <View key={comment.key}>
-          {this._renderAuthor(comment)}
-          <TimeAgo style={feedEntryStyle.timestamp} time={comment.createdAt}/>
-          <View style={postStyle.postContent}>
-            {(comment.photo)
-              ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
-                  <Image style={feedEntryStyle.images} source={{uri: photo.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
-                </TouchableOpacity>
-              : <Text style={postStyle.content}>{comment.content}</Text>
-            }
-            <SocialBtns
-              content={comment}
-              likeState={comment.likeMembers[this.uID]}
-              sharedState={comment.sharedMembers[this.uID]}
-              saveState={comment.savedMembers[this.uID]}
-              toggleLike={() => this._toggleMsgLike(index, comment.key)}
-              onShare={() => this._sharePost(index, comment.key)}
-              onSave={() => this._savePost(index, comment.key)}
-              onComment={() => this.setState({replyModalVisible: true})}
-            />
-            {/* render reply modal for the message */}
-          </View>
-        </View>
-      } else {
-        return (
-          <View key={comment.key}>
-            <ActivityIndicator animating={true} style={{height: 80}} size="small"/>
-          </View>
-        )
-      }
-    })
-  };
-
-  _renderCommentModal() {
-    return (
-      <Modal
-        animationType={"fade"}
-        transparent={false}
-        visible={this.state.replyModalVisible}
-        onRequestClose={() => this.setState({replyModalVisible: false})}>
-        <ComposeComment
-          postID={this.props.postID}
-          post={this.state.post}
-          renderPost={this._renderPostBody.bind(this)}
-          renderComments={() => this._renderComments(this.state.comments)}
-          closeModal={() => this.setState({replyModalVisible: false})}
-        />
-      </Modal>
-    )
-  }
-
   render() {
     if (this.state.loading) {
       return <ActivityIndicator animating={this.state.loading} style={{height: 80}} size="large"/>
@@ -359,8 +279,6 @@ class PostView extends Component {
           ? <ActivityIndicator animating={this.state.postLoading} style={{height: 80}} size="large"/>
           : this._renderPost()
         }
-        {this._renderComments(this.state.comments)}
-        {this._renderCommentModal()}
         <View style={{height: 100}}></View>
       </ScrollView>
     }
@@ -375,7 +293,6 @@ const mapStateToProps = function(state) {
   return {
     user: state.user.user,
     uID: state.auth.uID,
-    drafts: state.drafts.drafts,
     FitlyFirebase: state.app.FitlyFirebase
   };
 };
@@ -383,7 +300,6 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
   return {
     navigation: bindActionCreators({ push, pop, resetTo }, dispatch),
-    draftsAction: bindActionCreators({ save }, dispatch),
   };
 };
 

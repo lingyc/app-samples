@@ -9,9 +9,9 @@ const SocialBtns = (props) => {
   const iconSize = 20;
   const iconColor = 'grey';
   return <View style={postStyle.socialBtns}>
-    <TouchableOpacity style={[postStyle.socialIcon, {width: 55, alignSelf: 'flex-start'}]} onPress={() => this.setState({replyModalVisible: true})}>
+    <TouchableOpacity style={[postStyle.socialIcon, {width: 55, alignSelf: 'flex-start'}]} onPress={() => onComment()}>
       <Icon name="ios-undo" size={iconSize} color={iconColor}/>
-      <Text onPress={() => onComment()} style={postStyle.iconText}>{content.replyCount}{"\n"}comment</Text>
+      <Text style={postStyle.iconText}>{content.replyCount}{"\n"}comment</Text>
     </TouchableOpacity>
     <TouchableOpacity style={postStyle.socialIcon} onPress={toggleLike}>
       {(likeState)

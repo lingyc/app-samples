@@ -17,7 +17,7 @@ import Firebase from 'firebase';
 //TODO: input validation??
 const hashTagRegex = (/^\w+$/g);
 
-class ComposeReply extends Component {
+class ComposeComment extends Component {
   constructor(props) {
     super(props);
     this.initialState = {
@@ -28,17 +28,37 @@ class ComposeReply extends Component {
       photo: null,
       tags: [],
     };
-
     this.state = {...this.initialState};
+    // this.props.contentID;
+    // this.props.contentType;
+    // this.props.contentAuthor;
+    // this.props.renderParent;
+    // this.props.renderComments;
+    // this.props.closeModal;
 
     this.user = this.props.user;
     this.uID = this.props.uID;
-    this.FitlyFirebase = this.props.FitlyFirebase;
-    this.postRef = this.FitlyFirebase.database().ref('/posts/' + this.props.postID);
-    this.msgRef = this.FitlyFirebase.database().ref('/messages/');
-    this.userMsgRef = this.FitlyFirebase.database().ref('/userMessages/' + this.uID);
-    this.postCommentRef = this.FitlyFirebase.database().ref('/postComments/' + this.props.postID);
-    this.notificationRef = this.FitlyFirebase.database().ref('/otherNotifications/' + this.props.post.author);
+    this.database = this.props.FitlyFirebase.database();
+    this.contentType = this.props.contentType;
+
+
+    if (this.contentType === 'post') {
+      this.parentRef = this.database.ref('/posts/' + this.props.contentID);
+      this.parentCommentRef = this.database.ref('/postComments/' + this.props.contentID);
+      this.contentLink = '/posts/' + this.props.contentID;
+    } else if (this.contentType === 'message') {
+      this.parentRef = this.database.ref('/messages/' + this.props.contentID);
+      this.parentCommentRef = this.parentRef.child('replies');
+      this.contentLink = '/messages/' + this.props.contentID;
+    } else if (this.contentType === 'photo') {
+      this.parentRef = this.database.ref('/photos/' + this.props.contentID);
+      this.parentCommentRef = this.parentRef.child('replies');
+      this.contentLink = '/photos/' + this.props.contentID;
+    }
+
+    this.msgRef = this.database.ref('/messages/');
+    this.userMsgRef = this.database.ref('/userMessages/' + this.uID);
+    this.notificationRef = this.database.ref('/otherNotifications/' + this.props.contentAuthor);
   };
 
   //TODO: when hit summit does the view redirects to the post display view directly?
@@ -58,7 +78,7 @@ class ComposeReply extends Component {
 
         let msgObj = {
           ...authorInfo,
-          contentlink: '/posts' + this.props.postID,
+          contentlink: this.contentLink,
           content: draftState.content,
           replyCount: 0,
           likeMembers: null,
@@ -78,15 +98,15 @@ class ComposeReply extends Component {
 
         this.msgRef.child(msgKey).set(msgObj);
         this.userMsgRef.child(msgKey).set({timestamp: Firebase.database.ServerValue.TIMESTAMP});
-        this.postCommentRef.child(msgKey).set({timestamp: Firebase.database.ServerValue.TIMESTAMP});
-        this.postRef.child('replyCount').transaction(count => count + 1);
-        this.postRef.child('lastRepliedAt').set(Firebase.database.ServerValue.TIMESTAMP);
-        this.postRef.child('lastMsg').set(this.state.content);
+        this.parentCommentRef.child(msgKey).set({timestamp: Firebase.database.ServerValue.TIMESTAMP});
+        this.parentRef.child('replyCount').transaction(count => count + 1);
+        this.parentRef.child('lastRepliedAt').set(Firebase.database.ServerValue.TIMESTAMP);
+        this.parentRef.child('lastMsg').set(this.state.content);
 
         const updateObj = {
           type: "reply",
-          sourceType: "post",
-          postID: this.props.postID,
+          sourceType: this.contentType,
+          postID: this.props.contentID,
           msgID: msgKey,
           ownerID: this.uID,
           ownerName: authorInfo.authorName,
@@ -116,7 +136,6 @@ class ComposeReply extends Component {
   }
 
   _renderHeader() {
-    let draftState = this.props.drafts[this.props.draftRef];
     return (
       <HeaderInView
         leftElement={{icon: "ios-arrow-round-back-outline"}}
@@ -161,7 +180,7 @@ class ComposeReply extends Component {
         {this._renderHeader()}
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={[postStyle.scrollContentContainer, {marginTop: 20}]}>
             <View style={postStyle.postContainer}>
-              {this.props.renderPost()}
+              {this.props.renderParent()}
               {this.props.renderComments()}
             </View>
           </ScrollView>
@@ -173,7 +192,6 @@ class ComposeReply extends Component {
 
 const mapStateToProps = function(state) {
   return {
-    drafts: state.drafts.drafts,
     user: state.user.user,
     uID: state.auth.uID,
     FitlyFirebase: state.app.FitlyFirebase
@@ -183,8 +201,7 @@ const mapStateToProps = function(state) {
 const mapDispatchToProps = function(dispatch) {
   return {
     navigation: bindActionCreators({ pop, push, resetTo }, dispatch),
-    draftsAction: bindActionCreators({ save, clear }, dispatch)
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ComposeReply);
+export default connect(mapStateToProps, mapDispatchToProps)(ComposeComment);

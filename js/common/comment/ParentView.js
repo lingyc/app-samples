@@ -32,7 +32,7 @@ export default class ParentView extends Component {
       this.contentRef = this.FitlyFirebase.database().ref('photos').child(contentID);
     }
 
-    this.contentRef.once('value').then(snap => this._setContent(snap.val()));
+    this.contentRef.once('value').then(snap => this.setState({content: snap.val()}));
   };
 
   _goToProfile(id) {

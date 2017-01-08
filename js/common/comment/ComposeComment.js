@@ -22,16 +22,12 @@ class ComposeComment extends Component {
     super(props);
     this.initialState = {
       loading: false,
-      modalVisible: false,
       contentType: 'light-content',
       content: '',
       photo: null,
       tags: [],
     };
     this.state = {...this.initialState};
-    // this.props.contentID;
-    // this.props.contentType;
-    // this.props.contentAuthor;
     // this.props.renderParent;
     // this.props.renderComments;
     // this.props.closeModal;
@@ -39,26 +35,29 @@ class ComposeComment extends Component {
     this.user = this.props.user;
     this.uID = this.props.uID;
     this.database = this.props.FitlyFirebase.database();
-    this.contentType = this.props.contentType;
+
+    this.contentID = this.props.contentInfo.contentID;
+    this.contentType = this.props.contentInfo.contentType;
+    this.parentAuthor = this.props.contentInfo.parentAuthor;
 
 
     if (this.contentType === 'post') {
-      this.parentRef = this.database.ref('/posts/' + this.props.contentID);
-      this.parentCommentRef = this.database.ref('/postComments/' + this.props.contentID);
-      this.contentLink = '/posts/' + this.props.contentID;
+      this.contentLink = '/posts/' + this.contentID;
+      this.parentRef = this.database.ref(this.contentLink);
+      this.parentCommentRef = this.database.ref('/postComments/' + this.contentID);
     } else if (this.contentType === 'message') {
-      this.parentRef = this.database.ref('/messages/' + this.props.contentID);
+      this.contentLink = '/messages/' + this.contentID;
+      this.parentRef = this.database.ref(this.contentLink);
       this.parentCommentRef = this.parentRef.child('replies');
-      this.contentLink = '/messages/' + this.props.contentID;
     } else if (this.contentType === 'photo') {
-      this.parentRef = this.database.ref('/photos/' + this.props.contentID);
+      this.contentLink = '/photos/' + this.contentID;
+      this.parentRef = this.database.ref(this.contentLink);
       this.parentCommentRef = this.parentRef.child('replies');
-      this.contentLink = '/photos/' + this.props.contentID;
     }
 
     this.msgRef = this.database.ref('/messages/');
     this.userMsgRef = this.database.ref('/userMessages/' + this.uID);
-    this.notificationRef = this.database.ref('/otherNotifications/' + this.props.contentAuthor);
+    this.notificationRef = this.database.ref('/otherNotifications/' + this.parentAuthor);
   };
 
   //TODO: when hit summit does the view redirects to the post display view directly?
@@ -81,12 +80,9 @@ class ComposeComment extends Component {
           contentlink: this.contentLink,
           content: draftState.content,
           replyCount: 0,
-          likeMembers: null,
-          sharedMembers: null,
-          savedMembers: null,
           likeCount: 0,
-          sharedCount: 0,
-          savedCount: 0,
+          shareCount: 0,
+          saveCount: 0,
           createdAt: Firebase.database.ServerValue.TIMESTAMP,
         };
 

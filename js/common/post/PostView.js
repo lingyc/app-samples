@@ -4,15 +4,13 @@ import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, KeyboardAvo
 // import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { push, pop, resetTo } from '../../actions/navigation.js';
-import { save } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {convertFBObjToArray, saveUpdateToDB, turnOnCommentListener, turnOffCommentListener} from '../../library/firebaseHelpers.js'
 import TimeAgo from 'react-native-timeago';
 import Firebase from 'firebase';
-import ComposeComment from './ComposeComment.js';
+import CommentsModal from '../comment/CommentsModal.js';
 import SocialBtns from '../SocialBtns.js';
-import CommentsView from '../CommentsView.js';
 
 class PostView extends Component {
   constructor(props) {
@@ -44,18 +42,10 @@ class PostView extends Component {
 
   componentDidMount() {
     this._turnOnPostListener();
-    this._turnOnLikeListener();
-    this.shareRef.on('value', (snap) => this.setState({shared: snap.val()}));
-    this.userCollectionsRef.on('value', (snap) => this.setState({saved: snap.val()}));
-    //turn on listener for the replies
   }
 
   componentWillUnmount() {
     this._turnOffPostListener();
-    this._turnOffLikeListener();
-    this.shareRef.off('value');
-    this.userCollectionsRef.off('value');
-    //turn off listener for the replies
   };
 
   _turnOnPostListener() {
@@ -74,100 +64,6 @@ class PostView extends Component {
 
   _turnOffPostListener() {
     this.postRef.off('value');
-  };
-
-  _turnOnLikeListener() {
-    this.likeRef.on('value', (snap) => {
-      this.setState({like: snap.val()});
-    });
-  };
-
-  _turnOffLikeListener() {
-    this.likeRef.off('value');
-  };
-
-  _toggleLike() {
-    (async () => {
-      try {
-        if (!this.state.like) {
-          const updateObj = {
-            type: "like",
-            contentType: 'post',
-            contentID: this.props.postID,
-            ownerID: this.uID,
-            ownerName: this.user.public.first_name + ' ' + this.user.public.last_name,
-            ownerPicture: this.user.public.picture,
-            postCategory: this.state.post.category,
-            contentTitle: this.state.post.title,
-            photos: this.state.post.photos,
-            timestamp: Firebase.database.ServerValue.TIMESTAMP
-          };
-          if (!this.hasSentLike) {
-            saveUpdateToDB(updateObj, this.uID, {minor: true});
-            this.hasSentLike = true;
-          }
-          //tables to update: userLikes, postLikes, userUpdatesAll(only once)
-          this.postRef.child('likeCount').transaction(currentLikeCount => currentLikeCount + 1);
-          this.postLikesRef.set(true);
-          this.userLikesRef.set(updateObj);
-        } else {
-          this.postRef.child('likeCount').transaction(currentLikeCount => currentLikeCount - 1);
-          this.postLikesRef.set(null);
-          this.userLikesRef.set(null);
-        }
-      } catch(error) {
-        console.log('toggleLike error ', error);
-      }
-    })();
-  };
-
-
-  _sharePost() {
-    // TODO: deeplinking
-    //sent out a deeplink for the particular post to all contacts??
-    //for now we will send out the feed to the follower
-    (async () => {
-        try {
-          if (!this.state.shared) {
-            const updateObj = {
-              type: "shared",
-              contentType: 'post',
-              contentID: this.props.postID,
-              ownerID: this.uID,
-              ownerName: this.user.public.first_name + ' ' + this.user.public.last_name,
-              ownerPicture: this.user.public.picture,
-              postCategory: this.state.post.category,
-              contentTitle: this.state.post.title,
-              contentSnipet: this.state.post.content,
-              photos: this.state.post.photos,
-              timestamp: Firebase.database.ServerValue.TIMESTAMP
-            };
-            this.shareRef.set(true);
-            saveUpdateToDB(updateObj, this.uID);
-          } else {
-            console.log('you have already shared the post');
-          }
-      } catch(error) {
-        conosle.log('share post', error);
-      }
-    })();
-  };
-
-  _savePost() {
-    (async () => {
-      try {
-        if (!this.state.saved) {
-          const newCollection = {
-            contentType: 'post',
-            contentID: this.props.postID,
-            timestamp: Firebase.database.ServerValue.TIMESTAMP
-          };
-          this.userCollectionsRef.set(newCollection);
-        }
-      } catch(error) {
-        conosle.log('save post', error);
-      }
-    })();
   };
 
   _goToProfile(id) {
@@ -194,56 +90,19 @@ class PostView extends Component {
     </TouchableOpacity>
   };
 
-  _renderPostBody() {
-    const {post} = this.state;
-    return (
-      <View>
-        {this._renderAuthor(post)}
-        <TimeAgo style={feedEntryStyle.timestamp} time={post.createdAt}/>
-        <View style={postStyle.postContent}>
-          <Text style={postStyle.title}>{post.title}</Text>
-          <Text style={postStyle.textContent}>{post.content}</Text>
-          {this._renderPhotos(post.photos)}
-          {this._renderTags(post.tags)}
-        </View>
-      </View>
-    )
-  };
-
   _renderSocialBtns() {
+    const contentInfo = {
+      contentID: this.props.postID,
+      contentType: 'post',
+      parentAuthor: this.state.post.author
+    };
     return (
       <SocialBtns
-        content={this.state.post}
-        likeState={this.state.like}
-        sharedState={this.state.shared}
-        saveState={this.state.saved}
-        toggleLike={this._toggleLike.bind(this)}
-        onShare={this._sharePost.bind(this)}
-        onSave={this._savePost.bind(this)}
+        contentInfo={contentInfo}
+        buttons={{comment: true, like: true, share: true, save: true}}
         onComment={() => this.setState({modalVisible: true})}
       />
     )
-  };
-
-  _renderPost() {
-    return <View style={postStyle.postContainer}>
-      {this._renderPostBody()}
-      {this._renderSocialBtns()}
-      <CommentsView
-        root={true}
-        modalVisible={this.state.modalVisible}
-        renderParent={() => this._renderPostBody()}
-        closeModal={() => this.setState({modalVisible: false})}
-        contentType='post'
-        contentID={this.props.postID}
-        parentAuthor={this.state.post.author}
-        commentRef={this.postCommentRef}
-        FitlyFirebase={this.props.FitlyFirebase}
-        uID={this.props.uID}
-        user={this.props.user}
-        navigation={this.props.navigation}
-      />
-    </View>
   };
 
   _renderPhotos(photos) {
@@ -267,6 +126,40 @@ class PostView extends Component {
           <Text style={postStyle.tags} key={'tag' + index}>#{tag}</Text>
         );
       })}
+    </View>
+  };
+
+  _renderPostBody() {
+    const {post} = this.state;
+    return (
+      <View>
+        {this._renderAuthor(post)}
+        <TimeAgo style={feedEntryStyle.timestamp} time={post.createdAt}/>
+        <View style={postStyle.postContent}>
+          <Text style={postStyle.title}>{post.title}</Text>
+          <Text style={postStyle.textContent}>{post.content}</Text>
+          {this._renderPhotos(post.photos)}
+          {this._renderTags(post.tags)}
+        </View>
+      </View>
+    )
+  };
+
+  _renderPost() {
+    const initialRoute = {
+      contentID: this.props.postID,
+      contentType: 'post',
+      parentAuthor: this.state.post.author
+    };
+    return <View style={postStyle.postContainer}>
+      {this._renderPostBody()}
+      {this._renderSocialBtns()}
+      <CommentsModal
+        modalVisible={this.state.modalVisible}
+        renderParent={() => this._renderPostBody()}
+        closeModal={() => this.setState({modalVisible: false})}
+        initialRoute={initialRoute}
+      />
     </View>
   };
 

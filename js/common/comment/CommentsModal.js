@@ -56,11 +56,9 @@ export default class CommentsModal extends Component {
           visible={this.props.modalVisible}
           onRequestClose={() => this._popRoute()}>
           <ComposeComment
-            contentID={latestRoute.contentID}
-            contentType={latestRoute.contentType}
-            contentAuthor={latestRoute.parentAuthor}
-            renderParent={() => this._renderParent()}
-            renderComments={() => this._renderChild()}
+            contentInfo={latestRoute}
+            renderParent={() => this._renderParent(latestRoute)}
+            renderComments={() => this._renderChild(latestRoute)}
             closeModal={() => this._popRoute()}
           />
         </Modal>

@@ -1,17 +1,17 @@
 import React, {Component} from 'react';
-import { composeStyle, headerStyle } from '../../styles/styles.js';
+import { postStyle, feedEntryStyle, composeStyle, headerStyle } from '../../styles/styles.js';
 import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, KeyboardAvoidingView, TouchableOpacity, ActivityIndicator } from 'react-native';
 // import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
-import { postStyle, feedEntryStyle } from '../../styles/styles.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { push, pop, resetTo } from '../../actions/navigation.js';
 import { save } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {convertFBObjToArray, saveUpdateToDB, guid} from '../../library/firebaseHelpers.js'
+import {convertFBObjToArray, saveUpdateToDB, turnOnCommentListener, turnOffCommentListener} from '../../library/firebaseHelpers.js'
 import TimeAgo from 'react-native-timeago';
 import Firebase from 'firebase';
-import ComposeReply from './ComposeReply.js'
+import ComposeComment from './ComposeComment.js';
+import SocialBtns from '../SocialBtns.js'
 
 class PostView extends Component {
   constructor(props) {
@@ -21,7 +21,6 @@ class PostView extends Component {
       post: null,
       postLoading: true,
       commentLoading: true,
-      comments: [],
       like: null,
       shared: null,
       saved: null,
@@ -39,6 +38,7 @@ class PostView extends Component {
     this.postLikesRef = this.database.ref('postLikes/' + this.props.postID + '/' + this.uID)
     this.userCollectionsRef = this.database.ref('userCollections/' + this.uID + '/' + this.props.postID);
     this.userLikesRef = this.database.ref('userLikes/' + this.uID + '/' + this.props.postID);
+    this.postCommentRef = this.database.ref('/postComments/' + this.props.postID);
   };
 
   componentDidMount() {
@@ -67,6 +67,7 @@ class PostView extends Component {
         postLoading: false,
       })
     };
+
     this.postRef.on('value', handlePostUpdates);
   };
 
@@ -118,6 +119,48 @@ class PostView extends Component {
       }
     })();
   };
+
+  _toggleMsgLike(index, comment) {
+    const msgRef = this.FitlyFirebase.database().ref('messages' + commentID)
+    (async () => {
+      try {
+        let updatedMsg;
+        if (comment.likeMembers[this.uID]) {
+          await msgRef.child('likeMembers').child(this.uID).set(null);
+          await msgRef.child('likeCount').transaction(count => count - 1);
+        } else {
+          let photo = null;
+          if (comment.photo) {
+            photo = {
+              [comment.photo.key]: {
+                link: comment.photo.link
+              }
+            }
+          }
+          const updateObj = {
+            type: "like",
+            contentType: 'message',
+            contentID: comment.key,
+            ownerID: this.uID,
+            ownerName: this.user.public.first_name + ' ' + this.user.public.last_name,
+            ownerPicture: this.user.public.picture,
+            photos: photo,
+            timestamp: Firebase.database.ServerValue.TIMESTAMP
+          };
+          saveUpdateToDB(updateObj, this.uID, {minor: true});
+          await msgRef.child('likeMembers').child(this.uID).set(true);
+          await msgRef.child('likeCount').transaction(count => count + 1);
+
+        }
+        updatedMsg = (await msgRef.once('value')).val();
+        let commentsCopy = this.state.comments.slice();
+        commentsCopy[index] = updatedMsg;
+        this.setState({comments: commentsCopy});
+      } catch(error) {
+        console.log(error);
+      }
+    })();
+  }
 
   _sharePost() {
     // TODO: deeplinking
@@ -183,15 +226,19 @@ class PostView extends Component {
     }
   };
 
+  _renderAuthor(content) {
+    return <TouchableOpacity onPress={() => this._goToProfile(content.author)} style={feedEntryStyle.profileRow}>
+      <Image source={(content.authorPicture) ? {uri:content.authorPicture} : require('../../../img/default-user-image.png')}
+      style={feedEntryStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}/>
+      <Text style={feedEntryStyle.username}>{content.authorName}</Text>
+    </TouchableOpacity>
+  };
+
   _renderPostBody() {
     const {post} = this.state;
     return (
       <View>
-        <TouchableOpacity onPress={() => this._goToProfile(post.author)} style={feedEntryStyle.profileRow}>
-          <Image source={(post.authorPicture) ? {uri:post.authorPicture} : require('../../../img/default-user-image.png')}
-          style={feedEntryStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}/>
-          <Text style={feedEntryStyle.username}>{post.authorName}</Text>
-        </TouchableOpacity>
+        {this._renderAuthor(post)}
         <TimeAgo style={feedEntryStyle.timestamp} time={post.createdAt}/>
         <View style={postStyle.postContent}>
           <Text style={postStyle.title}>{post.title}</Text>
@@ -204,50 +251,26 @@ class PostView extends Component {
   };
 
   _renderSocialBtns() {
-    const iconSize = 20;
-    const iconColor = 'grey';
-    const {post} = this.state;
     return (
-      <View style={postStyle.socialBtns}>
-        <TouchableOpacity style={[postStyle.socialIcon, {width: 55, alignSelf: 'flex-start'}]} onPress={() => this.setState({replyModalVisible: true})}>
-          <Icon name="ios-undo" size={iconSize} color={iconColor}/>
-          <Text onPress={() => this.setState({replyModalVisible: true})} style={postStyle.iconText}>comment</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={postStyle.socialIcon} onPress={() => this._toggleLike()}>
-          {(this.state.like)
-            ? <Icon name="ios-heart" size={iconSize} color={iconColor}/>
-            : <Icon name="ios-heart-outline" size={iconSize} color={iconColor}/>
-          }
-          <Text style={postStyle.iconText}>{post.likeCount} likes</Text>
-        </TouchableOpacity>
-        {(this.state.shared)
-          ? <View style={postStyle.socialIcon}>
-            <Icon name="ios-share" size={iconSize} color={iconColor}/>
-            <Text style={postStyle.iconText}>shared</Text>
-          </View>
-          : <TouchableOpacity style={postStyle.socialIcon} onPress={() => this._sharePost()}>
-            <Icon name="ios-share-outline" size={iconSize} color={iconColor}/>
-          </TouchableOpacity>
-        }
-        {(this.state.saved)
-          ? <View style={postStyle.socialIcon}>
-            <Icon name="ios-bookmark" size={iconSize} color={iconColor}/>
-            <Text style={postStyle.iconText}>saved</Text>
-          </View>
-          : <TouchableOpacity style={postStyle.socialIcon} onPress={() => this._savePost()}>
-            <Icon name="ios-bookmark-outline" size={iconSize} color={iconColor}/>
-          </TouchableOpacity>
-        }
-      </View>
+      <SocialBtns
+        content={this.state.post}
+        likeState={this.state.like}
+        sharedState={this.state.shared}
+        saveState={this.state.saved}
+        toggleLike={this._toggleLike.bind(this)}
+        onShare={this._sharePost.bind(this)}
+        onSave={this._savePost.bind(this)}
+        onComment={() => this.setState({replyModalVisible: true})}
+      />
     )
-  }
+  };
 
   _renderPost() {
     return <View style={postStyle.postContainer}>
       {this._renderPostBody()}
       {this._renderSocialBtns()}
     </View>
-  }
+  };
 
   _renderPhotos(photos) {
     return (
@@ -261,7 +284,7 @@ class PostView extends Component {
         })}
       </View>
     );
-  }
+  };
 
   _renderTags(tags) {
     return <View style={postStyle.tagsRow}>
@@ -271,23 +294,56 @@ class PostView extends Component {
         );
       })}
     </View>
-  }
+  };
 
-  _renderComments() {
+  _renderComments(comments) {
+    return comments.map((comment, index) => {
+      if (comment) {
+        return <View key={comment.key}>
+          {this._renderAuthor(comment)}
+          <TimeAgo style={feedEntryStyle.timestamp} time={comment.createdAt}/>
+          <View style={postStyle.postContent}>
+            {(comment.photo)
+              ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
+                  <Image style={feedEntryStyle.images} source={{uri: photo.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
+                </TouchableOpacity>
+              : <Text style={postStyle.content}>{comment.content}</Text>
+            }
+            <SocialBtns
+              content={comment}
+              likeState={comment.likeMembers[this.uID]}
+              sharedState={comment.sharedMembers[this.uID]}
+              saveState={comment.savedMembers[this.uID]}
+              toggleLike={() => this._toggleMsgLike(index, comment.key)}
+              onShare={() => this._sharePost(index, comment.key)}
+              onSave={() => this._savePost(index, comment.key)}
+              onComment={() => this.setState({replyModalVisible: true})}
+            />
+            {/* render reply modal for the message */}
+          </View>
+        </View>
+      } else {
+        return (
+          <View key={comment.key}>
+            <ActivityIndicator animating={true} style={{height: 80}} size="small"/>
+          </View>
+        )
+      }
+    })
+  };
 
-  }
-
-  _renderReplyModal() {
+  _renderCommentModal() {
     return (
       <Modal
         animationType={"fade"}
         transparent={false}
         visible={this.state.replyModalVisible}
         onRequestClose={() => this.setState({replyModalVisible: false})}>
-        <ComposeReply
+        <ComposeComment
           postID={this.props.postID}
           post={this.state.post}
           renderPost={this._renderPostBody.bind(this)}
+          renderComments={() => this._renderComments(this.state.comments)}
           closeModal={() => this.setState({replyModalVisible: false})}
         />
       </Modal>
@@ -303,7 +359,8 @@ class PostView extends Component {
           ? <ActivityIndicator animating={this.state.postLoading} style={{height: 80}} size="large"/>
           : this._renderPost()
         }
-        {this._renderReplyModal()}
+        {this._renderComments(this.state.comments)}
+        {this._renderCommentModal()}
         <View style={{height: 100}}></View>
       </ScrollView>
     }

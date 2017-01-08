@@ -36,7 +36,8 @@ class ComposeReply extends Component {
     this.FitlyFirebase = this.props.FitlyFirebase;
     this.postRef = this.FitlyFirebase.database().ref('/posts/' + this.props.postID);
     this.msgRef = this.FitlyFirebase.database().ref('/messages/');
-    this.postReplyRef = this.FitlyFirebase.database().ref('/postReplies/' + this.props.postID);
+    this.userMsgRef = this.FitlyFirebase.database().ref('/userMessages/' + this.uID);
+    this.postCommentRef = this.FitlyFirebase.database().ref('/postComments/' + this.props.postID);
     this.notificationRef = this.FitlyFirebase.database().ref('/otherNotifications/' + this.props.post.author);
   };
 
@@ -49,36 +50,35 @@ class ComposeReply extends Component {
         this.setState({loading: true});
         let draftState = this.state;
         let msgKey = this.msgRef.push().key;
+        let authorInfo = {
+          author: this.uID,
+          authorName: this.user.public.first_name + ' ' + this.user.public.last_name,
+          authorPicture: this.user.public.picture
+        };
 
         let msgObj = {
-          author: this.uID,
+          ...authorInfo,
+          contentlink: '/posts' + this.props.postID,
           content: draftState.content,
           replyCount: 0,
+          likeMembers: null,
+          sharedMembers: null,
+          savedMembers: null,
           likeCount: 0,
+          sharedCount: 0,
+          savedCount: 0,
           createdAt: Firebase.database.ServerValue.TIMESTAMP,
         };
 
-        //create msg entry
-        //add reply to postReplies
-        //increase replyCount, lastMsg, lastReplied of the post,
-        //sent update to the post owner that someone reply to his post
-
         if (this.state.photo) {
-          let photoRefs = await savePhotoToDB([photo], this.uID, msgKey);
-          // {photoKey, link} = photoRefs[0];
-          msgObj = {
-            author: this.uID,
-            replyCount: 0,
-            likeCount: 0,
-            createdAt: Firebase.database.ServerValue.TIMESTAMP,
-            photo: {
-              ...photoRefs[0]
-            }
-          };
+          let photoRefs = await savePhotoToDB([photo], authorInfo, '/messages/' + msgKey);
+          msgObj.photo = {...photoRefs[0]};
+          msgObj.content = null;
         }
 
         this.msgRef.child(msgKey).set(msgObj);
-        this.postReplyRef.child(msgKey).set({timestamp: Firebase.database.ServerValue.TIMESTAMP});
+        this.userMsgRef.child(msgKey).set({timestamp: Firebase.database.ServerValue.TIMESTAMP});
+        this.postCommentRef.child(msgKey).set({timestamp: Firebase.database.ServerValue.TIMESTAMP});
         this.postRef.child('replyCount').transaction(count => count + 1);
         this.postRef.child('lastRepliedAt').set(Firebase.database.ServerValue.TIMESTAMP);
         this.postRef.child('lastMsg').set(this.state.content);
@@ -89,14 +89,14 @@ class ComposeReply extends Component {
           postID: this.props.postID,
           msgID: msgKey,
           ownerID: this.uID,
-          ownerName: this.user.public.first_name + ' ' + this.user.public.last_name,
-          ownerPicture: this.user.public.picture,
+          ownerName: authorInfo.authorName,
+          ownerPicture: authorInfo.authorPicture,
           message: draftState.content,
           timestamp: Firebase.database.ServerValue.TIMESTAMP
         };
 
-      this.notificationRef.push(updateObj);
-      this.setState({...this.initialState})
+        this.notificationRef.push(updateObj);
+        this.setState({...this.initialState})
 
       } catch(error) {
         this.setState({loading: false});
@@ -162,6 +162,7 @@ class ComposeReply extends Component {
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={[postStyle.scrollContentContainer, {marginTop: 20}]}>
             <View style={postStyle.postContainer}>
               {this.props.renderPost()}
+              {this.props.renderComments()}
             </View>
           </ScrollView>
           {this._renderInputBar()}

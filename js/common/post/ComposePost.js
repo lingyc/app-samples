@@ -42,7 +42,13 @@ class ComposePost extends Component {
         this.setState({loading: true});
         let draftState = this.props.drafts[this.props.draftRef];
         let postKey = this.FitlyFirebase.database().ref().child('posts').push().key;
-        let photoRefs = await savePhotoToDB(draftState.photos, this.uID, '/posts/' + postKey);
+        let authorInfo = {
+          authorID: this.uID,
+          authorName: this.user.public.first_name + ' ' + this.user.public.last_name,
+          authorPicture: this.user.public.picture
+        }
+
+        let photoRefs = await savePhotoToDB(draftState.photos, authorInfo, '/posts/' + postKey);
         let photoRefObject = photoRefs.reduce((refObj, photoRef) => {
             refObj[photoRef.key] = {
               link: photoRef.link,
@@ -57,10 +63,13 @@ class ComposePost extends Component {
           }, {});
         let postObj = {
           author: this.uID,
+          authorName: this.user.public.first_name + ' ' + this.user.public.last_name,
           authorPicture: this.user.public.picture,
           title: draftState.title,
           content: draftState.content,
           category: draftState.category,
+          sharedCount: 0,
+          savedCount: 0,
           replyCount: 0,
           tags: tagObj,
           likeCount: 0,

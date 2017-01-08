@@ -58,7 +58,8 @@ export const uploadPhoto = (location, data, options) => {
 };
 
 //uploads the photos and return a list of firebase database paths
-export const savePhotoToDB = (photos, uid, contentlink) => {
+export const savePhotoToDB = (photos, authorInfo, contentlink) => {
+  const {authorID, authorName, authorPicture} = authorInfo;
   let linkPromises = photos.map(photo => {
     return Promise.resolve(uploadPhoto('/photos/' + contentlink + '/', photo.path));
   });
@@ -75,8 +76,15 @@ export const savePhotoToDB = (photos, uid, contentlink) => {
       const photoObj = {
         link: link,
         likeCount: 0,
+        sharedCount: 0,
+        savedCount: 0,
+        likeMembers: null,
+        sharedMembers: null,
+        savedMembers: null,
         description: photos[index].description || '',
-        author: uid,
+        author: authorID,
+        authorName: authorName,
+        authorPicture: authorPicture,
         tags: photoTags,
         contentlink: contentlink,
         timestamp: Firebase.database.ServerValue.TIMESTAMP
@@ -104,7 +112,7 @@ export const saveUpdateToDB = (update, uid, type = {minor: false}) => {
 };
 
 //this function is work in progress, the intend is to skip waiting for picture upload and load the local files directly
-// export const noWaitSavePhotoToDB = (photos, uid, contentlink) => {
+// export const noWaitSavePhotoToDB = (photos, authorInfo, contentlink) => {
 //   //transform the photos objects into the correct format
 //   let imagesObjLocal = {};
 //   let linkPromises = [];
@@ -152,12 +160,12 @@ export const saveUpdateToDB = (update, uid, type = {minor: false}) => {
 //   return imagesObjLocal;
 // };
 
-export const turnOnfeedService = (uid, options, initialCallback, subsequentCallback) => {
+export const turnOnfeedService = (uid, options = {self: false}, initialCallback, subsequentCallback) => {
   let notificationSource = (options.self === true)
     ? FitlyFirebase.database().ref('followingNotifications/' + uid)
     : notificationSource = FitlyFirebase.database().ref('userUpdatesAll/' + uid)
 
-  const appendToFeed = (feedEntry) => {
+  const handleNewFeed = (feedEntry) => {
     let feedObject = feedEntry.val();
     let feedPictures = [];
     feedEntry.child('photos').forEach(photo => {
@@ -188,7 +196,7 @@ export const turnOnfeedService = (uid, options, initialCallback, subsequentCallb
     initialCallback(feedsArray);
   }).catch(error => console.log(error));
 
-  notificationSource.orderByChild('timestamp').startAt(Date.now()).on('child_added', appendToFeed);
+  notificationSource.orderByChild('timestamp').startAt(Date.now()).on('child_added', handleNewFeed);
 };
 
 export const turnOffeedService = (uid, options) => {
@@ -200,6 +208,25 @@ export const turnOffeedService = (uid, options) => {
   }
   notificationSource.off('child_added');
 };
+
+export const turnOnCommentListener = (dbRef, initialCallback, subsequentCallback) => {
+  dbRef.orderByChild('timestamp').once('value')
+  .then(replies => {
+    const commentMsgKeys = Object.keys(replies.val() || {});
+    initialCallback(commentMsgKeys);
+  }).catch(error => console.log(error));
+
+  const handleNewComment = (commentEntry) => {
+    let commentMsgKey = commentEntry.key;
+    subsequentCallback(commentMsgKey);
+  };
+
+  dbRef.orderByChild('timestamp').startAt(Date.now()).on('child_added', handleNewComment);
+}
+
+export const turnOffCommentListener = (dbRef) => {
+  dbRef.off('child_added');
+}
 
 export const convertFBObjToArray = (collectionObj) => {
   let array = [];

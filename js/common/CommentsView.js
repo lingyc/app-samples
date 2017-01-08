@@ -76,7 +76,6 @@ export default class CommentsView extends Component {
     const msgRef = this.msgRef.child(comment.key);
     (async () => {
       try {
-        let updatedMsg;
         if (comment.likeMembers && comment.likeMembers[this.uID]) {
           await msgRef.child('likeMembers').child(this.uID).set(null);
           await msgRef.child('likeCount').transaction(count => count - 1);
@@ -103,9 +102,11 @@ export default class CommentsView extends Component {
           await msgRef.child('likeMembers').child(this.uID).set(true);
           await msgRef.child('likeCount').transaction(count => count + 1);
         }
-        updatedMsg = (await msgRef.once('value')).val();
+        let updatedMsg = await msgRef.once('value');
+        let updateObj = updatedMsg.val();
+        updateObj.key = updatedMsg.key;
         let commentsCopy = this.state.comments.slice();
-        commentsCopy[index] = updatedMsg;
+        commentsCopy[index] = updateObj;
         this.setState({comments: commentsCopy});
       } catch(error) {
         console.log(error);

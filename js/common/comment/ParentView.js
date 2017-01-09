@@ -5,8 +5,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { push, pop } from '../../actions/navigation.js';
 import TimeAgo from 'react-native-timeago';
 import SocialBtns from '../SocialBtns.js'
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-export default class ParentView extends Component {
+class ParentView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -73,6 +75,7 @@ export default class ParentView extends Component {
         }
         <SocialBtns
           contentInfo={this.props.route}
+          content={this.state.content}
           buttons={{like: true, share: true, save: true}}
         />
       </View>

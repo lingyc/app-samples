@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import { Modal } from 'react-native';
+import { Modal, View } from 'react-native';
 import CommentsView from './CommentsView.js';
+import ComposeComment from './ComposeComment.js';
 import ParentView from './ParentView.js';
 
 export default class CommentsModal extends Component {
@@ -62,7 +63,7 @@ export default class CommentsModal extends Component {
             closeModal={() => this._popRoute()}
           />
         </Modal>
-        <CommentsView route={this.props.initialRoute} pushRoute={this._pushRoute.bind(this)}/>;
+        <CommentsView route={this.props.initialRoute} pushRoute={this._pushRoute.bind(this)}/>
       </View>
     )
   }

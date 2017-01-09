@@ -4,7 +4,6 @@ import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOp
 import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
 import HeaderInView from '../../header/HeaderInView.js'
 import TagInput from 'react-native-tag-input';
-import ImageEditModal from './ImageEditModal.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { pop, push, resetTo } from '../../actions/navigation.js';
 import { save, clear } from '../../actions/drafts.js';

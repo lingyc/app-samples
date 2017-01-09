@@ -89,7 +89,7 @@ export const savePhotoToDB = (photos, authorInfo, contentlink) => {
       };
 
       const photoKey = FitlyFirebase.database().ref('photos').push().key;
-      FitlyFirebase.database().ref(`userPhotos/${uid}/${photoKey}`).set({link: link, timestamp: Firebase.database.ServerValue.TIMESTAMP})
+      FitlyFirebase.database().ref(`userPhotos/${authorID}/${photoKey}`).set({link: link, timestamp: Firebase.database.ServerValue.TIMESTAMP})
       return Promise.resolve(FitlyFirebase.database().ref(`photos/${photoKey}`).set(photoObj).then(snap => { return {key: photoKey, link: link}; }));
     });
   }).then(refPromises => {
@@ -97,6 +97,8 @@ export const savePhotoToDB = (photos, authorInfo, contentlink) => {
   }).then(photoRefs => {
     console.log('photoRefs', photoRefs);
     return photoRefs;
+  }).catch(err => {
+    console.log('savePhotoToDB error', err);
   });
 };
 

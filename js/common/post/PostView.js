@@ -51,6 +51,7 @@ class PostView extends Component {
   _turnOnPostListener() {
     const handlePostUpdates = (postSnap) => {
       let postObj = postSnap.val();
+      if (!postObj) { return; }
       postObj.photos = convertFBObjToArray(postSnap.child('photos'));
       postObj.tags = Object.keys(postObj.tags || {});
       this.setState({
@@ -99,6 +100,7 @@ class PostView extends Component {
     return (
       <SocialBtns
         contentInfo={contentInfo}
+        content={this.state.post}
         buttons={{comment: true, like: true, share: true, save: true}}
         onComment={() => this.setState({modalVisible: true})}
       />

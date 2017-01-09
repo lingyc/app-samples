@@ -48,6 +48,17 @@ class ComposePost extends Component {
           authorPicture: this.user.public.picture
         }
 
+        this.props.navigation.resetTo({
+          key: "FitlyHomeView", global: true
+        });
+
+        this.props.navigation.push({
+          key: 'PostView@' + postKey,
+          passProps:{
+            postID: postKey
+          }
+        });
+
         let photoRefs = await savePhotoToDB(draftState.photos, authorInfo, '/posts/' + postKey);
         let photoRefObject = photoRefs.reduce((refObj, photoRef) => {
             refObj[photoRef.key] = {
@@ -79,18 +90,18 @@ class ComposePost extends Component {
 
         this.FitlyFirebase.database().ref('/posts/' + postKey).set(postObj)
         .then(post => {
-          this.setState({loading: false});
+          // this.setState({loading: false});
 
-          this.props.navigation.resetTo({
-            key: "FitlyHomeView", global: true
-          });
-
-          this.props.navigation.push({
-            key: 'PostView@' + postKey,
-            passProps:{
-              postID: postKey
-            }
-          });
+          // this.props.navigation.resetTo({
+          //   key: "FitlyHomeView", global: true
+          // });
+          //
+          // this.props.navigation.push({
+          //   key: 'PostView@' + postKey,
+          //   passProps:{
+          //     postID: postKey
+          //   }
+          // });
           this.FitlyFirebase.database().ref('/userPosts/' + this.uID).push({postKey: true});
           const updateObj = {
             type: "post",
@@ -107,10 +118,8 @@ class ComposePost extends Component {
           };
           saveUpdateToDB(updateObj, this.uID);
         });
-
-
       } catch(error) {
-        this.setState({loading: false});
+        // this.setState({loading: false});
         console.log('create post error', error);
       }
     })();

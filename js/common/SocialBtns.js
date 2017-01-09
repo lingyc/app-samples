@@ -4,11 +4,12 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {saveUpdateToDB} from '../../library/firebaseHelpers.js'
+import {saveUpdateToDB} from '../library/firebaseHelpers.js'
 import Firebase from 'firebase';
 
 class SocialBtns extends Component {
   constructor(props) {
+    super(props);
     this.state = {
       like: null,
       likeCount: null,
@@ -26,28 +27,15 @@ class SocialBtns extends Component {
     this.user = this.props.user;
     this.uID = this.props.uID;
 
-
     const {contentType, contentID, parentAuthor} = this.contentInfo;
     this.userShareRef = this.database.ref('userShared/' + this.uID + '/' + contentID);
     this.userCollectionsRef = this.database.ref('userCollections/' + this.uID + '/' + contentID);
     this.userLikesRef = this.database.ref('userLikes/' + this.uID + '/' + contentID);
 
-    if (contentType === 'post') {
-      this.contentRef = this.database.ref('posts').child(contentID);
-      this.likeRef = this.database.ref('postLikes').child(contentID);
-      this.shareRef = this.database.ref('postShares').child(contentID);
-      this.saveRef = this.database.ref('postSaves').child(contentID);
-    } else if (contentType === 'message') {
-      this.contentRef = this.database.ref('messages').child(contentID);
-      this.likeRef = this.database.ref('messageLikes').child(contentID);
-      this.shareRef = this.database.ref('messageShares').child(contentID);
-      this.saveRef = this.database.ref('messageSaves').child(contentID);
-    } else if (contentType === 'photo') {
-      this.contentRef = this.database.ref('photos').child(contentID);
-      this.likeRef = this.database.ref('photoLikes').child(contentID);
-      this.shareRef = this.database.ref('photoShares').child(contentID);
-      this.saveRef = this.database.ref('photoSaves').child(contentID);
-    }
+    this.contentRef = this.database.ref(contentType + 's').child(contentID);
+    this.likeRef = this.database.ref(contentType + 'Likes').child(contentID);
+    this.shareRef = this.database.ref(contentType + 'Shares').child(contentID);
+    this.saveRef = this.database.ref(contentType + 'Saves').child(contentID);
 
     this.iconSize = 20;
     this.iconColor = 'grey';
@@ -62,27 +50,23 @@ class SocialBtns extends Component {
   }
 
   _getInitialStates() {
-    this.likeRef.once('value').then(snap => {
-      this.setState({
-        like: !!snap.val()[this.uID],
-        likeCount: Object.keys(snap.val()).length
-      })
-    });
-
-    this.shareRef.once('value').then(snap => {
-      this.setState({
-        share: !!snap.val()[this.uID],
-        shareCount: Object.keys(snap.val()).length
-      })
-    });
-
-    this.saveRef.once('value').then(snap => {
-      this.setState({
-        save: !!snap.val()[this.uID],
-        saveCount: Object.keys(snap.val()).length
-      })
-    });
-  }
+    const stateTypes = [
+      {ref: this.likeRef, type: 'like'},
+      {ref: this.shareRef, type: 'share'},
+      {ref: this.saveRef, type: 'save'}
+    ].map(state => {
+      const {type} = state;
+      state.ref.once('value').then(snap => {
+        let listObj =  snap.val();
+        this.setState({
+          [type]: !!(listObj && listObj[this.uID]),
+          [type + 'Count']: Object.keys(listObj || {}).length
+        })
+      }).catch(error => {
+        console.log('social buttons get initialstate error', error);
+      });
+    })
+  };
 
   _createUpdate(updateType) {
     const updateObj = {
@@ -196,7 +180,7 @@ class SocialBtns extends Component {
       const replyCount = this.content.replyCount;
       return (
         <TouchableOpacity style={[postStyle.socialIcon, {width: 55, alignSelf: 'flex-start'}]} onPress={() => this.props.onComment(this.contentInfo)}>
-          <Icon name="ios-undo" size={iconSize} color={this.iconColor}/>
+          <Icon name="ios-undo" size={this.iconSize} color={this.iconColor}/>
           <Text style={postStyle.iconText}>{(replyCount) ? replyCount : ''}{"\n"}comment</Text>
         </TouchableOpacity>
       );
@@ -223,18 +207,15 @@ class SocialBtns extends Component {
   _renderShareBtn() {
     if (this.buttons.share) {
       const shareCount = this.content.shareCount;
-      return (
-        {(this.state.share)
-          ? <View style={postStyle.socialIcon}>
-            <Icon name="ios-share" size={this.iconSize} color={this.iconColor}/>
-            <Text style={postStyle.iconText}>{(shareCount) ? shareCount : ''}{"\n"}shared</Text>
-          </View>
-          : <TouchableOpacity style={postStyle.socialIcon} onPress={this.handleShare}>
-            <Icon name="ios-share-outline" size={this.iconSize} color={this.iconColor}/>
-            <Text style={postStyle.iconText}>{(shareCount) ? shareCount : ''}{"\n"}shared</Text>
-          </TouchableOpacity>
-        }
-      );
+      return (this.state.share)
+        ? <View style={postStyle.socialIcon}>
+          <Icon name="ios-share" size={this.iconSize} color={this.iconColor}/>
+          <Text style={postStyle.iconText}>{(shareCount) ? shareCount : ''}{"\n"}shared</Text>
+        </View>
+        : <TouchableOpacity style={postStyle.socialIcon} onPress={this.handleShare}>
+          <Icon name="ios-share-outline" size={this.iconSize} color={this.iconColor}/>
+          <Text style={postStyle.iconText}>{(shareCount) ? shareCount : ''}{"\n"}shared</Text>
+        </TouchableOpacity>
     }
     return null;
   };
@@ -242,18 +223,15 @@ class SocialBtns extends Component {
   _renderSaveBtn() {
     if (this.buttons.save) {
       const saveCount = this.content.saveCount;
-      return (
-        {(this.state.save)
-          ? <View style={postStyle.socialIcon}>
-            <Icon name="ios-bookmark" size={this.iconSize} color={this.iconColor}/>
-            <Text style={postStyle.iconText}>{content.saveCount}{"\n"}saved</Text>
-          </View>
-          : <TouchableOpacity style={postStyle.socialIcon} onPress={this.handleSave}>
-            <Icon name="ios-bookmark-outline" size={this.iconSize} color={this.iconColor}/>
-            <Text style={postStyle.iconText}>{content.saveCount}{"\n"}saved</Text>
-          </TouchableOpacity>
-        }
-      );
+      return (this.state.save)
+        ? <View style={postStyle.socialIcon}>
+          <Icon name="ios-bookmark" size={this.iconSize} color={this.iconColor}/>
+          <Text style={postStyle.iconText}>{(saveCount) ? saveCount : ''}{"\n"}saved</Text>
+        </View>
+        : <TouchableOpacity style={postStyle.socialIcon} onPress={this.handleSave}>
+          <Icon name="ios-bookmark-outline" size={this.iconSize} color={this.iconColor}/>
+          <Text style={postStyle.iconText}>{(saveCount) ? saveCount : ''}{"\n"}saved</Text>
+        </TouchableOpacity>
     }
     return null;
   };
@@ -276,10 +254,4 @@ const mapStateToProps = function(state) {
   };
 };
 
-const mapDispatchToProps = function(dispatch) {
-  return {
-    navigation: bindActionCreators({ push, pop, resetTo }, dispatch),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(SocialBtns);
+export default connect(mapStateToProps)(SocialBtns);

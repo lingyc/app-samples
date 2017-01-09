@@ -10,7 +10,7 @@ import SocialBtns from '../SocialBtns.js'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-export default class CommentsView extends Component {
+class CommentsView extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -115,30 +115,34 @@ export default class CommentsView extends Component {
   };
 
   render() {
-    return comments.map((comment, index) => {
-      if (comment) {
-        return (
-          <View key={comment.key + index}>
-            {this._renderAuthor(comment)}
-            <TimeAgo style={feedEntryStyle.timestamp} time={comment.createdAt}/>
-            <View style={postStyle.postContent}>
-              {(comment.photo)
-                ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
-                    <Image style={feedEntryStyle.images} source={{uri: photo.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
-                  </TouchableOpacity>
-                : <Text style={postStyle.content}>{comment.content}</Text>}
-              {this._renderSocialBtns(comment)}
-            </View>
-          </View>
-        )
-      } else {
-        return (
-          <View key={comment.key + index}>
-            <ActivityIndicator animating={true} style={{height: 80}} size="small"/>
-          </View>
-        )
-      }
-    });
+    return (
+      <View>
+        {this.state.comments.map((comment, index) => {
+          if (comment) {
+            return (
+              <View key={comment.key + index}>
+                {this._renderAuthor(comment)}
+                <TimeAgo style={feedEntryStyle.timestamp} time={comment.createdAt}/>
+                <View style={postStyle.postContent}>
+                  {(comment.photo)
+                    ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
+                        <Image style={feedEntryStyle.images} source={{uri: photo.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
+                      </TouchableOpacity>
+                    : <Text style={postStyle.content}>{comment.content}</Text>}
+                  {this._renderSocialBtns(comment)}
+                </View>
+              </View>
+            )
+          } else {
+            return (
+              <View key={comment.key + index}>
+                <ActivityIndicator animating={true} style={{height: 80}} size="small"/>
+              </View>
+            )
+          }
+        })}
+      </View>
+    );
   }
 };
 
@@ -153,7 +157,7 @@ const mapStateToProps = function(state) {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    navigation: bindActionCreators({ push, pop, resetTo }, dispatch),
+    navigation: bindActionCreators({ push }, dispatch),
   };
 };
 

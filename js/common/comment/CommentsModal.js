@@ -39,8 +39,8 @@ export default class CommentsModal extends Component {
     }
   };
 
-  _renderParent(latestRoute) {
-    return (latestRoute) ? <ParentView route={latestRoute}/> : this.props.renderParent();
+  _renderParent(routeStack, latestRoute) {
+    return (routeStack.length > 1) ? <ParentView route={latestRoute}/> : this.props.renderParent();
   };
 
   _renderChild(latestRoute) {
@@ -48,6 +48,7 @@ export default class CommentsModal extends Component {
   };
 
   render() {
+    const stackSize = this.state.routeStack.length;
     const latestRoute = this.state.routeStack[this.state.routeStack.length - 1];
     return (
       <View>
@@ -58,7 +59,7 @@ export default class CommentsModal extends Component {
           onRequestClose={() => this._popRoute()}>
           <ComposeComment
             contentInfo={latestRoute}
-            renderParent={() => this._renderParent(latestRoute)}
+            renderParent={() => this._renderParent(this.state.routeStack, latestRoute)}
             renderComments={() => this._renderChild(latestRoute)}
             closeModal={() => this._popRoute()}
           />

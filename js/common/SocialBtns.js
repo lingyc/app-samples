@@ -10,19 +10,22 @@ import Firebase from 'firebase';
 class SocialBtns extends Component {
   constructor(props) {
     super(props);
+
+    this.content = this.props.content;
+
     this.state = {
       like: null,
-      likeCount: null,
+      likeCount: this.content.likeCount,
       share: null,
-      shareCount: null,
+      shareCount: this.content.shareCount,
       save: null,
-      saveCount: null,
+      saveCount: this.content.saveCount,
+      replyCount: this.content.replyCount,
     }
 
     this.contentInfo = this.props.contentInfo;
     this.buttons = this.props.buttons;
     this.onComment = this.props.onComment;
-    this.content = this.props.content;
     this.database = this.props.FitlyFirebase.database();
     this.user = this.props.user;
     this.uID = this.props.uID;
@@ -56,11 +59,10 @@ class SocialBtns extends Component {
       {ref: this.saveRef, type: 'save'}
     ].map(state => {
       const {type} = state;
-      state.ref.once('value').then(snap => {
+      state.ref.child(this.uID).once('value').then(snap => {
         let listObj =  snap.val();
         this.setState({
           [type]: !!(listObj && listObj[this.uID]),
-          [type + 'Count']: Object.keys(listObj || {}).length
         })
       }).catch(error => {
         console.log('social buttons get initialstate error', error);
@@ -103,7 +105,7 @@ class SocialBtns extends Component {
       try {
         if (!this.state.like) {
           this.likeRef.child(this.uID).set(true);
-          this.contentRef.transaction(count => count + 1);
+          this.contentRef.child('likeCount').transaction(count => count + 1);
 
           if (!this.hasLiked) {
             const updateObj = this._createUpdate('like');
@@ -119,7 +121,7 @@ class SocialBtns extends Component {
         } else {
           this.likeRef.child(this.uID).set(null);
           this.userLikesRef.set(null);
-          this.contentRef.transaction(count => count - 1);
+          this.contentRef.child('likeCount').transaction(count => count - 1);
           this.setState({
             like: false,
             likeCount: this.state.likeCount - 1
@@ -139,6 +141,7 @@ class SocialBtns extends Component {
         try {
           if (!this.state.share) {
             const updateObj = this._createUpdate('share');
+            this.contentRef.child('shareCount').transaction(count => count + 1);
             this.shareRef.child(this.uID).set(true);
             saveUpdateToDB(updateObj, this.uID);
             this.setState({
@@ -163,6 +166,7 @@ class SocialBtns extends Component {
             contentID: this.contentInfo.contentID,
             timestamp: Firebase.database.ServerValue.TIMESTAMP
           };
+          this.contentRef.child('saveCount').transaction(count => count + 1);
           this.userCollectionsRef.set(newCollection);
         }
         this.setState({
@@ -177,7 +181,7 @@ class SocialBtns extends Component {
 
   _renderCommentBtn() {
     if (this.buttons.comment) {
-      const replyCount = this.content.replyCount;
+      const replyCount = this.state.replyCount;
       return (
         <TouchableOpacity style={[postStyle.socialIcon, {width: 55, alignSelf: 'flex-start'}]} onPress={() => this.props.onComment(this.contentInfo)}>
           <Icon name="ios-undo" size={this.iconSize} color={this.iconColor}/>
@@ -190,9 +194,9 @@ class SocialBtns extends Component {
 
   _renderLikeBtn() {
     if (this.buttons.like) {
-      const likeCount = this.content.likeCount;
+      const likeCount = this.state.likeCount;
       return (
-        <TouchableOpacity style={postStyle.socialIcon} onPress={this.toggleLike}>
+        <TouchableOpacity style={postStyle.socialIcon} onPress={this._toggleLike}>
           {(this.state.like)
             ? <Icon name="ios-heart" size={this.iconSize} color={this.iconColor}/>
             : <Icon name="ios-heart-outline" size={this.iconSize} color={this.iconColor}/>
@@ -206,13 +210,13 @@ class SocialBtns extends Component {
 
   _renderShareBtn() {
     if (this.buttons.share) {
-      const shareCount = this.content.shareCount;
+      const shareCount = this.state.shareCount;
       return (this.state.share)
         ? <View style={postStyle.socialIcon}>
           <Icon name="ios-share" size={this.iconSize} color={this.iconColor}/>
           <Text style={postStyle.iconText}>{(shareCount) ? shareCount : ''}{"\n"}shared</Text>
         </View>
-        : <TouchableOpacity style={postStyle.socialIcon} onPress={this.handleShare}>
+        : <TouchableOpacity style={postStyle.socialIcon} onPress={this._handleShare}>
           <Icon name="ios-share-outline" size={this.iconSize} color={this.iconColor}/>
           <Text style={postStyle.iconText}>{(shareCount) ? shareCount : ''}{"\n"}shared</Text>
         </TouchableOpacity>
@@ -222,13 +226,13 @@ class SocialBtns extends Component {
 
   _renderSaveBtn() {
     if (this.buttons.save) {
-      const saveCount = this.content.saveCount;
+      const saveCount = this.state.saveCount;
       return (this.state.save)
         ? <View style={postStyle.socialIcon}>
           <Icon name="ios-bookmark" size={this.iconSize} color={this.iconColor}/>
           <Text style={postStyle.iconText}>{(saveCount) ? saveCount : ''}{"\n"}saved</Text>
         </View>
-        : <TouchableOpacity style={postStyle.socialIcon} onPress={this.handleSave}>
+        : <TouchableOpacity style={postStyle.socialIcon} onPress={this._handleSave}>
           <Icon name="ios-bookmark-outline" size={this.iconSize} color={this.iconColor}/>
           <Text style={postStyle.iconText}>{(saveCount) ? saveCount : ''}{"\n"}saved</Text>
         </TouchableOpacity>

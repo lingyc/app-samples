@@ -43,7 +43,7 @@ class ComposePost extends Component {
         let draftState = this.props.drafts[this.props.draftRef];
         let postKey = this.FitlyFirebase.database().ref().child('posts').push().key;
         let authorInfo = {
-          authorID: this.uID,
+          author: this.uID,
           authorName: this.user.public.first_name + ' ' + this.user.public.last_name,
           authorPicture: this.user.public.picture
         }

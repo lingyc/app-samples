@@ -125,8 +125,8 @@ class CommentsView extends Component {
                 <TimeAgo style={feedEntryStyle.timestamp} time={comment.createdAt}/>
                 <View style={postStyle.postContent}>
                   {(comment.photo)
-                    ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
-                        <Image style={feedEntryStyle.images} source={{uri: photo.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
+                    ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', comment.photo.key)}>
+                        <Image style={feedEntryStyle.images} source={{uri: comment.photo.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
                       </TouchableOpacity>
                     : <Text style={postStyle.content}>{comment.content}</Text>}
                   {this._renderSocialBtns(comment)}

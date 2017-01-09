@@ -84,24 +84,21 @@ class ComposeComment extends Component {
           saveCount: 0,
           createdAt: Firebase.database.ServerValue.TIMESTAMP,
         };
-
         if (this.state.photo) {
-          let photoRefs = await savePhotoToDB([photo], authorInfo, '/messages/' + msgKey);
-          msgObj.photo = {...photoRefs[0]};
+          let photoRefs = await savePhotoToDB([this.state.photo], authorInfo, '/messages/' + msgKey);
+          msgObj.photo = photoRefs[0];
           msgObj.content = null;
         }
-
         this.msgRef.child(msgKey).set(msgObj);
         this.userMsgRef.child(msgKey).set({timestamp: Firebase.database.ServerValue.TIMESTAMP});
         this.parentCommentRef.child(msgKey).set({timestamp: Firebase.database.ServerValue.TIMESTAMP});
         this.parentRef.child('replyCount').transaction(count => count + 1);
         this.parentRef.child('lastRepliedAt').set(Firebase.database.ServerValue.TIMESTAMP);
         this.parentRef.child('lastMsg').set(this.state.content);
-
         const updateObj = {
           type: "reply",
           sourceType: this.contentType,
-          postID: this.props.contentID,
+          sourceID: this.contentID,
           msgID: msgKey,
           ownerID: this.uID,
           ownerName: authorInfo.authorName,
@@ -112,7 +109,6 @@ class ComposeComment extends Component {
 
         this.notificationRef.push(updateObj);
         this.setState({...this.initialState})
-
       } catch(error) {
         this.setState({loading: false});
         console.log('create post error', error);
@@ -123,8 +119,7 @@ class ComposeComment extends Component {
   _sendPhotoMsg() {
     selectPicture()
     .then(photo => {
-      this.setState({photo: photo.uri});
-      this._sendMsg();
+      this.setState({photo: {path: photo.uri}}, () => this._sendMsg());
     }).catch(error => {
       console.log('error getting photo')
     })

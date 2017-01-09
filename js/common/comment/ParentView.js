@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { postStyle, feedEntryStyle } from '../../styles/styles.js';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { push, pop } from '../../actions/navigation.js';
+import { push } from '../../actions/navigation.js';
 import TimeAgo from 'react-native-timeago';
 import SocialBtns from '../SocialBtns.js'
 import { connect } from 'react-redux';
@@ -93,7 +93,7 @@ const mapStateToProps = function(state) {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    navigation: bindActionCreators({ pop, push, resetTo }, dispatch),
+    navigation: bindActionCreators({ push }, dispatch),
   };
 };
 

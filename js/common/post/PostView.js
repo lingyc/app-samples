@@ -49,6 +49,7 @@ class PostView extends Component {
   };
 
   _turnOnPostListener() {
+    //TODO: no need to listen to the entire object, just mainly the like, save, share and reply counts
     const handlePostUpdates = (postSnap) => {
       let postObj = postSnap.val();
       if (!postObj) { return; }

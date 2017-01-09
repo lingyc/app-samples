@@ -59,7 +59,7 @@ export const uploadPhoto = (location, data, options) => {
 
 //uploads the photos and return a list of firebase database paths
 export const savePhotoToDB = (photos, authorInfo, contentlink) => {
-  const {authorID, authorName, authorPicture} = authorInfo;
+  const {author, authorName, authorPicture} = authorInfo;
   let linkPromises = photos.map(photo => {
     return Promise.resolve(uploadPhoto('/photos/' + contentlink + '/', photo.path));
   });
@@ -80,7 +80,7 @@ export const savePhotoToDB = (photos, authorInfo, contentlink) => {
         saveCount: 0,
         replyCount: 0,
         description: photos[index].description || '',
-        author: authorID,
+        author: author,
         authorName: authorName,
         authorPicture: authorPicture,
         tags: photoTags,
@@ -89,7 +89,7 @@ export const savePhotoToDB = (photos, authorInfo, contentlink) => {
       };
 
       const photoKey = FitlyFirebase.database().ref('photos').push().key;
-      FitlyFirebase.database().ref(`userPhotos/${authorID}/${photoKey}`).set({link: link, timestamp: Firebase.database.ServerValue.TIMESTAMP})
+      FitlyFirebase.database().ref(`userPhotos/${author}/${photoKey}`).set({link: link, timestamp: Firebase.database.ServerValue.TIMESTAMP})
       return Promise.resolve(FitlyFirebase.database().ref(`photos/${photoKey}`).set(photoObj).then(snap => { return {key: photoKey, link: link}; }));
     });
   }).then(refPromises => {

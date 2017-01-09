@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { postStyle, feedEntryStyle } from '../../styles/styles.js';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { push } from '../../actions/navigation.js';
 import TimeAgo from 'react-native-timeago';
@@ -12,6 +12,7 @@ class ParentView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: true,
       content: null,
       like: false,
       shared: false,
@@ -34,7 +35,10 @@ class ParentView extends Component {
       this.contentRef = this.FitlyFirebase.database().ref('photos').child(contentID);
     }
 
-    this.contentRef.once('value').then(snap => this.setState({content: snap.val()}));
+    this.contentRef.once('value').then(snap => this.setState({
+      content: snap.val(),
+      loading: false,
+    }));
   };
 
   _goToProfile(id) {
@@ -62,24 +66,32 @@ class ParentView extends Component {
   };
 
   render() {
-    const {content} = this.state;
-    return (
-      <View>
-        {this._renderAuthor(content)}
-        <TimeAgo style={feedEntryStyle.timestamp} time={content.createdAt}/>
-        {(content.photo)
-          ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
+    if (this.state.loading) {
+      return (
+        <View>
+          <ActivityIndicator animating={true} style={{height: 80}} size="small"/>
+        </View>
+      );
+    } else {
+      const {content} = this.state;
+      return (
+        <View>
+          {this._renderAuthor(content)}
+          <TimeAgo style={feedEntryStyle.timestamp} time={content.createdAt}/>
+          {(content.photo)
+            ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
               <Image style={feedEntryStyle.images} source={{uri: content.photo.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
             </TouchableOpacity>
-          : <Text style={postStyle.content}>{content.content}</Text>
-        }
-        <SocialBtns
-          contentInfo={this.props.route}
-          content={this.state.content}
-          buttons={{like: true, share: true, save: true}}
-        />
-      </View>
-    );
+            : <Text style={postStyle.content}>{content.content}</Text>
+          }
+          <SocialBtns
+            contentInfo={this.props.route}
+            content={this.state.content}
+            buttons={{like: true, share: true, save: true}}
+          />
+        </View>
+      );
+    }
   }
 };
 

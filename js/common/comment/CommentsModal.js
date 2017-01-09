@@ -9,6 +9,7 @@ export default class CommentsModal extends Component {
     super(props);
     this.state = {
       routeStack: [this.props.initialRoute],
+      skipInititalRoute: false
     };
 
     // let route = {
@@ -30,11 +31,20 @@ export default class CommentsModal extends Component {
   };
 
   _popRoute() {
-    if (this.state.routeStack.length > 1) {
+    const pop = () => {
       let newRoutes = this.state.routeStack.slice();
       newRoutes.pop();
       this.setState({routeStack: newRoutes});
+    };
+
+    let minStackSize = (this.state.skipInititalRoute) ? 2 : 1;
+    if (this.state.routeStack.length > minStackSize) {
+      pop();
     } else {
+      if (this.state.skipInititalRoute) {
+        this.setState({skipInititalRoute: false});
+        pop();
+      }
       this.props.closeModal();
     }
   };
@@ -64,7 +74,13 @@ export default class CommentsModal extends Component {
             closeModal={() => this._popRoute()}
           />
         </Modal>
-        <CommentsView route={this.props.initialRoute} pushRoute={this._pushRoute.bind(this)}/>
+        <CommentsView
+          route={this.props.initialRoute}
+          openModal={() => {
+            this.setState({skipInititalRoute: true})
+            this.props.openModal();
+          }}
+          pushRoute={this._pushRoute.bind(this)}/>
       </View>
     )
   }

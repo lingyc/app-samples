@@ -135,7 +135,7 @@ class PostView extends Component {
   _renderPostBody() {
     const {post} = this.state;
     return (
-      <View>
+      <View style={{borderBottomWidth: .5, borderColor: '#ccc'}}>
         {this._renderAuthor(post)}
         <TimeAgo style={feedEntryStyle.timestamp} time={post.createdAt}/>
         <View style={postStyle.postContent}>
@@ -143,6 +143,7 @@ class PostView extends Component {
           <Text style={postStyle.textContent}>{post.content}</Text>
           {this._renderPhotos(post.photos)}
           {this._renderTags(post.tags)}
+          {this._renderSocialBtns()}
         </View>
       </View>
     )
@@ -156,10 +157,10 @@ class PostView extends Component {
     };
     return <View style={postStyle.postContainer}>
       {this._renderPostBody()}
-      {this._renderSocialBtns()}
       <CommentsModal
         modalVisible={this.state.modalVisible}
         renderParent={() => this._renderPostBody()}
+        openModal={() => this.setState({modalVisible: true})}
         closeModal={() => this.setState({modalVisible: false})}
         initialRoute={initialRoute}
       />

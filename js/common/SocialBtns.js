@@ -50,7 +50,12 @@ class SocialBtns extends Component {
 
   componentDidMount() {
     this._getInitialStates();
-  }
+    this.contentRef.child('replyCount').on('value', countSnap => this.setState({replyCount: countSnap.val()}));
+  };
+
+  componentWillUnmount() {
+    this.contentRef.child('replyCount').off('value');
+  };
 
   _getInitialStates() {
     const stateTypes = [

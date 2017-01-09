@@ -33,6 +33,8 @@ class CommentsView extends Component {
     } else if (contentType === 'photo') {
       this.commentsRef = this.database.ref('photos').child(contentID).child('replies');
     }
+
+    this._onComment = this._onComment.bind(this);
   }
 
   componentDidMount() {
@@ -98,6 +100,11 @@ class CommentsView extends Component {
     </TouchableOpacity>
   };
 
+  _onComment(route) {
+    this.props.openModal && this.props.openModal();
+    this.props.pushRoute(route);
+  }
+
   _renderSocialBtns(content) {
     let contentInfo = {
       contentType: 'message',
@@ -108,7 +115,7 @@ class CommentsView extends Component {
       <SocialBtns
         contentInfo={contentInfo}
         buttons={{comment: true, like: true, share: true, save: true}}
-        onComment={this.props.pushRoute}
+        onComment={this._onComment}
         content={content}
       />
     )
@@ -120,7 +127,7 @@ class CommentsView extends Component {
         {this.state.comments.map((comment, index) => {
           if (comment) {
             return (
-              <View key={comment.key + index}>
+              <View key={comment.key + index} style={{borderBottomWidth: .5, borderColor: '#ccc'}}>
                 {this._renderAuthor(comment)}
                 <TimeAgo style={feedEntryStyle.timestamp} time={comment.createdAt}/>
                 <View style={postStyle.postContent}>
@@ -141,6 +148,7 @@ class CommentsView extends Component {
             )
           }
         })}
+        <View style={{height: 100}}></View>
       </View>
     );
   }

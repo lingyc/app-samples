@@ -144,7 +144,7 @@ class ComposeComment extends Component {
           style={postStyle.replyInput}
           value={this.state.content}
           placeholderTextColor="grey"
-          autoFocus={true}
+          // autoFocus={true}
           returnKeyType='send'
           onSubmitEditing={() => this._sendMsg()}
         />

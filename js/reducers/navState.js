@@ -112,10 +112,9 @@ export default function (state: State = initialState, action): State {
     case SELECT_TAB: {
       const {tabIndex} = action;
       if (tabIndex !== state.tabs.index) {
-        const tabs = {...state.tabs, index: tabIndex};
         return {
           ...state,
-          tabs
+          tabs: StateUtils.jumpToIndex(state.tabs, tabIndex)
         };
       } else {
         const {tabs} = state;

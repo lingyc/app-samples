@@ -17,7 +17,6 @@ export const createUpdateObj = (ref: string, data) => {
   for (key in data) {
     updateObj[ref + '/' + key + '/'] = data[key];
   }
-  console.log(updateObj);
   return updateObj;
 };
 
@@ -45,6 +44,8 @@ export const updateCurrentLocationInDB = (uid) => {
     };
   }).then(placeObj => {
     return database.ref('users/' + uid + '/public/currentLocation/').set(placeObj);
+  }).catch(error => {
+    console.log('updateCurrentLocationInDB error ', error)
   });
 };
 

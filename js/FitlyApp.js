@@ -39,7 +39,7 @@ class FitlyApp extends Component {
         action.updateLogginStatus(true);
 
         //this line updates the currentLocation of the user on the database, when should we update the location of the user?
-        // await updateCurrentLocationInDB(authData.uid);
+        await updateCurrentLocationInDB(authData.uid);
 
         const firebaseUserData = (await FitlyFirebase.database().ref('users/' + authData.uid).once('value')).val();
         if (firebaseUserData === null || firebaseUserData.public.profileComplete === false) {

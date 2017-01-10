@@ -21,7 +21,7 @@ class SocialBtns extends Component {
       save: null,
       saveCount: this.content.saveCount,
       replyCount: this.content.replyCount,
-    }
+    };
 
     this.contentInfo = this.props.contentInfo;
     this.buttons = this.props.buttons;

@@ -85,3 +85,10 @@ export default class CommentsModal extends Component {
     )
   }
 };
+
+CommentsModal.propTypes = {
+  modalVisible: React.PropTypes.bool,
+  renderParent: React.PropTypes.func,
+  closeModal: React.PropTypes.func,
+  initialRoute: React.PropTypes.object,
+};

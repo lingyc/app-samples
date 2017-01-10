@@ -6,6 +6,7 @@ import { push } from '../../actions/navigation.js';
 import {saveUpdateToDB, turnOnCommentListener, turnOffCommentListener} from '../../library/firebaseHelpers.js'
 import TimeAgo from 'react-native-timeago';
 import SocialBtns from '../SocialBtns.js'
+import Author from '../Author.js';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -76,30 +77,6 @@ class CommentsView extends Component {
     turnOffCommentListener(this.commentsRef);
   };
 
-  _goToProfile(id) {
-    if (id === this.uID) {
-      this.props.navigation.push({key: "Profile@"}, {general: true});
-    } else {
-      this.props.navigation.push({
-        key: "ProfileEntry@" + id,
-        passProps: {
-          otherUID: id,
-        }
-      },
-      {
-        general: true
-      })
-    }
-  };
-
-  _renderAuthor(content) {
-    return <TouchableOpacity onPress={() => this._goToProfile(content.author)} style={feedEntryStyle.profileRow}>
-      <Image source={(content.authorPicture) ? {uri:content.authorPicture} : require('../../../img/default-user-image.png')}
-      style={feedEntryStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}/>
-      <Text style={feedEntryStyle.username}>{content.authorName}</Text>
-    </TouchableOpacity>
-  };
-
   _onComment(route) {
     this.props.openModal && this.props.openModal();
     this.props.pushRoute(route);
@@ -128,7 +105,7 @@ class CommentsView extends Component {
           if (comment) {
             return (
               <View key={comment.key + index} style={{borderBottomWidth: .5, borderColor: '#ccc'}}>
-                {this._renderAuthor(comment)}
+                <Author content={comment} pushToRoute={this.props.navigation.push}/>
                 <TimeAgo style={feedEntryStyle.timestamp} time={comment.createdAt}/>
                 <View style={postStyle.postContent}>
                   {(comment.photo)

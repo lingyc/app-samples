@@ -49,7 +49,7 @@ class ComposePost extends Component {
         }
 
         this.props.navigation.resetTo({
-          key: "FitlyHomeView", global: true
+          key: "TabNavigator", global: true
         });
 
         this.props.navigation.push({
@@ -93,7 +93,7 @@ class ComposePost extends Component {
           // this.setState({loading: false});
 
           // this.props.navigation.resetTo({
-          //   key: "FitlyHomeView", global: true
+          //   key: "TabNavigator", global: true
           // });
           //
           // this.props.navigation.push({

@@ -346,7 +346,7 @@ class SetupLocation extends Component {
            this.props.action.storeUserProfile(userData);
 
            this.props.navigation.resetTo({
-             key:'FitlyHomeView',
+             key:'TabNavigator',
              global: true,
              from:'SetupLocationView, profile incomplete'
            });

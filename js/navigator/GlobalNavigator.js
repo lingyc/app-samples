@@ -10,7 +10,7 @@ import HeaderGlobal from '../header/HeaderGlobal.js';
 
 //default navigator swipe gets too close to edge, we would increase the edgeHitWidth
 // const SCREEN_WIDTH = require('Dimensions').get('window').width;
-class FitlyNavigator extends Component {
+class GlobalNavigator extends Component {
   constructor(props) {
     super(props);
   }
@@ -63,4 +63,4 @@ const mapDispatchToProps = function(dispatch) {
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(FitlyNavigator);
+export default connect(mapStateToProps, mapDispatchToProps)(GlobalNavigator);

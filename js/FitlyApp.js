@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import {StyleSheet, ActivityIndicator, View } from 'react-native';
-import FitlyNavigator from './navigator/FitlyNavigator.js'
+import GlobalNavigator from './navigator/GlobalNavigator.js'
 import { storeUserProfile } from '../js/actions/user.js';
 import { setFirebaseUID, updateLogginStatus } from '../js/actions/auth.js';
 import { resetTo } from '../js/actions/navigation.js';
@@ -53,7 +53,7 @@ class FitlyApp extends Component {
         } else {
           action.storeUserProfile(firebaseUserData);
           this.setState({ loading: false });
-          navigation.resetTo({key: "FitlyHomeView", global: true});
+          navigation.resetTo({key: "TabNavigator", global: true});
         }
       } catch(error) {
         console.log('initial authentication check - user has not signin', error)
@@ -77,7 +77,7 @@ class FitlyApp extends Component {
           </View>
         );
       } else {
-        return (<FitlyNavigator FitlyFirebase={FitlyFirebase}/>);
+        return (<GlobalNavigator FitlyFirebase={FitlyFirebase}/>);
       }
    }
  }

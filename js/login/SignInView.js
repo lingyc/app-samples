@@ -46,7 +46,7 @@ class SignInView extends Component {
           action.setLoadingState(false);
         } else {
           action.storeUserProfile(firebaseUserData);
-          navigation.resetTo({ key: 'FitlyHomeView', global: true, from: 'SigninEmail, profile complete' });
+          navigation.resetTo({ key: 'TabNavigator', global: true, from: 'SigninEmail, profile complete' });
           action.setLoadingState(false);
         }
       } catch(error) {

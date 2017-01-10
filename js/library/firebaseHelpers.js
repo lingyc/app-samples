@@ -88,7 +88,7 @@ export const savePhotoToDB = (photos, authorInfo, contentlink) => {
         authorPicture: authorPicture,
         tags: photoTags,
         contentlink: contentlink,
-        timestamp: Firebase.database.ServerValue.TIMESTAMP
+        createdAt: Firebase.database.ServerValue.TIMESTAMP
       };
 
       const photoKey = database.ref('photos').push().key;

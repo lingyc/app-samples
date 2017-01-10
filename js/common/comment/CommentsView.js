@@ -82,6 +82,15 @@ class CommentsView extends Component {
     this.props.pushRoute(route);
   }
 
+  _onPhotoPress(comment) {
+    const route = {
+      contentID: comment.photo.key,
+      contentType: 'photo',
+      authorName: comment.author
+    };
+    this._onComment(route);
+  }
+
   _renderSocialBtns(content) {
     let contentInfo = {
       contentType: 'message',

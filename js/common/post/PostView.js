@@ -43,7 +43,6 @@ class PostView extends Component {
       })
       this.postRef.off('value');
     };
-
     this.postRef.on('value', handlePostUpdates);
   };
 
@@ -68,7 +67,12 @@ class PostView extends Component {
       <View style={postStyle.imgContainer}>
         {photos.map((photo, index) => {
           return (
-            <TouchableOpacity style={postStyle.imagesTouchable}  key={'postPhotos' + index} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
+            <TouchableOpacity style={postStyle.imagesTouchable}  key={'postPhotos' + index}
+              onPress={() => this.props.navigation.push({
+                key: "ImageView@" + photo.key,
+                passProps: {photoID: photo.key}
+              },{general: true}
+            )}>
               <Image style={postStyle.images} source={{uri: photo.link}} defaultSource={require('../../../img/default-photo-image.png')}/>
             </TouchableOpacity>
           );
@@ -114,7 +118,6 @@ class PostView extends Component {
       {this._renderPostBody()}
       <CommentsModal
         modalVisible={this.state.modalVisible}
-        renderParent={() => this._renderPostBody()}
         openModal={() => this.setState({modalVisible: true})}
         closeModal={() => this.setState({modalVisible: false})}
         initialRoute={initialRoute}

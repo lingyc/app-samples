@@ -37,7 +37,12 @@ class Feeds extends Component {
       <View style={feedEntryStyle.imgContainer}>
         {photos.map((photo, index) => {
           return (
-            <TouchableOpacity style={feedEntryStyle.imagesTouchable}  key={'feedPhotos' + index} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
+            <TouchableOpacity style={feedEntryStyle.imagesTouchable}  key={'feedPhotos' + index}
+              onPress={() => this.props.navigation.push({
+                key: "ImageView@" + photo.key,
+                passProps: {photoID: photo.key}
+              },{general: true}
+            )}>
               <Image style={feedEntryStyle.images} source={{uri: photo.link}} style={feedEntryStyle.images} defaultSource={require('../../img/default-photo-image.png')}/>
             </TouchableOpacity>
           );

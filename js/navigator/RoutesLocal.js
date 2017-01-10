@@ -4,8 +4,9 @@ import Search from '../tabs/search/Search.js';
 import Notification from '../tabs/notification/Notification.js';
 import Connect from '../tabs/connect/Connect.js';
 
-import ProfileEntry from '../common/ProfileEntry.js'
-import PostView from '../common/post/PostView.js'
+import ProfileEntry from '../common/ProfileEntry.js';
+import PostView from '../common/post/PostView.js';
+import ImageView from '../common/ImageView.js';
 
 const ROUTES = {
   Profile: Profile,
@@ -14,7 +15,8 @@ const ROUTES = {
   Notification: Notification,
   Connect: Connect,
   ProfileEntry: ProfileEntry,
-  PostView: PostView
+  PostView: PostView,
+  ImageView: ImageView,
 };
 
 export default ROUTES;

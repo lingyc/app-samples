@@ -11,17 +11,6 @@ export default class CommentsModal extends Component {
       routeStack: [this.props.initialRoute],
       skipInititalRoute: false
     };
-
-    // let route = {
-    //   contentType: 'type',
-    //   contentID: 'ID',
-    //   parentAuthor: 'uID',
-    // }
-
-    // this.props.modalVisible;
-    // this.props.renderParent;
-    // this.props.closeModal
-    // this.props.initialRoute;
   }
 
   _pushRoute(route) {
@@ -49,8 +38,8 @@ export default class CommentsModal extends Component {
     }
   };
 
-  _renderParent(routeStack, latestRoute) {
-    return (routeStack.length > 1) ? <ParentView route={latestRoute}/> : this.props.renderParent();
+  _renderParent(latestRoute) {
+    return <ParentView route={latestRoute} pushRoute={this._pushRoute.bind(this)}/>;
   };
 
   _renderChild(latestRoute) {
@@ -69,7 +58,7 @@ export default class CommentsModal extends Component {
           onRequestClose={() => this._popRoute()}>
           <ComposeComment
             contentInfo={latestRoute}
-            renderParent={() => this._renderParent(this.state.routeStack, latestRoute)}
+            renderParent={() => this._renderParent(latestRoute)}
             renderComments={() => this._renderChild(latestRoute)}
             closeModal={() => this._popRoute()}
           />
@@ -85,6 +74,12 @@ export default class CommentsModal extends Component {
     )
   }
 };
+
+// let routeExample = {
+//   contentType: 'type',
+//   contentID: 'ID',
+//   parentAuthor: 'uID',
+// }
 
 CommentsModal.propTypes = {
   modalVisible: React.PropTypes.bool,

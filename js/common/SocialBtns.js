@@ -12,6 +12,13 @@ class SocialBtns extends Component {
     super(props);
 
     this.content = this.props.content;
+    this.contentInfo = this.props.contentInfo;
+    this.buttons = this.props.buttons;
+    this.onComment = this.props.onComment;
+    this.database = this.props.FitlyFirebase.database();
+    this.user = this.props.user;
+    this.uID = this.props.uID;
+    const {contentType, contentID, parentAuthor} = this.contentInfo;
 
     this.state = {
       like: null,
@@ -21,16 +28,10 @@ class SocialBtns extends Component {
       save: null,
       saveCount: this.content.saveCount,
       replyCount: this.content.replyCount,
+      ownContent: parentAuthor === this.uID
     };
 
-    this.contentInfo = this.props.contentInfo;
-    this.buttons = this.props.buttons;
-    this.onComment = this.props.onComment;
-    this.database = this.props.FitlyFirebase.database();
-    this.user = this.props.user;
-    this.uID = this.props.uID;
 
-    const {contentType, contentID, parentAuthor} = this.contentInfo;
     this.userShareRef = this.database.ref('userShared/' + this.uID + '/' + contentID);
     this.userCollectionsRef = this.database.ref('userCollections/' + this.uID + '/' + contentID);
     this.userLikesRef = this.database.ref('userLikes/' + this.uID + '/' + contentID);
@@ -200,14 +201,16 @@ class SocialBtns extends Component {
   _renderLikeBtn() {
     if (this.buttons.like) {
       const likeCount = this.state.likeCount;
+      const likeIcon = (this.state.ownContent) ? 'ios-heart-outline' : 'ios-heart';
+      const Wrapper = (this.state.ownContent) ? View : TouchableOpacity;
       return (
-        <TouchableOpacity style={postStyle.socialIcon} onPress={this._toggleLike}>
+        <Wrapper style={postStyle.socialIcon} onPress={this._toggleLike}>
           {(this.state.like)
-            ? <Icon name="ios-heart" size={this.iconSize} color={this.iconColor}/>
+            ? <Icon name={likeIcon} size={this.iconSize} color={this.iconColor}/>
             : <Icon name="ios-heart-outline" size={this.iconSize} color={this.iconColor}/>
           }
           <Text style={postStyle.iconText}>{(likeCount) ? likeCount : ''}{"\n"}likes</Text>
-        </TouchableOpacity>
+        </Wrapper>
       );
     }
     return null;
@@ -216,9 +219,10 @@ class SocialBtns extends Component {
   _renderShareBtn() {
     if (this.buttons.share) {
       const shareCount = this.state.shareCount;
-      return (this.state.share)
+      const shareIcon = (this.state.ownContent) ? 'ios-share-outline' : 'ios-share';
+      return (this.state.share || this.state.ownContent)
         ? <View style={postStyle.socialIcon}>
-          <Icon name="ios-share" size={this.iconSize} color={this.iconColor}/>
+          <Icon name={shareIcon} size={this.iconSize} color={this.iconColor}/>
           <Text style={postStyle.iconText}>{(shareCount) ? shareCount : ''}{"\n"}shared</Text>
         </View>
         : <TouchableOpacity style={postStyle.socialIcon} onPress={this._handleShare}>
@@ -232,9 +236,10 @@ class SocialBtns extends Component {
   _renderSaveBtn() {
     if (this.buttons.save) {
       const saveCount = this.state.saveCount;
-      return (this.state.save)
+      const saveIcon = (this.state.ownContent) ? 'ios-bookmark-outline' : 'ios-bookmark';
+      return (this.state.save || this.state.ownContent)
         ? <View style={postStyle.socialIcon}>
-          <Icon name="ios-bookmark" size={this.iconSize} color={this.iconColor}/>
+          <Icon name={saveIcon} size={this.iconSize} color={this.iconColor}/>
           <Text style={postStyle.iconText}>{(saveCount) ? saveCount : ''}{"\n"}saved</Text>
         </View>
         : <TouchableOpacity style={postStyle.socialIcon} onPress={this._handleSave}>

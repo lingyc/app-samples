@@ -116,8 +116,8 @@ _renderPostFeedEntry(feed) {
                     <Text style={feedEntryStyle.username}>{feed.ownerName}</Text>
                     {this._renderUpdateMsg(feed)}
                   </View>
-                  <TimeAgo style={feedEntryStyle.timestamp} time={feed.timestamp}/>
                 </TouchableOpacity>
+                <TimeAgo style={feedEntryStyle.timestamp} time={feed.timestamp}/>
                 {this._renderFeedEntryContent(feed)}
               </View>
             );

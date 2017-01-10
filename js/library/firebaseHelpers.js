@@ -1,5 +1,5 @@
 import Firebase from 'firebase';
-//Firestack and Firebase have feature missing from each other
+//Firestack and Firebase have feature missing from each other, Firestack will be used until Firebase support all features
 import Firestack from 'react-native-firestack'
 import firebaseConfig from '../../credentials/firebaseConfig.js'
 export const FitlyFirebase = Firebase.initializeApp(firebaseConfig);
@@ -9,6 +9,8 @@ export const firestack = new Firestack({
   debug: __DEV__ && !!window.navigator.userAgent,
   ...firebaseConfig
 });
+
+const database = FitlyFirebase.database();
 
 export const createUpdateObj = (ref: string, data) => {
   let updateObj = {};
@@ -42,30 +44,31 @@ export const updateCurrentLocationInDB = (uid) => {
       zip: place.postalCode
     };
   }).then(placeObj => {
-    return FitlyFirebase.database().ref('users/' + uid + '/public/currentLocation/').set(placeObj);
+    return database.ref('users/' + uid + '/public/currentLocation/').set(placeObj);
   });
 };
 
 export const uploadPhoto = (location, data, options) => {
-  location = (options && options.profile) ? location + 'profile.jpg' : location + guid() + '.jpg';
+  location = (options && options.profile)
+    ? location + 'profile.jpg'
+    : location + randomString() + '.jpg';
   return firestack.storage.uploadFile(location, data, {
     contentType: 'image/jpeg',
     contentEncoding: 'base64',
   })
   .then(snapshot => {
     return snapshot.downloadUrl;
+  }).catch(error => {
+    console.log('photo upload error', error);
   })
 };
 
 //uploads the photos and return a list of firebase database paths
 export const savePhotoToDB = (photos, authorInfo, contentlink) => {
   const {author, authorName, authorPicture} = authorInfo;
-  let linkPromises = photos.map(photo => {
-    return Promise.resolve(uploadPhoto('/photos/' + contentlink + '/', photo.path));
-  });
+  let linkPromises = photos.map(photo => Promise.resolve(uploadPhoto('/photos/' + contentlink + '/', photo.path)));
 
   return Promise.all(linkPromises).then(links => {
-    console.log('links', links);
     return links.map((link, index) => {
       const photoTagsArray = photos[index].tags || [];
       const photoTags = photoTagsArray.reduce((tagObj, tag) => {
@@ -88,14 +91,18 @@ export const savePhotoToDB = (photos, authorInfo, contentlink) => {
         timestamp: Firebase.database.ServerValue.TIMESTAMP
       };
 
-      const photoKey = FitlyFirebase.database().ref('photos').push().key;
-      FitlyFirebase.database().ref(`userPhotos/${author}/${photoKey}`).set({link: link, timestamp: Firebase.database.ServerValue.TIMESTAMP})
-      return Promise.resolve(FitlyFirebase.database().ref(`photos/${photoKey}`).set(photoObj).then(snap => { return {key: photoKey, link: link}; }));
+      const photoKey = database.ref('photos').push().key;
+      database.ref(`userPhotos/${author}/${photoKey}`).set({link: link, timestamp: Firebase.database.ServerValue.TIMESTAMP})
+      return Promise.resolve(
+        database.ref(`photos/${photoKey}`).set(photoObj)
+        .then(snap => {
+          return {key: photoKey, link: link};
+        })
+      );
     });
   }).then(refPromises => {
     return Promise.all(refPromises);
   }).then(photoRefs => {
-    console.log('photoRefs', photoRefs);
     return photoRefs;
   }).catch(err => {
     console.log('savePhotoToDB error', err);
@@ -104,66 +111,17 @@ export const savePhotoToDB = (photos, authorInfo, contentlink) => {
 
 export const saveUpdateToDB = (update, uid, type = {minor: false}) => {
   if (type.minor) {
-    FitlyFirebase.database().ref('/userUpdatesAll/' + uid).push(update);
+    database.ref('/userUpdatesAll/' + uid).push(update);
   } else {
-    FitlyFirebase.database().ref('/userUpdatesMajor/' + uid).push(update);
-    FitlyFirebase.database().ref('/userUpdatesAll/' + uid).push(update);
+    database.ref('/userUpdatesMajor/' + uid).push(update);
+    database.ref('/userUpdatesAll/' + uid).push(update);
   }
 };
 
-//this function is work in progress, the intend is to skip waiting for picture upload and load the local files directly
-// export const noWaitSavePhotoToDB = (photos, authorInfo, contentlink) => {
-//   //transform the photos objects into the correct format
-//   let imagesObjLocal = {};
-//   let linkPromises = [];
-//   let imagesObjDB = {};
-//
-//   photos.each(photo => {
-//     linkPromises.push(Promise.resolve(uploadPhoto('/photos/' + contentlink + '/', photo.path)));
-//     let photoTagsArray = photo.tags || [];
-//     let photoTags = photoTagsArray.reduce((tagObj, tag) => {
-//       tagObj[tag] = true;
-//       return tagObj;
-//     }, {});
-//
-//     let photoObj = {
-//       //this temp object uses the local path, this will be changed to the actual URL in the next code block
-//       link: photo.path,
-//       likeCount: 0,
-//       description: photo.description || '',
-//       author: uid,
-//       tags: photoTags,
-//       contentlink: contentlink,
-//       timestamp: Firebase.database.ServerValue
-//     };
-//     imagesObjLocal.push(photoObj);
-//   });
-//
-//   Promise.all(linkPromises).then(links => {
-//     console.log('links', links);
-//     return links.map((link, index) => {
-//       let photoObj = imagesObjLocal[index];
-//       photoObj.link = link;
-//       return Promise.resolve(FitlyFirebase.database().ref('photos').push(photoObj).then(snap => {
-//         imagesObjDB[snap.key] = true;
-//         return snap.key;
-//       }));
-//     });
-//   }).then(refPromises => {
-//     console.log('refPromise', refPromises);
-//     return Promise.all(refPromises);
-//   }).then(photoRefs => {
-//     console.log('photoRefs', photoRefs);
-//     return FitlyFirebase.database().ref('/posts/photos').set(imagesObjDB);
-//   });
-//
-//   return imagesObjLocal;
-// };
-
 export const turnOnfeedService = (uid, options = {self: false}, initialCallback, subsequentCallback) => {
   let notificationSource = (options.self === true)
-    ? FitlyFirebase.database().ref('followingNotifications/' + uid)
-    : notificationSource = FitlyFirebase.database().ref('userUpdatesAll/' + uid)
+    ? database.ref('followingNotifications/' + uid)
+    : notificationSource = database.ref('userUpdatesAll/' + uid)
 
   const handleNewFeed = (feedEntry) => {
     let feedObject = feedEntry.val();
@@ -179,8 +137,8 @@ export const turnOnfeedService = (uid, options = {self: false}, initialCallback,
 
   notificationSource.orderByChild('timestamp').limitToLast(10).once('value')
   .then(feeds => {
-    //the forEach below is from Firebase API not native JS firebase data come back as objects,
-    //which needs to convert back to array for interating in the correct order
+    //the forEach below belongs to Firebase API not native JS, firebase data come back as objects,
+    //which needs to be converted back to array for order iteration, firebase forEach can iterate firebase data in the correct order
     let feedsArray = [];
     feeds.forEach(feed => {
       let feedObject = feed.val();
@@ -200,12 +158,9 @@ export const turnOnfeedService = (uid, options = {self: false}, initialCallback,
 };
 
 export const turnOffeedService = (uid, options) => {
-  let notificationSource;
-  if (options.self === true) {
-    notificationSource = FitlyFirebase.database().ref('followingNotifications/' + uid);
-  } else {
-    notificationSource = FitlyFirebase.database().ref('userUpdatesAll/' + uid);
-  }
+  let notificationSource = (options.self === true)
+    ? database.ref('followingNotifications/' + uid)
+    : database.ref('userUpdatesAll/' + uid);
   notificationSource.off('child_added');
 };
 
@@ -239,12 +194,8 @@ export const convertFBObjToArray = (collectionObj) => {
 };
 
 //generate random id for photos
-export const guid = () => {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
+export const randomString = () => {
+  const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 }

@@ -67,7 +67,7 @@ class SocialBtns extends Component {
       state.ref.child(this.uID).once('value').then(snap => {
         let listObj =  snap.val();
         this.setState({
-          [type]: !!(listObj && listObj[this.uID]),
+          [type]: !!(listObj),
         })
       }).catch(error => {
         console.log('social buttons get initialstate error', error);

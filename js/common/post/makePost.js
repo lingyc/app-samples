@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import HeaderInView from '../../header/HeaderInView.js'
 import Icon from 'react-native-vector-icons/Ionicons';
-import {guid} from '../../library/firebaseHelpers.js'
+import {randomString} from '../../library/firebaseHelpers.js'
 
 class MakePost extends Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class MakePost extends Component {
 
   componentDidMount() {
     if (!this.props.draftRef) {
-      const draftRef = guid();
+      const draftRef = randomString();
       this.setState({
         draftRef: draftRef
       })
@@ -74,7 +74,6 @@ class MakePost extends Component {
     this.props.draftsAction.clear(this.state.draftRef);
   }
 
-  //refactor this out as a reusable component
   _renderHeader() {
     return (
       <HeaderInView
@@ -87,7 +86,6 @@ class MakePost extends Component {
     );
   };
 
-  //after post creation, push navigator to the post that was just created
   render() {
     if (!this.props.drafts[this.state.draftRef]) {
       return (
@@ -100,7 +98,6 @@ class MakePost extends Component {
         </View>
       );
     } else {
-      // console.log(this.props.drafts[this.state.draftRef]);
       return (
         <View style={{flex: 1, backgroundColor: 'white'}}>
           {this._renderHeader()}

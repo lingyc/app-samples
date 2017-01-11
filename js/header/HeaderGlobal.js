@@ -19,7 +19,6 @@ class HeaderGlobal extends Component {
   }
 
   _renderTitleComponent(sceneProps) {
-    console.log('sceneProps', sceneProps);
     if (sceneProps.scene.route.key === "SettingsMenu") {
       return (
         <View style={headerStyle.container}>

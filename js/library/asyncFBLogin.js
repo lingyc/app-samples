@@ -26,6 +26,10 @@ export const asyncFBLoginWithPermission = (permissions: array) => {
 };
 
 export const fetchFBProfile = (token: string) => {
+  let gotProfile = false;
   return fetch('https://graph.facebook.com/v2.8/me?fields=email,name,friends,first_name,last_name,picture,gender,birthday,location&access_token=' + token)
-  .then((response) => response.json())
+  .then((response) => {
+    return response.json()
+  })
+  .catch(error => console.log('unable to get facebook profile, try again later', error))
 };

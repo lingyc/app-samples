@@ -15,16 +15,11 @@ export const getCurrentPosition = () => {
 };
 
 export const getCurrentPlace = () => {
-  let gotGeocoding = false;
   return getCurrentPosition()
   .then(({coords}) => {
-    setTimeout(() => {
-      if (!gotGeocoding) { throw new Error({message: 'geocoder problem'}) }
-    }, 5000);
     return Geocoder.geocodePosition({lat: coords.latitude, lng: coords.longitude})
   })
   .then(geocoding => {
-    gotGeocoding = true;
     return geocoding[0];
   }).catch(error => {
     console.log('geocoding getCurrentPlace error', error);
@@ -32,13 +27,8 @@ export const getCurrentPlace = () => {
 };
 
 export const getPlace = (userInput) => {
-  let gotGeocoding = false;
-  setTimeout(() => {
-    if (!gotGeocoding) { throw new Error({message: 'geocoder problem'}) }
-  }, 5000);
   return Geocoder.geocodeAddress(userInput)
   .then(geocoding => {
-    gotGeocoding = true;
     return geocoding[0];
   }).catch(error => {
     console.log('geocoding getPlace error', error);

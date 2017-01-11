@@ -346,9 +346,8 @@ class SetupLocation extends Component {
            this.props.action.storeUserProfile(userData);
 
            this.props.navigation.resetTo({
-             key:'TabNavigator',
+             key:'OnBoadingSlides',
              global: true,
-             from:'SetupLocationView, profile incomplete'
            });
 
          } catch(error) {

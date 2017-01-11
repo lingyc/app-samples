@@ -560,13 +560,9 @@ export const feedEntryStyle = StyleSheet.create({
 export const postStyle = StyleSheet.create({
   scrollContentContainer: {
     ...scrollContentContainer,
-    marginTop: 20,
-    marginLeft: 20,
-    marginRight: 20,
-    marginBottom: 20,
   },
   postContainer: {
-    alignSelf: "stretch",
+    marginTop: 20,
     borderBottomWidth: .5,
     borderColor: '#eee',
     paddingBottom: 15,
@@ -603,6 +599,7 @@ export const postStyle = StyleSheet.create({
     paddingBottom: 20
   },
   socialBtns: {
+    backgroundColor: 'rgba(255,255,255,0)',
     flexDirection: "row",
     justifyContent: "flex-end"
   },
@@ -613,8 +610,8 @@ export const postStyle = StyleSheet.create({
   },
   socialIcon: {
     width: 40,
-    marginTop: 15,
-    paddingRight: 10,
+    // marginTop: 15,
+    // paddingRight: 10,
     alignItems: 'center'
   },
   tagsRow: {
@@ -661,8 +658,5 @@ export const postStyle = StyleSheet.create({
     position: 'absolute',
     right: 16,
     top: 6
-  },
-  fullWidthImage: {
-    flexGrow: 1
   },
 })

@@ -112,8 +112,8 @@ class ParentView extends Component {
   _renderPhoto(content) {
     return (
       <View>
-        <Author content={content} nonClickable={true}/>
-        <TimeAgo style={feedEntryStyle.timestamp} time={content.createdAt}/>
+        <Author style={{marginLeft: 15}} content={content} nonClickable={true}/>
+        <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={content.createdAt}/>
         <Image style={feedEntryStyle.images} source={{uri: content.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
         <Text style={postStyle.content}>{content.description}</Text>
         {this._renderTags(content.tags)}

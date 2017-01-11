@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { postStyle, feedEntryStyle } from '../styles/styles.js';
-import { ScrollView, Image, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { ScrollView, Image, View, Text, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { push } from '../actions/navigation.js';
 import { connect } from 'react-redux';
@@ -11,6 +11,7 @@ import Author from './Author.js';
 import CommentsModal from './comment/CommentsModal.js';
 import SocialBtns from './SocialBtns.js'
 import TimeAgo from 'react-native-timeago';
+import FitImage from '../library/FitImage.js';
 
 class ImageView extends Component {
   constructor(props) {
@@ -60,13 +61,18 @@ class ImageView extends Component {
       contentType: 'photo',
       parentAuthor: photo.author
     };
+    const {width, height} = Dimensions.get('window');
 
     return (
       <View style={postStyle.postContainer}>
-        <Author content={photo} pushToRoute={this.props.navigation.push}/>
-        <TimeAgo style={feedEntryStyle.timestamp} time={photo.createdAt}/>
-        <Image style={postStyle.fullWidthImage} source={{uri: photo.link}} defaultSource={require('../../img/default-photo-image.png')}/>
-        <Text style={postStyle.content}>{photo.description}</Text>
+        <Author content={photo} style={{marginLeft: 10}} pushToRoute={this.props.navigation.push}/>
+        <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={photo.createdAt}/>
+        <FitImage
+          style={{width: width}}
+          resizeMode='cover'
+          source={{uri: photo.link}}
+          defaultSource={require('../../img/default-photo-image.png')}/>
+        {(photo.description) ? <Text style={postStyle.content}>{photo.description}</Text> : null}
         {this._renderTags(photo.tags)}
         <SocialBtns
           contentInfo={contentInfo}

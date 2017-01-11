@@ -24,12 +24,12 @@ export default Author = (props) => {
 
   const Wrapper = (nonClickable) ? View : TouchableOpacity;
   return (reversed)
-    ? <Wrapper onPress={() => _goToProfile(content.author)} style={feedEntryStyle.profileRow}>
+    ? <Wrapper onPress={() => _goToProfile(content.author)} style={[feedEntryStyle.profileRow, props.style]}>
         <Text style={feedEntryStyle.username}>{content.authorName}</Text>
         <Image source={(content.authorPicture) ? {uri:content.authorPicture} : require('../../img/default-user-image.png')}
         style={feedEntryStyle.profileImg} defaultSource={require('../../img/default-user-image.png')}/>
       </Wrapper>
-    : <Wrapper onPress={() => _goToProfile(content.author)} style={feedEntryStyle.profileRow}>
+    : <Wrapper onPress={() => _goToProfile(content.author)} style={[feedEntryStyle.profileRow, props.style]}>
         <Image source={(content.authorPicture) ? {uri:content.authorPicture} : require('../../img/default-user-image.png')}
         style={feedEntryStyle.profileImg} defaultSource={require('../../img/default-user-image.png')}/>
         <Text style={feedEntryStyle.username}>{content.authorName}</Text>

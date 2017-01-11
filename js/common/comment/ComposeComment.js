@@ -168,7 +168,7 @@ class ComposeComment extends Component {
       <View style={{flex: 1}}>
         <StatusBar barStyle={this.state.contentType}/>
         {this._renderHeader()}
-          <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={[postStyle.scrollContentContainer, {marginTop: 20}]}>
+          <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={postStyle.scrollContentContainer}>
             <View style={postStyle.postContainer}>
               {this.props.renderParent()}
               {this.props.renderComments()}

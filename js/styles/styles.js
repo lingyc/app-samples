@@ -661,5 +661,8 @@ export const postStyle = StyleSheet.create({
     position: 'absolute',
     right: 16,
     top: 6
-  }
+  },
+  fullWidthImage: {
+    flexGrow: 1
+  },
 })

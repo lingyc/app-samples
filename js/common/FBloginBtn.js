@@ -30,14 +30,10 @@ class FBloginBtn extends Component {
         await asyncFBLogout();
         const data = await asyncFBLoginWithPermission(["public_profile", "email","user_friends","user_location","user_birthday"]);
         action.setSignUpMethod('Facebook');
-        console.log('setSignUpMethod');
         const userFBprofile = await fetchFBProfile(data.credentials.token);
-        console.log('userFBprofile');
         const credential = Firebase.auth.FacebookAuthProvider.credential(data.credentials.token);
         const user = await FitlyFirebase.auth().signInWithCredential(credential);
-        console.log('user');
         await updateCurrentLocationInDB(user.uid);
-        console.log('updateCurrentLocationInDB');
         const userRef = FitlyFirebase.database().ref('users/' + user.uid + '/');
         action.setFirebaseUID(user.uid);
         //update user's Facebook friends everytime they login with Facebook
@@ -45,7 +41,6 @@ class FBloginBtn extends Component {
         const firebaseUserData = (await userRef.once('value')).val();
         // console.log('firebaseUserData', firebaseUserData);
         if (firebaseUserData === null) {
-          console.log('creating user data');
           const { first_name, last_name, picture, email, gender, birthday, friends, location, id } = userFBprofile;
           userRef.set({
             public: {

@@ -333,6 +333,11 @@ class SetupLocation extends Component {
      if (this.state.location) {
        (async () => {
          try {
+           this.props.navigation.resetTo({
+             key:'OnBoardingSlides',
+             global: true,
+           });
+
            let publicDataUpdates = createUpdateObj('/users/' + this.props.uID + '/public', {
              location:this.state.location,
              currentLocation:this.state.location,
@@ -345,10 +350,6 @@ class SetupLocation extends Component {
            const userData = (await FitlyFirebase.database().ref('users/' + this.props.uID).once('value')).val();
            this.props.action.storeUserProfile(userData);
 
-           this.props.navigation.resetTo({
-             key:'OnBoadingSlides',
-             global: true,
-           });
 
          } catch(error) {
            this.props.action.printError(error.message)

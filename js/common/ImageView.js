@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { postStyle, feedEntryStyle, composeStyle, headerStyle } from '../styles/styles.js';
+import { postStyle, feedEntryStyle } from '../styles/styles.js';
 import { ScrollView, Image, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { push } from '../actions/navigation.js';
@@ -65,7 +65,7 @@ class ImageView extends Component {
       <View style={postStyle.postContainer}>
         <Author content={photo} pushToRoute={this.props.navigation.push}/>
         <TimeAgo style={feedEntryStyle.timestamp} time={photo.createdAt}/>
-        <Image style={postStyle.images} source={{uri: photo.link}} defaultSource={require('../../img/default-photo-image.png')}/>
+        <Image style={postStyle.fullWidthImage} source={{uri: photo.link}} defaultSource={require('../../img/default-photo-image.png')}/>
         <Text style={postStyle.content}>{photo.description}</Text>
         {this._renderTags(photo.tags)}
         <SocialBtns

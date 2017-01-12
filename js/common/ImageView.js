@@ -18,40 +18,34 @@ class ImageView extends Component {
     super(props);
 
     this.state = {
-      photos: [],
-      photoCommentModal: {}
+      photo: null,
+      modalVisible: false,
     };
 
     this.FitlyFirebase = this.props.FitlyFirebase;
     this.database = this.FitlyFirebase.database();
     this.uID = this.props.uID;
     this.user = this.props.user;
-    this.photoRef = this.database.ref('photos/');
-    this.leftMargin = {marginLeft: 15};
+    this.photoRef = this.database.ref('photos/' + this.props.photoID);
   };
 
   componentDidMount() {
-    this._getPhotos();
+    this._getPhoto();
   }
 
-  _getPhotos() {
-    this.props.photos.forEach((photo, index) => {
-      this.photoRef.child(photo.key).once('value', (photoSnap) => {
-        let photoObj = photoSnap.val();
-        if (!photoObj) { return; }
-        photoObj.tags = Object.keys(photoObj.tags || {});
-        photoObj.key = photo.key;
-        let photosCopy = this.state.photos.slice()
-        photosCopy[index] = photoObj;
-        this.setState({
-          photos: photosCopy,
-        })
-      });
+  _getPhoto() {
+    this.photoRef.once('value', (photoSnap) => {
+      let photoObj = photoSnap.val();
+      if (!photoObj) { return; }
+      photoObj.tags = Object.keys(photoObj.tags || {});
+      this.setState({
+        photo: photoObj,
+      })
     });
   };
 
   _renderTags(tags) {
-    return <View style={[postStyle.tagsRow, this.leftMargin]}>
+    return <View style={postStyle.tagsRow}>
       {tags.map((tag, index) => {
         return (
           <Text style={postStyle.tags} key={'tag' + index}>#{tag}</Text>
@@ -60,77 +54,56 @@ class ImageView extends Component {
     </View>
   };
 
-  _renderPhoto(photo, width, index) {
+  _renderPhoto() {
+    const {photo} = this.state;
     const contentInfo = {
-      contentID: photo.key,
+      contentID: this.props.photoID,
       contentType: 'photo',
       parentAuthor: photo.author
     };
+    const {width, height} = Dimensions.get('window');
 
-    const modalControl = (boolean) => {
-      return () => {
-        photoCommentModal = Object.assign({}, this.state.photoCommentModal)
-        photoCommentModal[photo.key] = boolean;
-        this.setState({photoCommentModal: photoCommentModal});
-      }
-    }
     return (
-      <View key={'images' + index}>
+      <View style={postStyle.postContainer}>
+        <Author content={photo} style={{marginLeft: 10}} pushToRoute={this.props.navigation.push}/>
+        <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={photo.createdAt}/>
         <FitImage
-          indicatorSize="large"
           style={{width: width}}
           resizeMode='cover'
-          source={{uri: photo.link}}
-          />
-        {(photo.description) ? <Text style={[postStyle.content, this.leftMargin]}>{photo.description}</Text> : null}
+          source={{uri: photo.link}}/>
+        {(photo.description) ? <Text style={postStyle.content}>{photo.description}</Text> : null}
         {this._renderTags(photo.tags)}
         <SocialBtns
           contentInfo={contentInfo}
-          content={photo}
+          content={this.state.photo}
           buttons={{comment: true, like: true, share: true, save: true}}
-          onComment={modalControl(true).bind(this)}
+          onComment={() => this.setState({modalVisible: true})}
         />
         <CommentsModal
-          modalVisible={this.state.photoCommentModal[photo.key]}
-          closeModal={modalControl(false).bind(this)}
+          modalVisible={this.state.modalVisible}
+          renderParent={() => this._renderPostBody()}
+          openModal={() => this.setState({modalVisible: true})}
+          closeModal={() => this.setState({modalVisible: false})}
           initialRoute={contentInfo}
-          disableCommentOnStart={true}
         />
       </View>
     )
-  };
-
-  _renderPhotos() {
-    const {photos} = this.state;
-    const {width} = Dimensions.get('window');
-    return (
-      <View style={postStyle.postContainer}>
-        {(photos[0])
-          ?<View>
-            <Author content={photos[0]} style={this.leftMargin} pushToRoute={this.props.navigation.push}/>
-            <TimeAgo style={feedEntryStyle.timestamp} time={photos[0].createdAt}/>
-          </View>
-         : null}
-        {photos.map((photo, index) => {
-          return (photo)
-           ? this._renderPhoto(photo, width, index)
-           : <ActivityIndicator animating={true} style={{height: 80}} size="large"/>
-        })}
-      </View>
-    );
-  };
+  }
 
 
   render() {
     return <ScrollView style={{backgroundColor: 'white'}} contentContainerStyle={postStyle.scrollContentContainer}>
-      {this._renderPhotos()}
+      {(this.state.photo)
+        ? this._renderPhoto()
+        : <ActivityIndicator animating={this.state.postLoading} style={{height: 80}} size="large"/>
+      }
       <View style={{height: 100}}></View>
     </ScrollView>
   };
 };
 
 ImageView.propTypes = {
-  photos: React.PropTypes.array
+  photoID: React.PropTypes.string
 };
 
 

@@ -21,7 +21,13 @@ class PhotoFeed extends Component {
   _renderPhotos(feed) {
     return feed.photos.map((photo, index) => {
       return (
-        <TouchableOpacity style={{flex: 0}}  key={'feedPhotos' + index} onPress={() => console.log('redirect to photo view with photokey ', photo.key)}>
+        <TouchableOpacity style={{flex: 0}}  key={'feedPhotos' + index}
+          onPress={() => {
+            this.props.navigation.push({
+              key: "ImageView@" + photo.key,
+              passProps: {photoID: photo.key}
+            },{general: true})
+          }}>
           <Image style={[feedEntryStyle.photoFeedEntry, {width: screenWidth / 3, height: screenWidth / 3}]} source={{uri: photo.link}} defaultSource={require('../../img/default-photo-image.png')}/>
           <Text style={[feedEntryStyle.smallDescription, {color: 'white', paddingRight: 10, bottom: 0}]}>{feed.ownerName + ' \nposted '}
             <TimeAgo time={feed.timestamp}/>

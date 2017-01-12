@@ -39,7 +39,7 @@ class Feeds extends Component {
           return (
             <TouchableOpacity style={feedEntryStyle.imagesTouchable}  key={'feedPhotos' + index}
               onPress={() => this.props.navigation.push({
-                key: "ImageView@" + photo.key,
+                key: "PostImagesView@" + photo.key,
                 passProps: {photos: photos}
               },{general: true}
             )}>

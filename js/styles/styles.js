@@ -603,7 +603,8 @@ export const postStyle = StyleSheet.create({
   socialBtns: {
     backgroundColor: 'rgba(255,255,255,0)',
     flexDirection: "row",
-    justifyContent: "flex-end"
+    justifyContent: "flex-end",
+    alignSelf:'stretch',
   },
   iconText: {
     color: "grey",

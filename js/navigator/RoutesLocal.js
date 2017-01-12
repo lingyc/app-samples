@@ -7,6 +7,7 @@ import Connect from '../tabs/connect/Connect.js';
 import ProfileEntry from '../common/ProfileEntry.js';
 import PostView from '../common/post/PostView.js';
 import ImageView from '../common/ImageView.js';
+import PostImagesView from '../common/PostImagesView.js';
 
 const ROUTES = {
   Profile: Profile,
@@ -17,6 +18,7 @@ const ROUTES = {
   ProfileEntry: ProfileEntry,
   PostView: PostView,
   ImageView: ImageView,
+  PostImagesView: PostImagesView
 };
 
 export default ROUTES;

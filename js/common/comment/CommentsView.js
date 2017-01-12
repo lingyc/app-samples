@@ -122,8 +122,8 @@ class CommentsView extends Component {
                         <Image style={feedEntryStyle.images} source={{uri: comment.photo.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
                       </TouchableOpacity>
                     : <Text style={postStyle.content}>{comment.content}</Text>}
-                  {this._renderSocialBtns(comment)}
                 </View>
+                {this._renderSocialBtns(comment)}
               </View>
             )
           } else {

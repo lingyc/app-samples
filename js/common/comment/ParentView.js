@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { postStyle, feedEntryStyle } from '../../styles/styles.js';
-import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { push } from '../../actions/navigation.js';
 import TimeAgo from 'react-native-timeago';
@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Author from '../Author.js';
 import {convertFBObjToArray} from '../../library/firebaseHelpers.js'
+import FitImage from '../../library/FitImage.js';
 
 class ParentView extends Component {
   constructor(props) {
@@ -110,11 +111,15 @@ class ParentView extends Component {
   }
 
   _renderPhoto(content) {
+    const {width, height} = Dimensions.get('window');
     return (
       <View>
         <Author style={{marginLeft: 15}} content={content} nonClickable={true}/>
         <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={content.createdAt}/>
-        <Image style={feedEntryStyle.images} source={{uri: content.link}} style={feedEntryStyle.images} defaultSource={require('../../../img/default-photo-image.png')}/>
+        <FitImage
+          style={{width: width}}
+          resizeMode='cover'
+          source={{uri: content.link}}/>
         <Text style={postStyle.content}>{content.description}</Text>
         {this._renderTags(content.tags)}
         <SocialBtns

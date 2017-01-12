@@ -8,7 +8,6 @@ import SettingsMenu from '../settings/SettingsMenu.js';
 import MakePost from '../common/post/MakePost.js';
 import ComposePost from '../common/post/ComposePost.js';
 
-
 const ROUTES = {
   WelcomeView: WelcomeView,
   SignInView: SignInView,

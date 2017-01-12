@@ -69,7 +69,7 @@ class PostView extends Component {
           return (
             <TouchableOpacity style={postStyle.imagesTouchable}  key={'postPhotos' + index}
               onPress={() => this.props.navigation.push({
-                key: "ImageView@" + photo.key,
+                key: "PostImagesView@" + photo.key,
                 passProps: {photos: photos}
               },{general: true}
             )}>
@@ -102,8 +102,8 @@ class PostView extends Component {
           <Text style={postStyle.textContent}>{post.content}</Text>
           {this._renderPhotos(post.photos)}
           {this._renderTags(post.tags)}
-          {this._renderSocialBtns()}
         </View>
+        {this._renderSocialBtns()}
       </View>
     )
   };

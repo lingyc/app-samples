@@ -74,8 +74,8 @@ class ParentView extends Component {
   _renderPost(content) {
     return (
       <View style={{borderBottomWidth: .5, borderColor: '#ccc'}}>
-        <Author content={content} nonClickable={true}/>
-        <TimeAgo style={feedEntryStyle.timestamp} time={content.createdAt}/>
+        <Author content={content} style={{marginLeft: 15}} nonClickable={true}/>
+        <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={content.createdAt}/>
         <View style={postStyle.postContent}>
           <Text style={postStyle.title}>{content.title}</Text>
           <Text style={postStyle.textContent}>{content.content}</Text>

@@ -109,13 +109,13 @@ class CommentsView extends Component {
 
   render() {
     return (
-      <View>
+      <View style={{marginTop: 20, marginBottom: 20}}>
         {this.state.comments.map((comment, index) => {
           if (comment) {
             return (
               <View key={comment.key + index} style={{borderBottomWidth: .5, borderColor: '#ccc'}}>
-                <Author content={comment} pushToRoute={this.props.navigation.push}/>
-                <TimeAgo style={feedEntryStyle.timestamp} time={comment.createdAt}/>
+                <Author content={comment} style={{marginLeft: 15}} pushToRoute={this.props.navigation.push}/>
+                <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={comment.createdAt}/>
                 <View style={postStyle.postContent}>
                   {(comment.photo)
                     ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', comment.photo.key)}>
@@ -134,7 +134,7 @@ class CommentsView extends Component {
             )
           }
         })}
-        <View style={{height: 100}}></View>
+        <View style={{height: 50}}></View>
       </View>
     );
   }

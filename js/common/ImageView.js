@@ -130,7 +130,7 @@ class ImageView extends Component {
 };
 
 ImageView.propTypes = {
-  photoID: React.PropTypes.string
+  photos: React.PropTypes.array
 };
 
 

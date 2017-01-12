@@ -562,6 +562,7 @@ export const postStyle = StyleSheet.create({
     ...scrollContentContainer,
   },
   postContainer: {
+    alignSelf: 'stretch',
     marginTop: 20,
     borderBottomWidth: .5,
     borderColor: '#eee',

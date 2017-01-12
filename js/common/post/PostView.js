@@ -70,7 +70,7 @@ class PostView extends Component {
             <TouchableOpacity style={postStyle.imagesTouchable}  key={'postPhotos' + index}
               onPress={() => this.props.navigation.push({
                 key: "ImageView@" + photo.key,
-                passProps: {photoID: photos}
+                passProps: {photos: photos}
               },{general: true}
             )}>
               <Image style={postStyle.images} source={{uri: photo.link}} defaultSource={require('../../../img/default-photo-image.png')}/>
@@ -95,8 +95,8 @@ class PostView extends Component {
     const {post} = this.state;
     return (
       <View style={{borderBottomWidth: .5, borderColor: '#ccc'}}>
-        <Author content={post} pushToRoute={this.props.navigation.push}/>
-        <TimeAgo style={feedEntryStyle.timestamp} time={post.createdAt}/>
+        <Author content={post} style={{marginLeft: 15}} pushToRoute={this.props.navigation.push}/>
+        <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={post.createdAt}/>
         <View style={postStyle.postContent}>
           <Text style={postStyle.title}>{post.title}</Text>
           <Text style={postStyle.textContent}>{post.content}</Text>

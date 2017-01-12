@@ -7,8 +7,9 @@ import ParentView from './ParentView.js';
 export default class CommentsModal extends Component {
   constructor(props) {
     super(props);
+    let initialRouteStack = (this.props.initialRoute) ? [this.props.initialRoute] : [];
     this.state = {
-      routeStack: [this.props.initialRoute],
+      routeStack: initialRouteStack,
       skipInititalRoute: false
     };
   }
@@ -54,7 +55,7 @@ export default class CommentsModal extends Component {
         <Modal
           animationType={"fade"}
           transparent={false}
-          visible={this.props.modalVisible}
+          visible={!!this.props.modalVisible}
           onRequestClose={() => this._popRoute()}>
           <ComposeComment
             contentInfo={latestRoute}
@@ -63,13 +64,16 @@ export default class CommentsModal extends Component {
             closeModal={() => this._popRoute()}
           />
         </Modal>
-        <CommentsView
-          route={this.props.initialRoute}
-          openModal={() => {
-            this.setState({skipInititalRoute: true})
-            this.props.openModal();
-          }}
-          pushRoute={this._pushRoute.bind(this)}/>
+        {(!this.props.disableCommentOnStart)
+          ? <CommentsView
+            route={this.props.initialRoute}
+            openModal={() => {
+              this.setState({skipInititalRoute: true})
+              this.props.openModal();
+            }}
+            pushRoute={this._pushRoute.bind(this)}/>
+          : null
+        }
       </View>
     )
   }

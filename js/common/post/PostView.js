@@ -70,7 +70,7 @@ class PostView extends Component {
             <TouchableOpacity style={postStyle.imagesTouchable}  key={'postPhotos' + index}
               onPress={() => this.props.navigation.push({
                 key: "ImageView@" + photo.key,
-                passProps: {photoID: photo.key}
+                passProps: {photoID: photos}
               },{general: true}
             )}>
               <Image style={postStyle.images} source={{uri: photo.link}} defaultSource={require('../../../img/default-photo-image.png')}/>

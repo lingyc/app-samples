@@ -79,6 +79,7 @@ export const savePhotoToDB = (photos, authorInfo, contentlink) => {
 
       const photoObj = {
         link: link,
+        replyCount: 0,
         likeCount: 0,
         shareCount: 0,
         saveCount: 0,

@@ -40,7 +40,7 @@ class Feeds extends Component {
             <TouchableOpacity style={feedEntryStyle.imagesTouchable}  key={'feedPhotos' + index}
               onPress={() => this.props.navigation.push({
                 key: "ImageView@" + photo.key,
-                passProps: {photoID: photo.key}
+                passProps: {photos: photos}
               },{general: true}
             )}>
               <Image style={feedEntryStyle.images} source={{uri: photo.link}} style={feedEntryStyle.images} defaultSource={require('../../img/default-photo-image.png')}/>

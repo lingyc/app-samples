@@ -115,7 +115,7 @@ class CommentsView extends Component {
             return (
               <View key={comment.key + index} style={{borderBottomWidth: .5, borderColor: '#ccc'}}>
                 <Author content={comment} style={{marginLeft: 15}} pushToRoute={this.props.navigation.push}/>
-                <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={comment.createdAt}/>
+                <TimeAgo style={feedEntryStyle.timestamp} time={comment.createdAt}/>
                 <View style={postStyle.postContent}>
                   {(comment.photo)
                     ? <TouchableOpacity style={feedEntryStyle.imagesTouchable} onPress={() => console.log('redirect to photo view with photokey ', comment.photo.key)}>

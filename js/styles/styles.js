@@ -523,7 +523,8 @@ export const feedEntryStyle = StyleSheet.create({
     fontSize: 10,
     right: 0,
     top: 10,
-    position: 'absolute'
+    position: 'absolute',
+    right: 15,
   },
   smallDescription: {
     backgroundColor: 'rgba(255,255,255,0)',

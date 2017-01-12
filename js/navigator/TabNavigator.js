@@ -88,6 +88,7 @@ class TabNavigator extends Component {
           barStyle="light-content"
         />
         <CardStack
+          style={{shadowOpacity:0, shadowRadius: 0, shadowColor: 'rgba(255,255,255,0)'}}
           key={this.props.navState.tabs.key}
           navigationState={this.props.navState.tabs}
           renderScene={this._renderScene.bind(this)}

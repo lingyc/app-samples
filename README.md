@@ -26,7 +26,6 @@ More TODOs can be found in the code. This list will grow.
 - [ ] Onboarding
   - [ ] validate user input
   - [ ] upload profile picture
-  - [ ] add carousels to finish the onboarding process
   - [ ] email validation
   - [ ] forget password feature
   - [ ] stylistic details
@@ -44,7 +43,7 @@ More TODOs can be found in the code. This list will grow.
     - [ ] invite others for workouts
   - [ ] push notifications
   - [ ] feeds
-    - [ ] refactor feeds to use listView
+    - [ ] include feeds for likes, replies
 
 
 - [ ] Search Tab

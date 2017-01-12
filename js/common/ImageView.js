@@ -108,7 +108,7 @@ class ImageView extends Component {
         {(photos[0])
           ?<View>
             <Author content={photos[0]} style={this.leftMargin} pushToRoute={this.props.navigation.push}/>
-            <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={photos[0].createdAt}/>
+            <TimeAgo style={feedEntryStyle.timestamp} time={photos[0].createdAt}/>
           </View>
          : null}
         {photos.map((photo, index) => {

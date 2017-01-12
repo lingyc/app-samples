@@ -10,7 +10,7 @@ import { bindActionCreators } from 'redux';
 import {selectPicture} from '../../library/pictureHelper.js';
 import {uploadPhoto, turnOnfeedService, turnOffeedService} from '../../library/firebaseHelpers.js';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js'
 
 
 class Profile extends Component {
@@ -19,6 +19,8 @@ class Profile extends Component {
     this.state = {
       loading: false,
       feeds: [],
+      summaryEditMode: false,
+      summaryInput: '',
     }
   }
 
@@ -55,6 +57,39 @@ class Profile extends Component {
     );
   };
 
+  _updateSummary() {
+    this.props.FitlyFirebase.database().ref('users/' + this.props.uID + '/public/summary').set(this.state.summaryInput);
+    this.setState({summaryInput: '', summaryEditMode: false});
+  }
+
+  _renderSummary(profile) {
+    if (this.state.summaryEditMode) {
+      return (
+        <View style={{flex: 0, alignItems:'center'}}>
+          <AutoExpandingTextInput
+            style={{borderWidth: .5, borderColor: 'grey', borderRadius: 5, fontSize: 15, width: 200, paddingLeft: 10, paddingRight:10, paddingBottom:10}}
+            multiline={true}
+            maxLength={200}
+            clearButtonMode="always"
+            onSubmitEditing={() => this._updateSummary()}
+            onChangeText={(text) => this.setState({summaryInput: text})}
+            value={this.state.summaryInput}
+            placeholder="say a little about yourself!"
+          />
+          <Text style={{fontSize: 13, color: 'grey', marginTop: 10}} onPress={() => this._updateSummary()}>send</Text>
+          <Text style={{fontSize: 13, color: 'grey',  margin: 10}} onPress={() => this.setState({summaryEditMode: !this.state.summaryEditMode, summaryInput: ''})}>close</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={{flex: 0, flexDirection:'row'}}>
+          <Text style={profileStyle.summaryText}>{(profile.summary) ? profile.summary : 'I love to workout!'}</Text>
+          <Text style={{fontSize: 12, marginLeft: 10, color: 'grey'}} onPress={() => this.setState({summaryEditMode: !this.state.summaryEditMode})}>edit</Text>
+        </View>
+      );
+    }
+  }
+
   _updateProfilePic() {
     selectPicture()
     .then(picture => {
@@ -85,9 +120,7 @@ class Profile extends Component {
         </TouchableOpacity>
         <Text style={profileStyle.nameText}>{profile.first_name + ' ' + profile.last_name}</Text>
         <Text style={profileStyle.dashboardText}>{profile.location.place}</Text>
-        {/* TODO: add edit summary btn */}
-        <Text style={profileStyle.summaryText}>{(profile.summary) ? profile.summary : 'I love to workout!'}</Text>
-
+        {this._renderSummary(profile)}
         <TouchableOpacity onPress={() => this.props.navigation.push({key: "MakePost", global: true})}>
           <Icon name="ios-create-outline" size={35} color="black"/>
         </TouchableOpacity>

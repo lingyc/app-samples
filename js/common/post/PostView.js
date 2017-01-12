@@ -96,7 +96,7 @@ class PostView extends Component {
     return (
       <View style={{borderBottomWidth: .5, borderColor: '#ccc'}}>
         <Author content={post} style={{marginLeft: 15}} pushToRoute={this.props.navigation.push}/>
-        <TimeAgo style={[feedEntryStyle.timestamp, {right: 15}]} time={post.createdAt}/>
+        <TimeAgo style={feedEntryStyle.timestamp} time={post.createdAt}/>
         <View style={postStyle.postContent}>
           <Text style={postStyle.title}>{post.title}</Text>
           <Text style={postStyle.textContent}>{post.content}</Text>

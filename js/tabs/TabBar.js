@@ -24,12 +24,12 @@ class TabBar extends Component {
   render() {
     const tabs = this.props.tabs.routes.map((tab, index) => {
       let tabStyling = tabStyle.tab;
-      let iconSize = 30;
+      let iconSize = 20;
       if (this.props.tabs.index === index) {
         tabStyling = tabStyle.selectedTab;
-        iconSize = 40;
+        iconSize = 30;
       }
-      let iconName, size = 30;
+      let iconName;
       if (tab.key === 'Activity') {
         iconName = "calendar";
       } else if (tab.key === 'Search') {

@@ -10,38 +10,62 @@ import { pop, push, resetTo } from '../../actions/navigation.js';
 import { save, clear } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {savePhotoToDB, saveUpdateToDB} from '../../library/firebaseHelpers.js'
+import {savePhotoToDB, saveUpdateToDB, randomString} from '../../library/firebaseHelpers.js'
 import {getImageFromCam, getImageFromLib} from '../../library/pictureHelper.js'
 import Firebase from 'firebase';
 
 //TODO: input validation??
 const hashTagRegex = (/^\w+$/g);
 
-class ComposePost extends Component {
+class CreateActivity extends Component {
   constructor(props) {
     super(props);
+    // this.props.groupID;
+    if (!this.props.draftRef) {
+      this.draftRef = randomString();
+      this.props.draftsAction.save(draftRef,{
+        category: "Workout Plan",
+        title: '',
+        details: '',
+        tags: [],
+        mainPhoto: null,
+        photos: [],
+        startDate: null,
+        endDate: null,
+        requirements: {
+          cost: 0,
+          others: [],
+        },
+        group: this.props.groupID || null
+        location: null,
+        placeName: null,
+        photoRefs: null,
+      })
+    } else {
+      this.draftRef = this.props.draftRef;
+    }
+
     this.state = {
       loading: false,
       modalVisible: false,
       contentType: 'light-content'
     };
+
     this.draftsAction = this.props.draftsAction;
-    this.setDraftState = this.props.draftsAction.save.bind(this, this.props.draftRef);
-    this.clearState = this.props.draftsAction.clear.bind(this, this.props.draftRef);
+    this.setDraftState = this.props.draftsAction.save.bind(this, this.draftRef);
+    this.clearState = this.props.draftsAction.clear.bind(this, this.draftRef);
     this.user = this.props.user;
     this.uID = this.props.uID;
-    this.FitlyFirebase = this.props.FitlyFirebase;
+    this.database = this.props.FitlyFirebase.database();
   };
 
-  //TODO: when hit summit does the view redirects to the post display view directly?
-  //disables cliking send
-  _savePostToDB() {
+  _saveToDB() {
     //tables to update: posts, userPosts, userUpdatesMajor, userUpdatesAll
     (async () => {
       try {
         this.setState({loading: true});
-        let draftState = this.props.drafts[this.props.draftRef];
-        let postKey = this.FitlyFirebase.database().ref().child('posts').push().key;
+        let draftState = this.props.drafts[this.draftRef];
+        let postKey = this.database.ref('posts').push().key;
         let authorInfo = {
           author: this.uID,
           authorName: this.user.public.first_name + ' ' + this.user.public.last_name,
@@ -57,7 +81,7 @@ class ComposePost extends Component {
           passProps:{
             postID: postKey
           }
-        },{general: true});
+        }, {general: true});
 
         let photoRefs = await savePhotoToDB(draftState.photos, authorInfo, '/posts/' + postKey);
         let photoRefObject = photoRefs.reduce((refObj, photoRef) => {
@@ -88,9 +112,9 @@ class ComposePost extends Component {
           photos: photoRefObject,
         };
 
-        this.FitlyFirebase.database().ref('/posts/' + postKey).set(postObj)
+        this.database.ref('/posts/' + postKey).set(postObj)
         .then(post => {
-          this.FitlyFirebase.database().ref('/userPosts/' + this.uID).push({postKey: true});
+          this.database.ref('/userPosts/' + this.uID).push({postKey: true});
           const updateObj = {
             type: "post",
             contentID: postKey,
@@ -107,14 +131,14 @@ class ComposePost extends Component {
           saveUpdateToDB(updateObj, this.uID);
         });
       } catch(error) {
-        this.setState({loading: false});
+        // this.setState({loading: false});
         console.log('create post error', error);
       }
     })();
   };
 
   _getImageFromCam() {
-    let draftState = this.props.drafts[this.props.draftRef];
+    let draftState = this.props.drafts[this.draftRef];
     getImageFromCam(image => {
       let newPhotos = draftState.photos;
       newPhotos.push(image);
@@ -123,7 +147,7 @@ class ComposePost extends Component {
   };
 
   _getImageFromLib() {
-    let draftState = this.props.drafts[this.props.draftRef];
+    let draftState = this.props.drafts[this.draftRef];
     getImageFromLib(images => {
       let newPhotos = draftState.photos.concat(images);
       this.setDraftState({photos: newPhotos});
@@ -131,13 +155,13 @@ class ComposePost extends Component {
   };
 
   _renderHeader() {
-    let draftState = this.props.drafts[this.props.draftRef];
+    let draftState = this.props.drafts[this.draftRef];
     return (
       <HeaderInView
         leftElement={{icon: "ios-arrow-round-back-outline"}}
         rightElement={{text: "Post"}}
         title={draftState.category}
-        _onPressRight={() => this._savePostToDB()}
+        _onPressRight={() => this._saveToDB()}
         _onPressLeft={() => this.props.navigation.pop()}
       />
     );
@@ -203,20 +227,14 @@ class ComposePost extends Component {
   };
 
   render() {
-    let draftState = this.props.drafts[this.props.draftRef];
+    let draftState = this.props.drafts[this.draftRef];
     return (
       <View style={{flex: 1, backgroundColor:"white"}}>
         <StatusBar barStyle={this.state.contentType}/>
         {this._renderImgModal(draftState)}
         {this._renderHeader()}
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={composeStyle.scrollContentContainer}>
-            <Image style={composeStyle.profilePic} source={(this.user.public.picture) ? {uri:this.user.public.picture} : require('../../../img/default-user-image.png')}
-              defaultSource={require('../../../img/default-user-image.png')}/>
-              <ActivityIndicator
-                animating={this.state.loading}
-                style={{position:'absolute', top: 0, right: 0, height: 80}}
-                size="small"
-              />
+
             <View style={composeStyle.inputBox}>
               <TextInput
                 returnKeyType="done"
@@ -225,7 +243,7 @@ class ComposePost extends Component {
                 onChangeText={(text) => this.setDraftState({title: text})}
                 style={[composeStyle.input, {fontWeight: "300"}]}
                 value={draftState.title}
-                placeholder="Title"
+                placeholder="Activity Name"
                 placeholderTextColor="grey"
               />
             </View>
@@ -236,7 +254,7 @@ class ComposePost extends Component {
                 style={[composeStyle.input, {fontSize: 16}]}
                 multiline={true}
                 value={draftState.content}
-                placeholder="what's kicking?"
+                placeholder="Activity Details"
                 placeholderTextColor="grey"
               />
               <View style={composeStyle.hashTagInput}>
@@ -271,4 +289,4 @@ const mapDispatchToProps = function(dispatch) {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ComposePost);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateActivity);

@@ -25,8 +25,8 @@ const scrollContentContainer = {
 
 export const FitlyBlue = '#1D2F7B';
 const headerHight = 80;
-const tabHeight = 70;
-const selectedTabHeight = 80;
+const tabHeight = 50;
+const selectedTabHeight = 55;
 export const tabColor = 'rgba(61,61,61,.97)';
 export const alternateBlue = '#326fd1';
 
@@ -125,7 +125,7 @@ export const tabStyle = StyleSheet.create({
   tabBar: {
     ...absoluteFullWidth,
     bottom: 0,
-    height: 80,
+    height: 55,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "flex-end"
@@ -453,7 +453,9 @@ export const profileStyle = StyleSheet.create({
   },
   summaryText: {
     fontSize: 12,
-    paddingBottom: 10
+    paddingBottom: 10,
+    width: 250,
+    textAlign: 'center'
   },
   dashboardTextColor: {
     color: alternateBlue,
@@ -477,7 +479,37 @@ export const profileStyle = StyleSheet.create({
     shadowOpacity: .6,
     shadowOffset: {width: 0, height: 0},
     shadowRadius: 2,
+  },
+  summaryTextBox: {
+    borderWidth: .5,
+    borderColor: 'grey',
+    borderRadius: 5,
+    fontSize: 15,
+    width: 200,
+    paddingLeft: 10,
+    paddingRight:10,
+    paddingBottom:10,
+    textAlign:'center'
+  },
+  summaryTextBtn: {
+    fontSize: 13,
+    color: 'grey',
+    marginTop: 10
+  },
+  createBtnContainer: {
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'space-between',
+    width: 90
+  },
+  createBtn: {
+    alignItems: 'center'
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   }
+
 });
 
 export const feedEntryStyle = StyleSheet.create({

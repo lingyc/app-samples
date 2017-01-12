@@ -190,7 +190,7 @@ class SocialBtns extends Component {
       const replyCount = this.state.replyCount;
       return (
         <TouchableOpacity style={[postStyle.socialIcon, {width: 55, alignSelf: 'flex-start'}]} onPress={() => this.props.onComment(this.contentInfo)}>
-          <Icon name="ios-undo" size={this.iconSize} color={this.color}/>
+          <Icon name={(replyCount) ? "ios-chatboxes" : 'ios-chatboxes-outline'} size={this.iconSize} color={this.color}/>
           <Text style={[postStyle.iconText, {color: this.color}]}>{(replyCount) ? replyCount : ''}</Text>
           {/* <Text style={[postStyle.iconText, {color: this.color}]}>{(replyCount) ? replyCount : ''}{"\n"}comment</Text> */}
         </TouchableOpacity>

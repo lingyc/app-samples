@@ -24,7 +24,7 @@ More TODOs can be found in the code. This list will grow.
 
 
 - [ ] Onboarding
-  - [ ] validate user input
+  - [ ] validate user input: use a library
   - [ ] upload profile picture
   - [ ] email validation
   - [ ] forget password feature

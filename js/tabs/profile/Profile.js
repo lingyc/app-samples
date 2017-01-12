@@ -67,7 +67,7 @@ class Profile extends Component {
       return (
         <View style={{flex: 0, alignItems:'center'}}>
           <AutoExpandingTextInput
-            style={{borderWidth: .5, borderColor: 'grey', borderRadius: 5, fontSize: 15, width: 200, paddingLeft: 10, paddingRight:10, paddingBottom:10}}
+            style={profileStyle.summaryTextBox}
             multiline={true}
             maxLength={200}
             clearButtonMode="always"
@@ -76,13 +76,13 @@ class Profile extends Component {
             value={this.state.summaryInput}
             placeholder="say a little about yourself!"
           />
-          <Text style={{fontSize: 13, color: 'grey', marginTop: 10}} onPress={() => this._updateSummary()}>send</Text>
-          <Text style={{fontSize: 13, color: 'grey',  margin: 10}} onPress={() => this.setState({summaryEditMode: !this.state.summaryEditMode, summaryInput: ''})}>close</Text>
+          <Text style={profileStyle.summaryTextBtn} onPress={() => this._updateSummary()}>send</Text>
+          <Text style={profileStyle.summaryTextBtn} onPress={() => this.setState({summaryEditMode: !this.state.summaryEditMode, summaryInput: ''})}>close</Text>
         </View>
       );
     } else {
       return (
-        <View style={{flex: 0, flexDirection:'row'}}>
+        <View style={{flex: 0, alignItems:'center'}}>
           <Text style={profileStyle.summaryText}>{(profile.summary) ? profile.summary : 'I love to workout!'}</Text>
           <Text style={{fontSize: 12, marginLeft: 10, color: 'grey'}} onPress={() => this.setState({summaryEditMode: !this.state.summaryEditMode})}>edit</Text>
         </View>
@@ -119,11 +119,22 @@ class Profile extends Component {
           </Image>
         </TouchableOpacity>
         <Text style={profileStyle.nameText}>{profile.first_name + ' ' + profile.last_name}</Text>
-        <Text style={profileStyle.dashboardText}>{profile.location.place}</Text>
+        <View style={profileStyle.locationContainer}>
+          <Icon name="ios-pin-outline" size={30} color="grey"/>
+          <Text style={[profileStyle.dashboardText, {marginLeft: 5}]}>{profile.location.place}</Text>
+        </View>
         {this._renderSummary(profile)}
-        <TouchableOpacity onPress={() => this.props.navigation.push({key: "MakePost", global: true})}>
-          <Icon name="ios-create-outline" size={35} color="black"/>
-        </TouchableOpacity>
+        <View style={profileStyle.createBtnContainer}>
+          <TouchableOpacity style={profileStyle.createBtn} onPress={() => this.props.navigation.push({key: "MakePost", global: true})}>
+            <Icon name="ios-create-outline" size={35} color="black"/>
+            <Text style={profileStyle.dashboardText}>post</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={profileStyle.createBtn} onPress={() => this.props.navigation.push({key: "CreateActivity", global: true})}>
+            <Icon name="ios-add-outline" size={35} color="black"/>
+            <Text style={profileStyle.dashboardText}>activity</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* below is the same as ProfileEntryView */}
         <View style={profileStyle.dashboard}>

@@ -15,6 +15,14 @@ const centeringContainer = {
   ...centering
 };
 
+const composeInputBox = {
+  flex: 0,
+  paddingTop: 3,
+  paddingBottom: 3,
+  alignSelf: 'stretch',
+  borderColor: '#ccc',
+}
+
 const absoluteFullWidth = {
     position: 'absolute',
     left: 0,
@@ -724,5 +732,14 @@ export const optionStyle = StyleSheet.create({
   datePicker: {
     // position: 'absolute'
     marginRight: 15
+  },
+  inputBar: {
+    ...composeInputBox,
+    borderBottomWidth: .5,
+  },
+  icon: {
+    position: 'absolute',
+    right: 20,
+    top: 15,
   }
 })

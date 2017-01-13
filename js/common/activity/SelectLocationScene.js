@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   Slider,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
+  TextInput
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -19,7 +20,7 @@ import DatePicker from 'react-native-datepicker'
 import { optionStyle, container } from '../../styles/styles.js'
 import { save, clear } from '../../actions/drafts.js';
 
-class SelectDateScene extends Component {
+class SelectLocationScene extends Component {
   constructor(props) {
     super(props);
     this.draftRef = this.props.draftRef;
@@ -27,39 +28,24 @@ class SelectDateScene extends Component {
   }
 
   render() {
-    const {startDate, endDate} = this.props.drafts[this.draftRef];
+    const {placeName, endDate} = this.props.drafts[this.draftRef];
     return (
       <View style={optionStyle.container}>
         <View style={optionStyle.entry}>
-          <Text style={optionStyle.label}>Start Date</Text>
-          <DatePicker
-            style={optionStyle.datePicker}
-            date={startDate && startDate.dateString}
-            mode="datetime"
-            format={"ddd, MMM Do, h:mm A"}
-            placeholder="date"
-            minDate={new Date()}
-            maxDate={endDate || null}
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            onDateChange={(dateString, date) => this.setDraftState({startDate: {dateString, date}})}
-            customStyles={datepickerStyle}
+          <Text style={optionStyle.label}>Place Name</Text>
+          <TextInput
+            returnKeyType="done"
+            maxLength={30}
+            autoFocus={true}
+            clearButtonMode="always"
+            onChangeText={(text) => this.setDraftState({placeName: text})}
+            value={placeName}
+            placeholder="Activity Name"
+            placeholderTextColor="grey"
           />
         </View>
         <View style={optionStyle.entry}>
           <Text style={optionStyle.label}>End Date</Text>
-          <DatePicker
-            style={optionStyle.datePicker}
-            date={endDate && endDate.dateString}
-            mode="datetime"
-            format={"ddd, MMM Do, h:mm A"}
-            placeholder="date"
-            minDate={startDate || new Date()}
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            onDateChange={(dateString, date) => this.setDraftState({endDate: {dateString, date}})}
-            customStyles={datepickerStyle}
-          />
         </View>
       </View>
     )
@@ -104,4 +90,4 @@ const mapDispatchToProps = function(dispatch) {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SelectDateScene);
+export default connect(mapStateToProps, mapDispatchToProps)(SelectLocationScene);

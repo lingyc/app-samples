@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { composeStyle } from '../../styles/styles.js';
-import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, TouchableHighlight, ActivityIndicator } from 'react-native';
+import { composeStyle, optionStyle } from '../../styles/styles.js';
+import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
 import TagInput from 'react-native-tag-input';
 import ImageEditModal from '../post/ImageEditModal.js';
@@ -217,16 +217,16 @@ class CreateActivityScene extends Component {
   _renderSchedule(draftState) {
     const {startDate, endDate} = draftState;
     return (
-      <View>
-        <Text>Time</Text>
+      <View style={optionStyle.entry}>
         {(startDate && endDate)
-          ? <View>
+          ? <View style={{marginLeft: 20}}>
               <Text>{getWeekdayMonthDay(startDate.date)}</Text>
               <Text>{getHrMinDuration(startDate.date, endDate.date)}</Text>
             </View>
-          : <Text>select a date</Text>
+          : <Text style={{marginLeft: 20}}>select a date</Text>
         }
-        <TouchableHighlight
+        <TouchableOpacity
+          style={optionStyle.icon}
           onPress={() => this.props.navigation.push({
             key: 'SelectDateScene',
             showHeader: true,
@@ -238,7 +238,7 @@ class CreateActivityScene extends Component {
             }
           })}>
           <Icon name="ios-calendar-outline" size={30} color="#bbb"/>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -246,24 +246,28 @@ class CreateActivityScene extends Component {
   _renderLocation(draftState) {
     const {location, address, placeName} = draftState;
     return (
-      <View>
-        <Text>Location</Text>
+      <View style={optionStyle.entry}>
         {(location && address && placeName)
           ? <View>
               <Text>Place Name</Text>
               <Text>Address</Text>
             </View>
-          : <Text>select a location</Text>
+          : <Text style={{marginLeft: 20}}>select a location</Text>
         }
-        <TouchableHighlight onPress={() => this.props.navigation.push({
-          key: 'SelectLocationScene',
-          global: true,
-          passProps:{
-            draftRef: this.draftRef
-          }
-        })}>
+        <TouchableOpacity
+          style={optionStyle.icon}
+          onPress={() => this.props.navigation.push({
+            key: 'SelectLocationScene',
+            showHeader: true,
+            headerTitle: 'select a location',
+            leftHeaderIcon: 'ios-arrow-round-back-outline',
+            global: true,
+            passProps:{
+              draftRef: this.draftRef
+            }
+          })}>
           <Icon name="ios-map-outline" size={30} color="#bbb"/>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -277,15 +281,15 @@ class CreateActivityScene extends Component {
         <View style={{flex: 1, backgroundColor:"white"}}>
           <StatusBar barStyle={this.state.contentType}/>
           {this._renderImgModal(draftState)}
-          {/* {this._renderHeader()} */}
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={composeStyle.scrollContentContainer}>
-            <View style={composeStyle.inputBox}>
+            <View style={optionStyle.inputBar}>
               <TextInput
                 returnKeyType="done"
                 maxLength={30}
+                autoFocus={true}
                 clearButtonMode="always"
                 onChangeText={(text) => this.setDraftState({title: text})}
-                style={[composeStyle.input, {fontWeight: "300"}]}
+                style={[composeStyle.input, {fontWeight: "500", textAlign:'center'}]}
                 value={draftState.title}
                 placeholder="Activity Name"
                 placeholderTextColor="grey"

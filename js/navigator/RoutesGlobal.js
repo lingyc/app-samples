@@ -9,6 +9,7 @@ import MakePost from '../common/post/MakePost.js';
 import ComposePost from '../common/post/ComposePost.js';
 import CreateActivityScene from '../common/activity/CreateActivityScene.js';
 import SelectDateScene from '../common/activity/SelectDateScene.js';
+import SelectLocationScene from '../common/activity/SelectLocationScene.js';
 
 const ROUTES = {
   WelcomeView: WelcomeView,
@@ -24,7 +25,8 @@ const ROUTES = {
   ComposePost: ComposePost,
   OnBoardingSlides: OnBoardingSlides,
   CreateActivityScene: CreateActivityScene,
-  SelectDateScene: SelectDateScene
+  SelectDateScene: SelectDateScene,
+  SelectLocationScene: SelectLocationScene
 };
 
 export default ROUTES;

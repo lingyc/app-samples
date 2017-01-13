@@ -46,7 +46,8 @@ class HeaderGlobal extends Component {
     const {key, leftHeaderIcon = "ios-close"} = sceneProps.scene.route;
     if (key === "SettingsMenu" ||
         key === "CreateActivityScene" ||
-        key === "SelectDateScene") {
+        key === "SelectDateScene" ||
+        key === "SelectLocationScene") {
       return (
         <TouchableOpacity style={headerStyle.closeBtn} onPress={() => this.props.navigation.pop({global: true})}>
           <Icon name={leftHeaderIcon} size={50} color="white"/>

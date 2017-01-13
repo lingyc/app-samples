@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import { composeStyle, headerStyle } from '../../styles/styles.js';
+import { composeStyle } from '../../styles/styles.js';
 import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, TouchableHighlight, ActivityIndicator } from 'react-native';
 import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
-import HeaderInView from '../../header/HeaderInView.js'
 import TagInput from 'react-native-tag-input';
 import ImageEditModal from '../post/ImageEditModal.js';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -13,6 +12,7 @@ import { bindActionCreators } from 'redux';
 import {savePhotoToDB, saveUpdateToDB, randomString} from '../../library/firebaseHelpers.js'
 import {getImageFromCam, getImageFromLib} from '../../library/pictureHelper.js'
 import Firebase from 'firebase';
+import {getWeekdayMonthDay, getHrMinDuration} from '../../library/convertTime.js'
 
 //TODO: input validation??
 const hashTagRegex = (/^\w+$/g);
@@ -185,19 +185,6 @@ class CreateActivityScene extends Component {
     })
   };
 
-  _renderHeader() {
-    let draftState = this.props.drafts[this.draftRef];
-    return (
-      <HeaderInView
-        leftElement={{icon: "ios-arrow-round-back-outline"}}
-        rightElement={{text: "Post"}}
-        title={draftState.category}
-        _onPressRight={() => this._saveToDB()}
-        _onPressLeft={() => this.props.navigation.pop()}
-      />
-    );
-  };
-
   _renderPhotoSection(draftState, renderThumnails) {
     let thumbnails;
     if (renderThumnails) {
@@ -234,8 +221,8 @@ class CreateActivityScene extends Component {
         <Text>Time</Text>
         {(startDate && endDate)
           ? <View>
-              <Text>{JSON.stringify(startDate)}</Text>
-              <Text>{JSON.stringify(endDate)}</Text>
+              <Text>{getWeekdayMonthDay(startDate.date)}</Text>
+              <Text>{getHrMinDuration(startDate.date, endDate.date)}</Text>
             </View>
           : <Text>select a date</Text>
         }

@@ -5,8 +5,13 @@ const centering = {
     justifyContent: 'center'
 };
 
-const centeringContainer = {
+export const container = {
   flex: 1,
+  backgroundColor: 'white'
+}
+
+const centeringContainer = {
+  ...container,
   ...centering
 };
 
@@ -694,4 +699,30 @@ export const postStyle = StyleSheet.create({
     right: 16,
     top: 6
   },
+})
+
+export const optionStyle = StyleSheet.create({
+  container: {
+    ...container,
+    backgroundColor: '#eee'
+  },
+  entry: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    minHeight: 65,
+    borderColor:'#eee',
+    borderBottomWidth: .5,
+  },
+  label: {
+    fontSize: 16,
+    marginLeft: 15,
+    width: 100
+  },
+  datePicker: {
+    // position: 'absolute'
+    marginRight: 15
+  }
 })

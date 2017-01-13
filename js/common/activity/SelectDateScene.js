@@ -16,7 +16,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import DatePicker from 'react-native-datepicker'
-import { loginStyles } from '../../styles/styles.js'
+import { optionStyle, container } from '../../styles/styles.js'
 import { save, clear } from '../../actions/drafts.js';
 
 class SelectDateScene extends Component {
@@ -26,46 +26,38 @@ class SelectDateScene extends Component {
     this.setDraftState = this.props.draftsAction.save.bind(this, this.draftRef);
   }
 
-  formatDate(date) {
-    let d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-    return [year, month, day].join('-');
-  }
-
   render() {
     const {startDate, endDate} = this.props.drafts[this.draftRef];
     return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
-        <View>
-          <Text>Start Date</Text>
+      <View style={optionStyle.container}>
+        <View style={optionStyle.entry}>
+          <Text style={optionStyle.label}>Start Date</Text>
           <DatePicker
-            style={{width: 200, alignSelf: 'center'}}
-            date={startDate}
+            style={optionStyle.datePicker}
+            date={startDate && startDate.dateString}
             mode="datetime"
-            placeholder="select start date"
-            minDate={this.formatDate(new Date())}
+            format={"ddd, MMM Do, h:mm A"}
+            placeholder="date"
+            minDate={new Date()}
             maxDate={endDate || null}
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
-            onDateChange={(date) => {this.setDraftState({startDate: date})}}
+            onDateChange={(dateString, date) => this.setDraftState({startDate: {dateString, date}})}
             customStyles={datepickerStyle}
           />
         </View>
-        <View>
-          <Text>End Date</Text>
+        <View style={optionStyle.entry}>
+          <Text style={optionStyle.label}>End Date</Text>
           <DatePicker
-            style={{width: 200, alignSelf: 'center'}}
-            date={endDate}
+            style={optionStyle.datePicker}
+            date={endDate && endDate.dateString}
             mode="datetime"
-            placeholder="select end date"
-            minDate={startDate || this.formatDate(new Date())}
+            format={"ddd, MMM Do, h:mm A"}
+            placeholder="date"
+            minDate={startDate || new Date()}
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
-            onDateChange={(date) => {this.setDraftState({endDate: date})}}
+            onDateChange={(dateString, date) => this.setDraftState({endDate: {dateString, date}})}
             customStyles={datepickerStyle}
           />
         </View>
@@ -76,17 +68,15 @@ class SelectDateScene extends Component {
 
  const datepickerStyle = {
    dateIcon: {
-     position: 'absolute',
      left: 0,
-     top: 4,
-     marginLeft: 0
+     marginLeft: 15
    },
    dateInput: {
-     marginLeft: 36,
      borderWidth: 0
    },
    dateText: {
-     color: 'black'
+     color: 'black',
+     width: 200
    },
    btnCancel: {
 

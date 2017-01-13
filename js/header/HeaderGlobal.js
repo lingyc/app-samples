@@ -16,10 +16,13 @@ import LogoutBtn from '../common/LogoutBtn.js';
 class HeaderGlobal extends Component {
   constructor(props) {
     super(props);
+    this._renderTitleComponent = this._renderTitleComponent.bind(this);
+    this._renderLeftComponent = this._renderLeftComponent.bind(this);
   }
 
   _renderTitleComponent(sceneProps) {
-    if (sceneProps.scene.route.key === "SettingsMenu") {
+    const {key, headerTitle} = sceneProps.scene.route;
+    if (key === "SettingsMenu") {
       return (
         <View style={headerStyle.container}>
           <Text style={headerStyle.titleText}>
@@ -29,13 +32,24 @@ class HeaderGlobal extends Component {
         </View>
       );
     }
+
+    return (
+      <View style={headerStyle.container}>
+        <Text style={headerStyle.titleText}>
+          {headerTitle}
+        </Text>
+      </View>
+    );
   };
 
   _renderLeftComponent(sceneProps) {
-    if (sceneProps.scene.route.key === "SettingsMenu") {
+    const {key, leftHeaderIcon = "ios-close"} = sceneProps.scene.route;
+    if (key === "SettingsMenu" ||
+        key === "CreateActivityScene" ||
+        key === "SelectDateScene") {
       return (
         <TouchableOpacity style={headerStyle.closeBtn} onPress={() => this.props.navigation.pop({global: true})}>
-          <Icon name="ios-close" size={50} color="white"/>
+          <Icon name={leftHeaderIcon} size={50} color="white"/>
         </TouchableOpacity>
       )
     }
@@ -46,8 +60,8 @@ class HeaderGlobal extends Component {
     return (
       <Header
         {...this.props.sceneProps}
-        renderTitleComponent={this._renderTitleComponent.bind(this)}
-        renderLeftComponent={this._renderLeftComponent.bind(this)}
+        renderTitleComponent={this._renderTitleComponent}
+        renderLeftComponent={this._renderLeftComponent}
         onNavigateBack={() => this.props.navigation.pop({global: true})}
         style={headerStyle.header}
       />

@@ -29,10 +29,8 @@ class GlobalNavigator extends Component {
   }
 
   _renderHeader(sceneProps) {
-    if (sceneProps.scene.route.key === "SettingsMenu") {
-      return (<HeaderGlobal sceneProps={sceneProps}/>);
-    }
-    return null;
+    const {showHeader = false} = sceneProps.scene.route;
+    return (showHeader) ? (<HeaderGlobal sceneProps={sceneProps}/>) : null;
   }
 
 

@@ -7,6 +7,8 @@ import TabNavigator from './TabNavigator.js';
 import SettingsMenu from '../settings/SettingsMenu.js';
 import MakePost from '../common/post/MakePost.js';
 import ComposePost from '../common/post/ComposePost.js';
+import CreateActivityScene from '../common/activity/CreateActivityScene.js';
+import SelectDateScene from '../common/activity/SelectDateScene.js';
 
 const ROUTES = {
   WelcomeView: WelcomeView,
@@ -21,6 +23,8 @@ const ROUTES = {
   MakePost: MakePost,
   ComposePost: ComposePost,
   OnBoardingSlides: OnBoardingSlides,
+  CreateActivityScene: CreateActivityScene,
+  SelectDateScene: SelectDateScene
 };
 
 export default ROUTES;

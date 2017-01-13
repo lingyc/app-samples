@@ -130,7 +130,7 @@ class Profile extends Component {
             <Text style={profileStyle.dashboardText}>post</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={profileStyle.createBtn} onPress={() => this.props.navigation.push({key: "CreateActivity", global: true})}>
+          <TouchableOpacity style={profileStyle.createBtn} onPress={() => this.props.navigation.push({key: "CreateActivityScene", showHeader: true, headerTitle: 'create a new activity', global: true})}>
             <Icon name="ios-add-outline" size={35} color="black"/>
             <Text style={profileStyle.dashboardText}>activity</Text>
           </TouchableOpacity>

@@ -31,7 +31,7 @@ class HeaderLocal extends Component {
           </TouchableOpacity>
           <TouchableOpacity
             style={headerStyle.settingsBtn}
-            onPress={() => this.props.navigation.push({key: "SettingsMenu", global: true})}>
+            onPress={() => this.props.navigation.push({key: "SettingsMenu", showHeader: true, global: true})}>
             <Icon name="bars" size={30} color="white"/>
           </TouchableOpacity>
         </View>

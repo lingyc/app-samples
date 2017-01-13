@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import { composeStyle, headerStyle } from '../../styles/styles.js';
-import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, TouchableHighlight, ActivityIndicator } from 'react-native';
 import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
 import HeaderInView from '../../header/HeaderInView.js'
 import TagInput from 'react-native-tag-input';
-import ImageEditModal from './ImageEditModal.js';
+import ImageEditModal from '../post/ImageEditModal.js';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { pop, push, resetTo } from '../../actions/navigation.js';
 import { save, clear } from '../../actions/drafts.js';
@@ -17,13 +17,13 @@ import Firebase from 'firebase';
 //TODO: input validation??
 const hashTagRegex = (/^\w+$/g);
 
-class CreateActivity extends Component {
+class CreateActivityScene extends Component {
   constructor(props) {
     super(props);
     // this.props.groupID;
     if (!this.props.draftRef) {
       this.draftRef = randomString();
-      this.props.draftsAction.save(draftRef,{
+      this.props.draftsAction.save(this.draftRef,{
         category: "Workout Plan",
         title: '',
         details: '',
@@ -36,8 +36,9 @@ class CreateActivity extends Component {
           cost: 0,
           others: [],
         },
-        group: this.props.groupID || null
+        group: this.props.groupID || null,
         location: null,
+        address: null,
         placeName: null,
         photoRefs: null,
       })
@@ -59,7 +60,7 @@ class CreateActivity extends Component {
     this.database = this.props.FitlyFirebase.database();
   };
 
-  _saveToDB() {
+  _saveActivityToDB() {
     //tables to update: posts, userPosts, userUpdatesMajor, userUpdatesAll
     (async () => {
       try {
@@ -137,47 +138,6 @@ class CreateActivity extends Component {
     })();
   };
 
-  _getImageFromCam() {
-    let draftState = this.props.drafts[this.draftRef];
-    getImageFromCam(image => {
-      let newPhotos = draftState.photos;
-      newPhotos.push(image);
-      this.setDraftState({photos: newPhotos});
-    });
-  };
-
-  _getImageFromLib() {
-    let draftState = this.props.drafts[this.draftRef];
-    getImageFromLib(images => {
-      let newPhotos = draftState.photos.concat(images);
-      this.setDraftState({photos: newPhotos});
-    })
-  };
-
-  _renderHeader() {
-    let draftState = this.props.drafts[this.draftRef];
-    return (
-      <HeaderInView
-        leftElement={{icon: "ios-arrow-round-back-outline"}}
-        rightElement={{text: "Post"}}
-        title={draftState.category}
-        _onPressRight={() => this._saveToDB()}
-        _onPressLeft={() => this.props.navigation.pop()}
-      />
-    );
-  };
-
-  _renderThumbnails(photos) {
-    return photos.map((photo, index) => {
-      return (
-        <TouchableOpacity key={index} onPress={() => this.setState({modalVisible: true, contentType: 'default'})} style={composeStyle.photoThumbnail}>
-          <Image style={{height: 100, width: 100}} source={{uri: photo.path, isStatic:true}}/>
-          <Icon style={{position: 'absolute', right: 10, bottom: 5, backgroundColor: 'rgba(0,0,0,0)'}} name="ios-expand" size={30} color='rgba(255,255,255,.7)'/>
-        </TouchableOpacity>
-      );
-    });
-  };
-
   _renderImgModal(draftState) {
     const removeImg = (index) => {
       let newPhotos = draftState.photos.slice();
@@ -208,6 +168,36 @@ class CreateActivity extends Component {
     );
   };
 
+  _getImageFromCam() {
+    let draftState = this.props.drafts[this.draftRef];
+    getImageFromCam(image => {
+      let newPhotos = draftState.photos;
+      newPhotos.push(image);
+      this.setDraftState({photos: newPhotos});
+    });
+  };
+
+  _getImageFromLib() {
+    let draftState = this.props.drafts[this.draftRef];
+    getImageFromLib(images => {
+      let newPhotos = draftState.photos.concat(images);
+      this.setDraftState({photos: newPhotos});
+    })
+  };
+
+  _renderHeader() {
+    let draftState = this.props.drafts[this.draftRef];
+    return (
+      <HeaderInView
+        leftElement={{icon: "ios-arrow-round-back-outline"}}
+        rightElement={{text: "Post"}}
+        title={draftState.category}
+        _onPressRight={() => this._saveToDB()}
+        _onPressLeft={() => this.props.navigation.pop()}
+      />
+    );
+  };
+
   _renderPhotoSection(draftState, renderThumnails) {
     let thumbnails;
     if (renderThumnails) {
@@ -226,15 +216,82 @@ class CreateActivity extends Component {
     );
   };
 
+  _renderThumbnails(photos) {
+    return photos.map((photo, index) => {
+      return (
+        <TouchableOpacity key={index} onPress={() => this.setState({modalVisible: true, contentType: 'default'})} style={composeStyle.photoThumbnail}>
+          <Image style={{height: 100, width: 100}} source={{uri: photo.path, isStatic:true}}/>
+          <Icon style={{position: 'absolute', right: 10, bottom: 5, backgroundColor: 'rgba(0,0,0,0)'}} name="ios-expand" size={30} color='rgba(255,255,255,.7)'/>
+        </TouchableOpacity>
+      );
+    });
+  };
+
+  _renderSchedule(draftState) {
+    const {startDate, endDate} = draftState;
+    return (
+      <View>
+        <Text>Time</Text>
+        {(startDate && endDate)
+          ? <View>
+              <Text>{JSON.stringify(startDate)}</Text>
+              <Text>{JSON.stringify(endDate)}</Text>
+            </View>
+          : <Text>select a date</Text>
+        }
+        <TouchableHighlight
+          onPress={() => this.props.navigation.push({
+            key: 'SelectDateScene',
+            showHeader: true,
+            headerTitle: 'select a date',
+            leftHeaderIcon: 'ios-arrow-round-back-outline',
+            global: true,
+            passProps:{
+              draftRef: this.draftRef
+            }
+          })}>
+          <Icon name="ios-calendar-outline" size={30} color="#bbb"/>
+        </TouchableHighlight>
+      </View>
+    );
+  };
+
+  _renderLocation(draftState) {
+    const {location, address, placeName} = draftState;
+    return (
+      <View>
+        <Text>Location</Text>
+        {(location && address && placeName)
+          ? <View>
+              <Text>Place Name</Text>
+              <Text>Address</Text>
+            </View>
+          : <Text>select a location</Text>
+        }
+        <TouchableHighlight onPress={() => this.props.navigation.push({
+          key: 'SelectLocationScene',
+          global: true,
+          passProps:{
+            draftRef: this.draftRef
+          }
+        })}>
+          <Icon name="ios-map-outline" size={30} color="#bbb"/>
+        </TouchableHighlight>
+      </View>
+    );
+  };
+
+
+
   render() {
     let draftState = this.props.drafts[this.draftRef];
-    return (
-      <View style={{flex: 1, backgroundColor:"white"}}>
-        <StatusBar barStyle={this.state.contentType}/>
-        {this._renderImgModal(draftState)}
-        {this._renderHeader()}
+    if (draftState) {
+      return (
+        <View style={{flex: 1, backgroundColor:"white"}}>
+          <StatusBar barStyle={this.state.contentType}/>
+          {this._renderImgModal(draftState)}
+          {/* {this._renderHeader()} */}
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={composeStyle.scrollContentContainer}>
-
             <View style={composeStyle.inputBox}>
               <TextInput
                 returnKeyType="done"
@@ -247,6 +304,8 @@ class CreateActivity extends Component {
                 placeholderTextColor="grey"
               />
             </View>
+            {this._renderSchedule(draftState)}
+            {this._renderLocation(draftState)}
             <View style={[composeStyle.inputBox, {paddingBottom: 20}]}>
               <AutoExpandingTextInput
                 clearButtonMode="always"
@@ -268,8 +327,11 @@ class CreateActivity extends Component {
             </View>
             {this._renderPhotoSection(draftState, true)}
           </ScrollView>
-      </View>
-    );
+        </View>
+      );
+    } else {
+      return <ActivityIndicator animating={true} style={{height: 80}} size="large"/>
+    }
   }
 };
 
@@ -289,4 +351,4 @@ const mapDispatchToProps = function(dispatch) {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateActivity);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateActivityScene);

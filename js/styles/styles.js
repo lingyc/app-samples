@@ -724,6 +724,12 @@ export const optionStyle = StyleSheet.create({
     borderColor:'#eee',
     borderBottomWidth: .5,
   },
+  map: {
+    left: 0,
+    right: 0,
+    height: 500,
+    backgroundColor: 'red'
+  },
   label: {
     fontSize: 16,
     marginLeft: 15,

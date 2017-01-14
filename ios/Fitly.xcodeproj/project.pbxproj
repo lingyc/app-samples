@@ -26,7 +26,8 @@
 		24043C49888649159967EAD9 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4EAD7C98C91E4BCB891C8C16 /* EvilIcons.ttf */; };
 		3D27EDD41E0C8B4100CA537C /* libRNGeocoder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D27EDD31E0C8B1400CA537C /* libRNGeocoder.a */; };
 		3D32966B1E29BA4900581C58 /* AirMaps in Resources */ = {isa = PBXBuildFile; fileRef = 3D32966A1E29BA4900581C58 /* AirMaps */; };
-		3D32966D1E29BA8900581C58 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 3D32966C1E29BA8900581C58 /* AirGoogleMaps */; };
+		3D3297651E29D09000581C58 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 3D3297641E29D09000581C58 /* AirGoogleMaps */; };
+		3D3297661E29D09000581C58 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 3D3297641E29D09000581C58 /* AirGoogleMaps */; };
 		3DAA3D111E071E7500397B88 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3DAA3D101E071E7500397B88 /* GoogleService-Info.plist */; };
 		3DAA3D451E076FAE00397B88 /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAA3D341E076F6900397B88 /* libRCTFBLogin.a */; };
 		3DEA605B1E07761100C233A5 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DEA60581E07761100C233A5 /* FBSDKCoreKit.framework */; };
@@ -267,7 +268,7 @@
 		30343B50CBAE45768DFE7270 /* libRNImagePicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNImagePicker.a; sourceTree = "<group>"; };
 		3D27EDB91E0C8B1400CA537C /* RNGeocoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNGeocoder.xcodeproj; path = "../node_modules/react-native-geocoder/ios/RNGeocoder.xcodeproj"; sourceTree = "<group>"; };
 		3D32966A1E29BA4900581C58 /* AirMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirMaps; path = "../node_modules/react-native-maps/ios/AirMaps"; sourceTree = "<group>"; };
-		3D32966C1E29BA8900581C58 /* AirGoogleMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirGoogleMaps; path = "../node_modules/react-native-maps/ios/AirGoogleMaps"; sourceTree = "<group>"; };
+		3D3297641E29D09000581C58 /* AirGoogleMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirGoogleMaps; path = "../node_modules/react-native-maps/ios/AirGoogleMaps"; sourceTree = "<group>"; };
 		3D8621541E20EA47007C46CD /* Fitly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Fitly.entitlements; path = Fitly/Fitly.entitlements; sourceTree = "<group>"; };
 		3DAA3D101E071E7500397B88 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3DAA3D2B1E076F6900397B88 /* RCTFBLogin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBLogin.xcodeproj; path = "../node_modules/react-native-facebook-login/RCTFBLogin.xcodeproj"; sourceTree = "<group>"; };
@@ -567,7 +568,7 @@
 			isa = PBXGroup;
 			children = (
 				3DAA3D101E071E7500397B88 /* GoogleService-Info.plist */,
-				3D32966C1E29BA8900581C58 /* AirGoogleMaps */,
+				3D3297641E29D09000581C58 /* AirGoogleMaps */,
 				13B07FAE1A68108700A75B9A /* Fitly */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* FitlyTests */,
@@ -970,6 +971,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D3297661E29D09000581C58 /* AirGoogleMaps in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -984,7 +986,7 @@
 				24043C49888649159967EAD9 /* EvilIcons.ttf in Resources */,
 				B497CC4D1621414E913C9B88 /* FontAwesome.ttf in Resources */,
 				F889B734C2524F989AEA0A64 /* Foundation.ttf in Resources */,
-				3D32966D1E29BA8900581C58 /* AirGoogleMaps in Resources */,
+				3D3297651E29D09000581C58 /* AirGoogleMaps in Resources */,
 				50E7B8D2E8E14BADA51A8C4E /* Ionicons.ttf in Resources */,
 				ADE44B09998C4E409FFE729F /* MaterialIcons.ttf in Resources */,
 				74930F37C4FA419AA43BF71C /* Octicons.ttf in Resources */,

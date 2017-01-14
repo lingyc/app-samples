@@ -19,12 +19,26 @@ import { bindActionCreators } from 'redux';
 import DatePicker from 'react-native-datepicker'
 import { optionStyle, container } from '../../styles/styles.js'
 import { save, clear } from '../../actions/drafts.js';
+import MapView from 'react-native-maps';
 
 class SelectLocationScene extends Component {
   constructor(props) {
     super(props);
     this.draftRef = this.props.draftRef;
     this.setDraftState = this.props.draftsAction.save.bind(this, this.draftRef);
+    this.state = {
+      region: {
+        latitude: 37.78825,
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }
+    }
+    this._onRegionChange = this._onRegionChange.bind(this);
+  }
+
+  _onRegionChange(region) {
+    this.setState({ region });
   }
 
   render() {
@@ -44,9 +58,12 @@ class SelectLocationScene extends Component {
             placeholderTextColor="grey"
           />
         </View>
-        <View style={optionStyle.entry}>
-          <Text style={optionStyle.label}>End Date</Text>
-        </View>
+        <MapView
+          provider={MapView.PROVIDER_GOOGLE}
+          style={optionStyle.map}
+          region={this.state.region}
+          onRegionChange={this._onRegionChange}
+        />
       </View>
     )
   }

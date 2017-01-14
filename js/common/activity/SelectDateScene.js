@@ -39,7 +39,7 @@ class SelectDateScene extends Component {
             format={"ddd, MMM Do, h:mm A"}
             placeholder="date"
             minDate={new Date()}
-            maxDate={endDate || null}
+            maxDate={endDate && endDate.date || null}
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             onDateChange={(dateString, date) => this.setDraftState({startDate: {dateString, date}})}
@@ -54,7 +54,7 @@ class SelectDateScene extends Component {
             mode="datetime"
             format={"ddd, MMM Do, h:mm A"}
             placeholder="date"
-            minDate={startDate || new Date()}
+            minDate={startDate && startDate.date || new Date()}
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             onDateChange={(dateString, date) => this.setDraftState({endDate: {dateString, date}})}

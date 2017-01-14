@@ -15,9 +15,11 @@ React-Native-FMPicker
 Refer to https://facebook.github.io/react-native/docs/running-on-device.html
 
 
-## Icons ##
+## Icons ##a
 Get the icon names at http://ionicframework.com/docs/v2/ionicons/  or http://fontawesome.io/icons/ for the react-native-vector-icons library
 
+## Issues ##
+Pod install React throws an error which cause Google maps to have issue installing
 
 ## TODOs ##
 More TODOs can be found in the code. This list will grow.

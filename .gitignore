@@ -43,4 +43,5 @@ android/app/libs
 
 # Config Keys
 credentials/firebaseConfig.js
+credentials/GOOGLE_PLACE_API_KEY.js
 ios/GoogleService-Info.plist

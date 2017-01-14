@@ -724,11 +724,22 @@ export const optionStyle = StyleSheet.create({
     borderColor:'#eee',
     borderBottomWidth: .5,
   },
+  searchBar: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    borderColor:'#eee',
+    borderBottomWidth: .5,
+  },
   map: {
     left: 0,
     right: 0,
-    height: 500,
-    backgroundColor: 'red'
+    top: 43,
+    bottom: 0,
+    // height: 400,
+    position: 'absolute',
+    backgroundColor: 'red',
+    zIndex: -2,
   },
   label: {
     fontSize: 16,

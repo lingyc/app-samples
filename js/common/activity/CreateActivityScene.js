@@ -244,13 +244,13 @@ class CreateActivityScene extends Component {
   };
 
   _renderLocation(draftState) {
-    const {location, address, placeName} = draftState;
+    const {location} = draftState;
     return (
       <View style={optionStyle.entry}>
-        {(location && address && placeName)
-          ? <View>
-              <Text>Place Name</Text>
-              <Text>Address</Text>
+        {(location)
+          ? <View style={{marginLeft: 20}}>
+              <Text>{location.placeName}</Text>
+              <Text style={{left: 0, right: -40}}>{location.address}</Text>
             </View>
           : <Text style={{marginLeft: 20}}>select a location</Text>
         }

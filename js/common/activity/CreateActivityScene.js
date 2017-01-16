@@ -32,10 +32,7 @@ class CreateActivityScene extends Component {
         photos: [],
         startDate: null,
         endDate: null,
-        requirements: {
-          cost: 0,
-          others: [],
-        },
+        cost: 0,
         group: this.props.groupID || null,
         location: null,
         address: null,
@@ -47,6 +44,9 @@ class CreateActivityScene extends Component {
     }
 
     this.state = {
+      editCost: false,
+      editName: false,
+      editDetails: false,
       loading: false,
       modalVisible: false,
       contentType: 'light-content'
@@ -58,6 +58,7 @@ class CreateActivityScene extends Component {
     this.user = this.props.user;
     this.uID = this.props.uID;
     this.database = this.props.FitlyFirebase.database();
+    this._setCost = this._setCost.bind(this);
   };
 
   _saveActivityToDB() {
@@ -191,7 +192,7 @@ class CreateActivityScene extends Component {
       thumbnails = this._renderThumbnails(draftState.photos);
     }
     return (
-      <View style={composeStyle.photosSection}>
+      <View style={[composeStyle.photosSection]}>
         {thumbnails}
         <TouchableOpacity style={composeStyle.photoThumbnail} onPress={() => this._getImageFromLib()}>
           <Icon name="ios-image-outline" size={30} color="#bbb"/>
@@ -272,6 +273,50 @@ class CreateActivityScene extends Component {
     );
   };
 
+  _renderCost(draftState) {
+    const {editCost} = this.state;
+    const {cost} = draftState;
+    return (
+      <View style={optionStyle.entry}>
+        <View style={{marginLeft: 20}}>
+          <Text style={{marginLeft: 20}}>cost to enter: {(cost) ? '$' : ''}</Text>
+          {(editCost)
+            ? <TextInput
+                returnKeyType="done"
+                maxLength={30}
+                autoFocus={true}
+                keyboardType='numeric'
+                clearButtonMode="always"
+                onChangeText={(text) => this.setDraftState({cost: text})}
+                onSubmitEditing={this._setCost}
+                onEndEditing={this._setCost}
+                style={[composeStyle.input, {fontWeight: "500", textAlign:'center'}]}
+                value={cost.toString()}
+                placeholder="amount"
+                placeholderTextColor="grey"
+              />
+            : <Text style={{marginLeft: 20}}>{(cost) ? cost : 'free'}</Text>
+          }
+        </View>
+        <TouchableOpacity
+          style={optionStyle.icon}
+          onPress={() => this.setState({editCost: true})}>
+          <Icon name="ios-create-outline" size={30} color="#bbb"/>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
+  _setCost() {
+    const {cost} = this.props.drafts[this.draftRef];
+    const numericCost = parseInt(cost, 10);
+    if (numericCost < 0 || isNaN(numericCost)) {
+      this.setDraftState({cost: 0});
+    } else {
+      this.setDraftState({cost: numericCost});
+    }
+    this.setState({editCost: false});
+  }
 
 
   render() {
@@ -282,7 +327,7 @@ class CreateActivityScene extends Component {
           <StatusBar barStyle={this.state.contentType}/>
           {this._renderImgModal(draftState)}
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={composeStyle.scrollContentContainer}>
-            <View style={optionStyle.inputBar}>
+            <View style={[optionStyle.inputBar, {borderColor: '#eee'}]}>
               <TextInput
                 returnKeyType="done"
                 maxLength={30}
@@ -297,11 +342,12 @@ class CreateActivityScene extends Component {
             </View>
             {this._renderSchedule(draftState)}
             {this._renderLocation(draftState)}
-            <View style={[composeStyle.inputBox, {paddingBottom: 20}]}>
+            {this._renderCost(draftState)}
+            <View style={[composeStyle.inputBox, { borderColor: '#eee'}]}>
               <AutoExpandingTextInput
                 clearButtonMode="always"
                 onChangeText={(text) => this.setDraftState({content: text})}
-                style={[composeStyle.input, {fontSize: 16}]}
+                style={[composeStyle.input, {  fontSize: 16, borderBottomWidth:.5, borderColor: '#eee'}]}
                 multiline={true}
                 value={draftState.content}
                 placeholder="Activity Details"

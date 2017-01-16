@@ -40,7 +40,7 @@ export default PlaceSearchBox = (props) => {
       },
     }}
 
-    currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
+    // currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
     currentLocationLabel="Current location"
     nearbyPlacesAPI='GooglePlacesSearch' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
     GoogleReverseGeocodingQuery={{

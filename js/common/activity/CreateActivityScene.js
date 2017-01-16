@@ -186,6 +186,17 @@ class CreateActivityScene extends Component {
     })
   };
 
+  _setCost() {
+    const {cost} = this.props.drafts[this.draftRef];
+    const numericCost = parseFloat(cost).toFixed(2);
+    if (numericCost < 0 || isNaN(numericCost)) {
+      this.setDraftState({cost: 0});
+    } else {
+      this.setDraftState({cost: numericCost});
+    }
+    this.setState({editCost: false});
+  }
+
   _renderPhotoSection(draftState, renderThumnails) {
     let thumbnails;
     if (renderThumnails) {
@@ -215,6 +226,34 @@ class CreateActivityScene extends Component {
     });
   };
 
+  _renderTitle(draftState) {
+    return (
+      <View style={optionStyle.entry}>
+        {(this.state.editName)
+          ? <TextInput
+              returnKeyType="done"
+              maxLength={30}
+              autoFocus={true}
+              clearButtonMode="always"
+              onChangeText={(text) => this.setDraftState({title: text})}
+              style={{marginLeft: 20, fontWeight: "500", width: 200}}
+              onSubmitEditing={() => this.setState({editName: false})}
+              onEndEditing={() => this.setState({editName: false})}
+              value={draftState.title}
+              placeholder="Activity Name"
+              placeholderTextColor="grey"
+            />
+          : <Text style={{marginLeft: 20}}>Activity Name: {(draftState.title) ? draftState.title : 'unamed'}</Text>
+        }
+        <TouchableOpacity
+          style={optionStyle.icon}
+          onPress={() => this.setState({editName: true})}>
+          <Icon name="ios-create-outline" size={30} color="#bbb"/>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   _renderSchedule(draftState) {
     const {startDate, endDate} = draftState;
     return (
@@ -224,7 +263,7 @@ class CreateActivityScene extends Component {
               <Text>{getWeekdayMonthDay(startDate.date)}</Text>
               <Text>{getHrMinDuration(startDate.date, endDate.date)}</Text>
             </View>
-          : <Text style={{marginLeft: 20}}>select a date</Text>
+          : <Text style={{marginLeft: 20}}>Select a Date</Text>
         }
         <TouchableOpacity
           style={optionStyle.icon}
@@ -253,7 +292,7 @@ class CreateActivityScene extends Component {
               <Text>{location.placeName}</Text>
               <Text style={{left: 0, right: -40}}>{location.address}</Text>
             </View>
-          : <Text style={{marginLeft: 20}}>select a location</Text>
+          : <Text style={{marginLeft: 20}}>Select a Location</Text>
         }
         <TouchableOpacity
           style={optionStyle.icon}
@@ -278,8 +317,8 @@ class CreateActivityScene extends Component {
     const {cost} = draftState;
     return (
       <View style={optionStyle.entry}>
-        <View style={{marginLeft: 20}}>
-          <Text style={{marginLeft: 20}}>cost to enter: {(cost) ? '$' : ''}</Text>
+        <View style={{marginLeft: 20, flexDirection:'row'}}>
+          <Text>Cost to Enter: {(cost) ? '$' : ''}</Text>
           {(editCost)
             ? <TextInput
                 returnKeyType="done"
@@ -290,12 +329,12 @@ class CreateActivityScene extends Component {
                 onChangeText={(text) => this.setDraftState({cost: text})}
                 onSubmitEditing={this._setCost}
                 onEndEditing={this._setCost}
-                style={[composeStyle.input, {fontWeight: "500", textAlign:'center'}]}
+                style={{width: 200}}
                 value={cost.toString()}
                 placeholder="amount"
                 placeholderTextColor="grey"
               />
-            : <Text style={{marginLeft: 20}}>{(cost) ? cost : 'free'}</Text>
+            : <Text>{(cost) ? cost : 'free'}</Text>
           }
         </View>
         <TouchableOpacity
@@ -307,17 +346,48 @@ class CreateActivityScene extends Component {
     );
   };
 
-  _setCost() {
-    const {cost} = this.props.drafts[this.draftRef];
-    const numericCost = parseInt(cost, 10);
-    if (numericCost < 0 || isNaN(numericCost)) {
-      this.setDraftState({cost: 0});
-    } else {
-      this.setDraftState({cost: numericCost});
-    }
-    this.setState({editCost: false});
+  _renderDetails(draftState) {
+    return (
+      <View style={[optionStyle.entry, {paddingTop: 15, paddingBottom: 15}]}>
+        {(this.state.editDetails)
+          ? <AutoExpandingTextInput
+            clearButtonMode="always"
+            autoFocus={true}
+            onChangeText={(text) => this.setDraftState({details: text})}
+            style={{marginLeft: 20, width: 300, fontSize: 16}}
+            multiline={true}
+            onSubmitEditing={() => this.setState({editDetails: false})}
+            onEndEditing={() => this.setState({editDetails: false})}
+            value={draftState.details}
+            placeholder="Activity Details"
+            placeholderTextColor="grey"
+          />
+          : <View>
+            <Text style={{marginLeft: 20}}>Activity Details: {'\n'}</Text>
+            <Text style={{marginLeft: 20, width: 300}}>{(draftState.details) ? draftState.details : 'no details'}</Text>
+          </View>
+        }
+        <TouchableOpacity
+          style={optionStyle.icon}
+          onPress={() => this.setState({editDetails: true})}>
+          <Icon name="ios-create-outline" size={30} color="#bbb"/>
+        </TouchableOpacity>
+      </View>
+    )
   }
 
+  _renderHashTags(draftState) {
+    return (
+      <View style={composeStyle.hashTagInput}>
+        <Text style={composeStyle.hashTag}>#</Text>
+        <TagInput
+          value={draftState.tags}
+          onChange={(tags) => this.setDraftState({tags: tags})}
+          regex={hashTagRegex}
+        />
+      </View>
+    )
+  }
 
   render() {
     let draftState = this.props.drafts[this.draftRef];
@@ -327,41 +397,12 @@ class CreateActivityScene extends Component {
           <StatusBar barStyle={this.state.contentType}/>
           {this._renderImgModal(draftState)}
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={composeStyle.scrollContentContainer}>
-            <View style={[optionStyle.inputBar, {borderColor: '#eee'}]}>
-              <TextInput
-                returnKeyType="done"
-                maxLength={30}
-                autoFocus={true}
-                clearButtonMode="always"
-                onChangeText={(text) => this.setDraftState({title: text})}
-                style={[composeStyle.input, {fontWeight: "500", textAlign:'center'}]}
-                value={draftState.title}
-                placeholder="Activity Name"
-                placeholderTextColor="grey"
-              />
-            </View>
+            {this._renderTitle(draftState)}
             {this._renderSchedule(draftState)}
             {this._renderLocation(draftState)}
             {this._renderCost(draftState)}
-            <View style={[composeStyle.inputBox, { borderColor: '#eee'}]}>
-              <AutoExpandingTextInput
-                clearButtonMode="always"
-                onChangeText={(text) => this.setDraftState({content: text})}
-                style={[composeStyle.input, {  fontSize: 16, borderBottomWidth:.5, borderColor: '#eee'}]}
-                multiline={true}
-                value={draftState.content}
-                placeholder="Activity Details"
-                placeholderTextColor="grey"
-              />
-              <View style={composeStyle.hashTagInput}>
-                <Text style={composeStyle.hashTag}>#</Text>
-                <TagInput
-                  value={draftState.tags}
-                  onChange={(tags) => this.setDraftState({tags: tags})}
-                  regex={hashTagRegex}
-                />
-              </View>
-            </View>
+            {this._renderDetails(draftState)}
+            {this._renderHashTags(draftState)}
             {this._renderPhotoSection(draftState, true)}
           </ScrollView>
         </View>

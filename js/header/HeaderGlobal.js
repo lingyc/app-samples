@@ -47,7 +47,9 @@ class HeaderGlobal extends Component {
     if (key === "SettingsMenu" ||
         key === "CreateActivityScene" ||
         key === "SelectDateScene" ||
-        key === "SelectLocationScene") {
+        key === "SelectLocationScene" ||
+        key === "SelectInvitesScene"
+        ) {
       return (
         <TouchableOpacity style={headerStyle.closeBtn} onPress={() => this.props.navigation.pop({global: true})}>
           <Icon name={leftHeaderIcon} size={50} color="white"/>

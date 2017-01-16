@@ -744,7 +744,6 @@ export const optionStyle = StyleSheet.create({
   label: {
     fontSize: 16,
     marginLeft: 15,
-    width: 100
   },
   datePicker: {
     // position: 'absolute'

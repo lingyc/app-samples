@@ -10,6 +10,7 @@ import ComposePost from '../common/post/ComposePost.js';
 import CreateActivityScene from '../common/activity/CreateActivityScene.js';
 import SelectDateScene from '../common/activity/SelectDateScene.js';
 import SelectLocationScene from '../common/activity/SelectLocationScene.js';
+import SelectInvitesScene from '../common/activity/SelectInvitesScene.js';
 
 const ROUTES = {
   WelcomeView: WelcomeView,
@@ -26,7 +27,8 @@ const ROUTES = {
   OnBoardingSlides: OnBoardingSlides,
   CreateActivityScene: CreateActivityScene,
   SelectDateScene: SelectDateScene,
-  SelectLocationScene: SelectLocationScene
+  SelectLocationScene: SelectLocationScene,
+  SelectInvitesScene: SelectInvitesScene
 };
 
 export default ROUTES;

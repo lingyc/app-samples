@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import { composeStyle, optionStyle } from '../../styles/styles.js';
+import { composeStyle, optionStyle, feedEntryStyle } from '../../styles/styles.js';
 import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
 import TagInput from 'react-native-tag-input';
 import ImageEditModal from '../post/ImageEditModal.js';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { pop, push, resetTo } from '../../actions/navigation.js';
+import { push, resetTo } from '../../actions/navigation.js';
 import { save, clear } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -32,12 +32,14 @@ class CreateActivityScene extends Component {
         photos: [],
         startDate: null,
         endDate: null,
+        otherOrganizers: [],
         cost: 0,
         group: this.props.groupID || null,
         location: null,
         address: null,
         placeName: null,
         photoRefs: null,
+        public: true,
       })
     } else {
       this.draftRef = this.props.draftRef;
@@ -49,7 +51,8 @@ class CreateActivityScene extends Component {
       editDetails: false,
       loading: false,
       modalVisible: false,
-      contentType: 'light-content'
+      contentType: 'light-content',
+      otherOrganizersDetails: [],
     };
 
     this.draftsAction = this.props.draftsAction;
@@ -189,7 +192,7 @@ class CreateActivityScene extends Component {
   _setCost() {
     const {cost} = this.props.drafts[this.draftRef];
     const numericCost = parseFloat(cost).toFixed(2);
-    if (numericCost < 0 || isNaN(numericCost)) {
+    if (numericCost < 0.01 || isNaN(numericCost)) {
       this.setDraftState({cost: 0});
     } else {
       this.setDraftState({cost: numericCost});
@@ -254,6 +257,59 @@ class CreateActivityScene extends Component {
     )
   }
 
+  _renderOrganizers(draftState) {
+    const {public: userProfile} = this.props.user;
+    return (
+      <View style={optionStyle.entry}>
+        <View style={{marginTop: 15, marginBottom: 15, marginLeft: 20}}>
+          <Text style={{marginBottom: 10}}>Organizer:</Text>
+          <View style={{flexDirection:'row', justifyContent:'center'}}>
+            <View style={{alignItems:'center'}}>
+              <Image source={(userProfile.picture) ? {uri:userProfile.picture} : require('../../../img/default-user-image.png')}
+              style={feedEntryStyle.profileImg} defaultSource={require('../../../img/default-user-image.png')}/>
+              <Text>{userProfile.first_name + ' ' + userProfile.last_name}</Text>
+            </View>
+            {this.state.otherOrganizersDetails.map(organizer => {
+              return <Image
+                source={(organizer.picture) ? {uri:organizer.picture} : require('../../../img/default-user-image.png')}
+                defaultSource={require('../../../img/default-user-image.png')}/>
+              })}
+            </View>
+        </View>
+        <TouchableOpacity
+          style={[optionStyle.icon, {right: 22}]}
+          onPress={() => console.log('add more organizers')}>
+          <Icon name="ios-add-outline" size={40} color="#bbb"/>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  _renderInvites(draftState) {
+    const {public: userProfile} = this.props.user;
+    return (
+      <View style={optionStyle.entry}>
+        <Text style={{marginLeft: 20}}>Select Invites: {(draftState.title) ? draftState.title : 'unamed'}</Text>
+        <TouchableOpacity
+          style={[optionStyle.icon, {right: 22}]}
+          onPress={() => {
+            this.props.navigation.push({
+              key: 'SelectInvitesScene',
+              showHeader: true,
+              headerTitle: 'select invites',
+              leftHeaderIcon: 'ios-arrow-round-back-outline',
+              global: true,
+              passProps:{
+                draftRef: this.draftRef
+              }
+            })
+          }}>
+          <Icon name="ios-add-outline" size={40} color="#bbb"/>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   _renderSchedule(draftState) {
     const {startDate, endDate} = draftState;
     return (
@@ -288,9 +344,10 @@ class CreateActivityScene extends Component {
     return (
       <View style={optionStyle.entry}>
         {(location)
-          ? <View style={{marginLeft: 20}}>
+          ? <View style={{marginTop: 15, marginBottom: 15, marginLeft: 20}}>
+              <Text>Location: {'\n'}</Text>
               <Text>{location.placeName}</Text>
-              <Text style={{left: 0, right: -40}}>{location.address}</Text>
+              <Text style={{left: 0, width: 300}}>{location.address}</Text>
             </View>
           : <Text style={{marginLeft: 20}}>Select a Location</Text>
         }
@@ -395,16 +452,18 @@ class CreateActivityScene extends Component {
       return (
         <View style={{flex: 1, backgroundColor:"white"}}>
           <StatusBar barStyle={this.state.contentType}/>
-          {this._renderImgModal(draftState)}
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={composeStyle.scrollContentContainer}>
             {this._renderTitle(draftState)}
+            {this._renderOrganizers(draftState)}
             {this._renderSchedule(draftState)}
             {this._renderLocation(draftState)}
+            {this._renderInvites(draftState)}
             {this._renderCost(draftState)}
             {this._renderDetails(draftState)}
             {this._renderHashTags(draftState)}
             {this._renderPhotoSection(draftState, true)}
           </ScrollView>
+          {this._renderImgModal(draftState)}
         </View>
       );
     } else {
@@ -424,7 +483,7 @@ const mapStateToProps = function(state) {
 
 const mapDispatchToProps = function(dispatch) {
   return {
-    navigation: bindActionCreators({ pop, push, resetTo }, dispatch),
+    navigation: bindActionCreators({ push, resetTo }, dispatch),
     draftsAction: bindActionCreators({ save, clear }, dispatch)
   };
 };

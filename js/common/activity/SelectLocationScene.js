@@ -219,7 +219,7 @@ class SelectLocationScene extends Component {
         <View style={optionStyle.searchBar}>
           <PlaceSearchBox onPress={this._showMarker}/>
         </View>
-        <TouchableOpacity style={{width: 60, height: 60, borderRadius: 30, alignSelf: 'flex-end', top: 20, right: 20, alignItems: 'center', justifyContent:'center', backgroundColor:'rgba(255,255,255,.8)'}} onPress={this._animateToCurrentLocation}>
+        <TouchableOpacity style={{width: 60, height: 60, borderRadius: 30, alignSelf: 'flex-end', top: 40, right: 20, alignItems: 'center', justifyContent:'center', backgroundColor:'rgba(255,255,255,.8)'}} onPress={this._animateToCurrentLocation}>
           <Icon name="ios-locate-outline" size={30} color="#999"/>
         </TouchableOpacity>
       </View>

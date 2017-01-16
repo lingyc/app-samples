@@ -3,15 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import {
-  TouchableHighlight,
-  Text,
-  View,
-  KeyboardAvoidingView,
-  Slider,
-  ActivityIndicator,
-  ScrollView
-} from 'react-native';
+import { Text, View } from 'react-native';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

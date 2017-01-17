@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { composeStyle, optionStyle, feedEntryStyle } from '../../styles/styles.js';
-import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, ActivityIndicator, SegmentedControlIOS } from 'react-native';
+import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, ActivityIndicator, SegmentedControlIOS, Dimensions } from 'react-native';
 import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
 import TagInput from 'react-native-tag-input';
 import ImageEditModal from '../post/ImageEditModal.js';
@@ -10,8 +10,9 @@ import { save, clear } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {savePhotoToDB, saveUpdateToDB, randomString} from '../../library/firebaseHelpers.js'
-import {getImageFromCam, getImageFromLib} from '../../library/pictureHelper.js'
+import {getImageFromCam, getImageFromLib, selectPicture} from '../../library/pictureHelper.js'
 import Firebase from 'firebase';
+import FitImage from '../../library/FitImage.js';
 import {getWeekdayMonthDay, getHrMinDuration} from '../../library/convertTime.js'
 
 //TODO: input validation??
@@ -40,6 +41,7 @@ class CreateActivityScene extends Component {
         placeName: null,
         photoRefs: null,
         public: true,
+        backgroundImage: null,
         invites: {
           allFollowers: false,
           allFollowings: false,
@@ -70,6 +72,7 @@ class CreateActivityScene extends Component {
     this.uID = this.props.uID;
     this.database = this.props.FitlyFirebase.database();
     this._setCost = this._setCost.bind(this);
+    this._updateBackgroundImage = this._updateBackgroundImage.bind(this);
   };
 
   _saveActivityToDB() {
@@ -150,51 +153,10 @@ class CreateActivityScene extends Component {
     })();
   };
 
-  _renderImgModal(draftState) {
-    const removeImg = (index) => {
-      let newPhotos = draftState.photos.slice();
-      newPhotos.splice(index, 1);
-      this.setDraftState({photos: newPhotos});
-    };
-
-    return (
-      <ImageEditModal
-        draftState={draftState}
-        visible={this.state.modalVisible}
-        onBack={() => this.setState({modalVisible: false, contentType:'light-content'})}
-        onRequestClose={() => this.setState({modalVisible: false})}
-        getImageFromLib={() => this._getImageFromLib()}
-        getImageFromCam={() => this._getImageFromCam()}
-        onRemoveImage={(index) => removeImg(index)}
-        onCaptionChange={(text, index) => {
-          let newPhotos = draftState.photos.slice();
-          newPhotos[index].description = text;
-          this.setDraftState({photos: newPhotos});
-        }}
-        onTagChange={(tags, index) => {
-          let newPhotos = draftState.photos.slice();
-          newPhotos[index].tags = tags;
-          this.setDraftState({photos: newPhotos})
-        }}
-      />
-    );
-  };
-
-  _getImageFromCam() {
-    let draftState = this.props.drafts[this.draftRef];
-    getImageFromCam(image => {
-      let newPhotos = draftState.photos;
-      newPhotos.push(image);
-      this.setDraftState({photos: newPhotos});
-    });
-  };
-
-  _getImageFromLib() {
-    let draftState = this.props.drafts[this.draftRef];
-    getImageFromLib(images => {
-      let newPhotos = draftState.photos.concat(images);
-      this.setDraftState({photos: newPhotos});
-    })
+  _updateBackgroundImage() {
+    selectPicture()
+    .then(picture => this.setDraftState({backgroundImage: picture.uri}))
+    .catch(error => console.log("update profile pic", error));
   };
 
   _setCost() {
@@ -208,34 +170,34 @@ class CreateActivityScene extends Component {
     this.setState({editCost: false});
   }
 
-  _renderPhotoSection(draftState, renderThumnails) {
-    let thumbnails;
-    if (renderThumnails) {
-      thumbnails = this._renderThumbnails(draftState.photos);
-    }
+  _renderBackgroundImage(draftState) {
+    const {backgroundImage} = draftState;
+    const {width} = Dimensions.get('window');
     return (
-      <View style={[composeStyle.photosSection]}>
-        {thumbnails}
-        <TouchableOpacity style={composeStyle.photoThumbnail} onPress={() => this._getImageFromLib()}>
-          <Icon name="ios-image-outline" size={30} color="#bbb"/>
-        </TouchableOpacity>
-        <TouchableOpacity style={composeStyle.photoThumbnail} onPress={() => this._getImageFromCam()}>
-          <Icon name="ios-camera-outline" size={30} color="#bbb"/>
-        </TouchableOpacity>
+      <View style={[optionStyle.entry, {justifyContent: 'center'}]}>
+        <Image
+          style={{height: 150, width: width, justifyContent: 'flex-end'}}
+          resizeMode='cover'
+          source={(backgroundImage) ? {uri: backgroundImage, isStatic:true} : require('../../../img/default-photo-image.png')}
+          defaultSource={require('../../../img/default-photo-image.png')}>
+          <TouchableOpacity
+            style={{backgroundColor: 'rgba(255,255,255,.85)', flexDirection:'row', alignItems: 'center', justifyContent: 'center'}}
+            onPress={this._updateBackgroundImage}>
+            <Text style={{backgroundColor: 'rgba(255,255,255,0)', marginRight: 10}}>background</Text>
+            <Icon name="ios-create-outline" size={30} color="#bbb"/>
+          </TouchableOpacity>
+          {(backgroundImage)
+            ? <TouchableOpacity
+                style={{position: 'absolute', right: 15, bottom: 0, backgroundColor: 'rgba(255,255,255,0)'}}
+                onPress={() => this.setDraftState({backgroundImage: null})}>
+                <Icon name="ios-remove-outline" size={30} color="#bbb"/>
+              </TouchableOpacity>
+            : null
+          }
+        </Image>
       </View>
-    );
-  };
-
-  _renderThumbnails(photos) {
-    return photos.map((photo, index) => {
-      return (
-        <TouchableOpacity key={index} onPress={() => this.setState({modalVisible: true, contentType: 'default'})} style={composeStyle.photoThumbnail}>
-          <Image style={{height: 100, width: 100}} source={{uri: photo.path, isStatic:true}}/>
-          <Icon style={{position: 'absolute', right: 10, bottom: 5, backgroundColor: 'rgba(0,0,0,0)'}} name="ios-expand" size={30} color='rgba(255,255,255,.7)'/>
-        </TouchableOpacity>
-      );
-    });
-  };
+    )
+  }
 
   _renderTitle(draftState) {
     return (
@@ -479,6 +441,7 @@ class CreateActivityScene extends Component {
         <View style={{flex: 1, backgroundColor:"white"}}>
           <StatusBar barStyle={this.state.contentType}/>
           <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={composeStyle.scrollContentContainer}>
+            {this._renderBackgroundImage(draftState)}
             {this._renderTitle(draftState)}
             {this._renderOrganizers(draftState)}
             {this._renderSchedule(draftState)}
@@ -488,9 +451,8 @@ class CreateActivityScene extends Component {
             {this._renderCost(draftState)}
             {this._renderDetails(draftState)}
             {this._renderHashTags(draftState)}
-            {this._renderPhotoSection(draftState, true)}
+            <View style={{height: 50}}></View>
           </ScrollView>
-          {this._renderImgModal(draftState)}
         </View>
       );
     } else {

@@ -56,12 +56,12 @@ class SelectInvitesScene extends Component {
   }
 
   _renderEntries(boolean) {
-    const {allFollowings, allFollowers, allPrevConnected, contacts} = this.props.drafts[this.draftRef].invites;
+    const {allFollowings, allFollowers, allPrevConnected, facebookFriend, contacts} = this.props.drafts[this.draftRef].invites;
     const icon = (boolean) ? 'ios-remove-outline' : 'ios-add-outline';
     const contactLength = Object.keys(contacts).length;
     const showEmpty = boolean
       ? (allFollowings || allFollowers || allPrevConnected || !!contactLength) === boolean
-      : (allFollowings && allFollowers && allPrevConnected && !!contactLength) === boolean;
+      : (allFollowings && allFollowers && allPrevConnected && facebookFriend && !!contactLength) === boolean;
 
     const showContacts = (boolean)
       ? ((contactLength > 0) === boolean) ? <Entry text={'contacts: ' + contactLength + ' added'} icon={icon} onPress={() => this._clearInviteContacts()}/> : null
@@ -76,6 +76,7 @@ class SelectInvitesScene extends Component {
         {(allFollowings === boolean) ? <Entry text='all followings' icon={icon} onPress={() => this._onPressQuickInvites('allFollowings')}/> : null}
         {(allFollowers === boolean) ? <Entry text='all followers' icon={icon} onPress={() => this._onPressQuickInvites('allFollowers')}/> : null}
         {(allPrevConnected === boolean) ? <Entry text='all previously connected users' icon={icon} onPress={() => this._onPressQuickInvites('allPrevConnected')}/> : null}
+        {(facebookFriend === boolean) ? <Entry text='all facebook friends' icon={icon} onPress={() => this._onPressQuickInvites('facebookFriend')}/> : null}
         {showContacts}
       </View>
     )

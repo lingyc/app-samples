@@ -1,4 +1,4 @@
-# Fitly #
+# App Code Samples #
 
 
 ## Installation ##
@@ -15,7 +15,7 @@ React-Native-FMPicker
 Refer to https://facebook.github.io/react-native/docs/running-on-device.html
 
 
-## Icons ##a
+## Icons ##
 Get the icon names at http://ionicframework.com/docs/v2/ionicons/  or http://fontawesome.io/icons/ for the react-native-vector-icons library
 
 ## Issues ##
@@ -23,15 +23,6 @@ Pod install React throws an error which cause Google maps to have issue installi
 
 ## TODOs ##
 More TODOs can be found in the code. This list will grow.
-
-
-- [ ] Onboarding
-  - [ ] validate user input: use a library
-  - [ ] upload profile picture
-  - [ ] email validation
-  - [ ] forget password feature
-  - [ ] stylistic details
-
 
 - [ ] Local Storage
   - [ ] Persist redux store

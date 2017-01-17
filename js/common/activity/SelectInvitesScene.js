@@ -48,16 +48,30 @@ class SelectInvitesScene extends Component {
       </View>
       <View style={{flex: 0}}>
         <View style={{height: 25, backgroundColor: '#eee', justifyContent:'center', borderColor:'#aaa'}}>
-          <Text style={{textAlign:'center', color: '#aaa'}}>invite contacts</Text>
+          <Text style={{textAlign:'center', color: '#aaa'}}>invite other contacts</Text>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => this.props.navigation.push({
+          key: 'SelectContactScene',
+          showHeader: true,
+          headerTitle: 'select contacts',
+          leftHeaderIcon: 'ios-arrow-round-back-outline',
+          global: true,
+          passProps:{
+            draftRef: this.draftRef
+          }
+        })}>
           <View style={[optionStyle.entry, {minHeight: 40}]}>
             <Text style={optionStyle.label}>contacts</Text>
             <Icon style={{right: 22}} name="ios-arrow-forward" size={40} color="#bbb"/>
           </View>
         </TouchableOpacity>
+        <TouchableOpacity>
+          <View style={[optionStyle.entry, {minHeight: 40}]}>
+            <Text style={optionStyle.label}>facebook friends</Text>
+            <Icon style={{right: 22}} name="ios-arrow-forward" size={40} color="#bbb"/>
+          </View>
+        </TouchableOpacity>
       </View>
-
     </ScrollView>
   }
 };

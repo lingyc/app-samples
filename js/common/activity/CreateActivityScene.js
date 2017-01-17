@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { composeStyle, optionStyle, feedEntryStyle } from '../../styles/styles.js';
-import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Modal, View, TextInput, Text, StatusBar, ScrollView, Image, TouchableOpacity, ActivityIndicator, SegmentedControlIOS } from 'react-native';
 import AutoExpandingTextInput from '../../common/AutoExpandingTextInput.js';
 import TagInput from 'react-native-tag-input';
 import ImageEditModal from '../post/ImageEditModal.js';
@@ -40,6 +40,14 @@ class CreateActivityScene extends Component {
         placeName: null,
         photoRefs: null,
         public: true,
+        invites: {
+          allFollowers: false,
+          allFollowings: false,
+          allPrevConnected: false,
+          users: [],
+          contacts: [],
+          facebookFriend: []
+        }
       })
     } else {
       this.draftRef = this.props.draftRef;
@@ -310,6 +318,24 @@ class CreateActivityScene extends Component {
     )
   }
 
+  _renderPublicOrPrivate(draftState) {
+    return (
+      <View style={optionStyle.entry}>
+        <View style={{marginTop: 15, marginBottom: 15, marginLeft: 20}}>
+          <Text>Only users invited can join private events {'\n'}</Text>
+          <SegmentedControlIOS
+            style={{alignSelf: 'stretch'}}
+            values={['Public', 'Private']}
+            selectedIndex={(draftState.public) ? 1 : 0}
+            onChange={(event) => (event.nativeEvent.selectedSegmentIndex)
+              ? this.setDraftState({public: true})
+              : this.setDraftState({public: false})}
+          />
+        </View>
+      </View>
+    )
+  }
+
   _renderSchedule(draftState) {
     const {startDate, endDate} = draftState;
     return (
@@ -457,6 +483,7 @@ class CreateActivityScene extends Component {
             {this._renderOrganizers(draftState)}
             {this._renderSchedule(draftState)}
             {this._renderLocation(draftState)}
+            {this._renderPublicOrPrivate(draftState)}
             {this._renderInvites(draftState)}
             {this._renderCost(draftState)}
             {this._renderDetails(draftState)}

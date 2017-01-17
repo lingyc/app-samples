@@ -11,6 +11,7 @@ import CreateActivityScene from '../common/activity/CreateActivityScene.js';
 import SelectDateScene from '../common/activity/SelectDateScene.js';
 import SelectLocationScene from '../common/activity/SelectLocationScene.js';
 import SelectInvitesScene from '../common/activity/SelectInvitesScene.js';
+import SelectContactScene from '../common/activity/SelectContactScene.js';
 
 const ROUTES = {
   WelcomeView: WelcomeView,
@@ -28,7 +29,8 @@ const ROUTES = {
   CreateActivityScene: CreateActivityScene,
   SelectDateScene: SelectDateScene,
   SelectLocationScene: SelectLocationScene,
-  SelectInvitesScene: SelectInvitesScene
+  SelectInvitesScene: SelectInvitesScene,
+  SelectContactScene: SelectContactScene,
 };
 
 export default ROUTES;

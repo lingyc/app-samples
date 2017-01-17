@@ -48,7 +48,8 @@ class HeaderGlobal extends Component {
         key === "CreateActivityScene" ||
         key === "SelectDateScene" ||
         key === "SelectLocationScene" ||
-        key === "SelectInvitesScene"
+        key === "SelectInvitesScene" ||
+        key === "SelectContactScene"
         ) {
       return (
         <TouchableOpacity style={headerStyle.closeBtn} onPress={() => this.props.navigation.pop({global: true})}>

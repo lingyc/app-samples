@@ -29,6 +29,7 @@
 		3D32966B1E29BA4900581C58 /* AirMaps in Resources */ = {isa = PBXBuildFile; fileRef = 3D32966A1E29BA4900581C58 /* AirMaps */; };
 		3D3297651E29D09000581C58 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 3D3297641E29D09000581C58 /* AirGoogleMaps */; };
 		3D3297661E29D09000581C58 /* AirGoogleMaps in Resources */ = {isa = PBXBuildFile; fileRef = 3D3297641E29D09000581C58 /* AirGoogleMaps */; };
+		3D6846381E2D9AA300062665 /* libRCTContacts.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D6846371E2D9A7400062665 /* libRCTContacts.a */; };
 		3DAA3D111E071E7500397B88 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3DAA3D101E071E7500397B88 /* GoogleService-Info.plist */; };
 		3DAA3D451E076FAE00397B88 /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAA3D341E076F6900397B88 /* libRCTFBLogin.a */; };
 		3DEA605B1E07761100C233A5 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DEA60581E07761100C233A5 /* FBSDKCoreKit.framework */; };
@@ -150,6 +151,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNSearchBar;
+		};
+		3D6846361E2D9A7400062665 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3D6846321E2D9A7400062665 /* RCTContacts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1441618E1BD0A79300FA4F59;
+			remoteInfo = RCTContacts;
 		};
 		3D744AD91DFF648200F6E962 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -277,6 +285,7 @@
 		3D27EDB91E0C8B1400CA537C /* RNGeocoder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNGeocoder.xcodeproj; path = "../node_modules/react-native-geocoder/ios/RNGeocoder.xcodeproj"; sourceTree = "<group>"; };
 		3D32966A1E29BA4900581C58 /* AirMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirMaps; path = "../node_modules/react-native-maps/ios/AirMaps"; sourceTree = "<group>"; };
 		3D3297641E29D09000581C58 /* AirGoogleMaps */ = {isa = PBXFileReference; lastKnownFileType = folder; name = AirGoogleMaps; path = "../node_modules/react-native-maps/ios/AirGoogleMaps"; sourceTree = "<group>"; };
+		3D6846321E2D9A7400062665 /* RCTContacts.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTContacts.xcodeproj; path = "../node_modules/react-native-contacts/ios/RCTContacts.xcodeproj"; sourceTree = "<group>"; };
 		3D8621541E20EA47007C46CD /* Fitly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Fitly.entitlements; path = Fitly/Fitly.entitlements; sourceTree = "<group>"; };
 		3DAA3D101E071E7500397B88 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3DAA3D2B1E076F6900397B88 /* RCTFBLogin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBLogin.xcodeproj; path = "../node_modules/react-native-facebook-login/RCTFBLogin.xcodeproj"; sourceTree = "<group>"; };
@@ -326,6 +335,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D6846381E2D9AA300062665 /* libRCTContacts.a in Frameworks */,
 				3D27EDD41E0C8B4100CA537C /* libRNGeocoder.a in Frameworks */,
 				3DEA605C1E07761100C233A5 /* FBSDKLoginKit.framework in Frameworks */,
 				3DAA3D451E076FAE00397B88 /* libRCTFBLogin.a in Frameworks */,
@@ -507,6 +517,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3D6846331E2D9A7400062665 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3D6846371E2D9A7400062665 /* libRCTContacts.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		3DAA3D2C1E076F6900397B88 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -552,6 +570,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				3D6846321E2D9A7400062665 /* RCTContacts.xcodeproj */,
 				3D27EDB91E0C8B1400CA537C /* RNGeocoder.xcodeproj */,
 				3DEA60E71E0A1E0000C233A5 /* Firestack.xcodeproj */,
 				3DAA3D2B1E076F6900397B88 /* RCTFBLogin.xcodeproj */,
@@ -741,6 +760,10 @@
 					ProjectRef = 5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */;
 				},
 				{
+					ProductGroup = 3D6846331E2D9A7400062665 /* Products */;
+					ProjectRef = 3D6846321E2D9A7400062665 /* RCTContacts.xcodeproj */;
+				},
+				{
 					ProductGroup = 3DAA3D2C1E076F6900397B88 /* Products */;
 					ProjectRef = 3DAA3D2B1E076F6900397B88 /* RCTFBLogin.xcodeproj */;
 				},
@@ -895,6 +918,13 @@
 			fileType = archive.ar;
 			path = libRNSearchBar.a;
 			remoteRef = 3D6845C71E2C8D9C00062665 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3D6846371E2D9A7400062665 /* libRCTContacts.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTContacts.a;
+			remoteRef = 3D6846361E2D9A7400062665 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3D744ADA1DFF648200F6E962 /* libRCTImage-tvOS.a */ = {

@@ -1,42 +1,82 @@
 import React, { Component } from 'react';
-import { TouchableHighlight, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { View, ScrollView, ListView } from 'react-native';
 import { optionStyle, container } from '../../styles/styles.js'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { push, resetTo } from '../../actions/navigation.js';
 import { save, clear } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import SearchBar from 'react-native-search-bar';
-import Contacts from 'react-native-contacts';
+import CheckBox from 'react-native-check-box'
 
 class SelectContactScene extends Component {
   constructor(props) {
     super(props);
     this.draftRef = this.props.draftRef;
-    this.state = {
-      contacts: [],
-    }
-    console.log(Contacts);
-  }
+    this.contacts = this.props.contacts;
+    this.setDraftState = this.props.draftsAction.save.bind(this, this.draftRef);
 
-  componentWillMount() {
-    console.log(Contacts);
-    Contacts.getAll( (error, contacts) =>  {
-      if (error && error.type === 'permissionDenied') {
-        console.error(error);
-      }
-      else {
-        console.log(contacts);
-        this.setState({
-          contacts: contacts
-        })
+    //render entry only if the entry changed
+    const dataSource = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => {
+        const {contacts} = this.props.drafts[this.draftRef].invites;
+        const r1Num = r1.phoneNumbers[0].number;
+        const r2Num = r2.phoneNumbers[0].number;
+        return contacts[r1Num] !== contacts[r2Num];
       }
     });
+
+    this.state = {
+      contacts: dataSource.cloneWithRows(this.props.contacts)
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextProps.drafts[this.draftRef].invites.contacts !== this.props.drafts[this.draftRef].invites.contacts;
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.setState({
+      contacts: this.state.contacts.cloneWithRows(this.props.contacts)
+    })
+  }
+
+  _onChecked(contact) {
+    const {invites} = this.props.drafts[this.draftRef];
+    const phone = contact.phoneNumbers[0];
+    let invitesCopy = Object.assign({}, invites);
+
+    if (invites.contacts[phone.number]) {
+      delete invitesCopy.contacts[phone.number];
+    } else {
+      invitesCopy.contacts[phone.number] = {
+        name: contact.givenName + ' ' + contact.familyName,
+        thumbnail: contact.thumbnailPath,
+        phoneNumber: phone
+      };
+    }
+    this.setDraftState({invites: invitesCopy});
+  }
+
+
+  _renderRow(contact, index) {
+    const {contacts} = this.props.drafts[this.draftRef].invites;
+    const phoneNumber = contact.phoneNumbers[0].number;
+    const name = contact.familyName + ', ' + contact.givenName;
+    return (
+      <View style={optionStyle.entry} key={name + index}>
+        <CheckBox
+          style={{flex: 1, padding: 10}}
+          onClick={() => this._onChecked(contact)}
+          isChecked={!!contacts[phoneNumber]}
+          leftText={name + ':  ' + phoneNumber}
+        />
+      </View>
+    );
   }
 
   render() {
     return <ScrollView keyboardDismissMode="on-drag" contentContainerStyle={{flex:1, backgroundColor:'white'}}>
-
+      {this.contacts.map((contact, index) => this._renderRow(contact, index))}
     </ScrollView>
   }
 };

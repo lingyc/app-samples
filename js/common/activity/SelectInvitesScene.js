@@ -7,11 +7,29 @@ import { save, clear } from '../../actions/drafts.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import SearchBar from 'react-native-search-bar';
+import Contacts from 'react-native-contacts';
 
 class SelectInvitesScene extends Component {
   constructor(props) {
     super(props);
     this.draftRef = this.props.draftRef;
+    this.state = {
+      contacts: []
+    }
+  }
+
+  componentDidMount() {
+    Contacts.getAll( (error, contacts) =>  {
+      if (error && error.type === 'permissionDenied') {
+        console.error(error);
+      }
+      else {
+        console.log(contacts);
+        this.setState({
+          contacts: contacts
+        })
+      }
+    });
   }
 
   render() {
@@ -45,10 +63,16 @@ class SelectInvitesScene extends Component {
             <Icon style={{right: 22}} name="ios-add-outline" size={40} color="#bbb"/>
           </View>
         </TouchableOpacity>
+        <TouchableOpacity>
+          <View style={[optionStyle.entry, {minHeight: 40}]}>
+            <Text style={optionStyle.label}>all facebook friends</Text>
+            <Icon style={{right: 22}} name="ios-arrow-forward" size={40} color="#bbb"/>
+          </View>
+        </TouchableOpacity>
       </View>
       <View style={{flex: 0}}>
         <View style={{height: 25, backgroundColor: '#eee', justifyContent:'center', borderColor:'#aaa'}}>
-          <Text style={{textAlign:'center', color: '#aaa'}}>invite other contacts</Text>
+          <Text style={{textAlign:'center', color: '#aaa'}}>invite contacts</Text>
         </View>
         <TouchableOpacity onPress={() => this.props.navigation.push({
           key: 'SelectContactScene',
@@ -57,17 +81,12 @@ class SelectInvitesScene extends Component {
           leftHeaderIcon: 'ios-arrow-round-back-outline',
           global: true,
           passProps:{
-            draftRef: this.draftRef
+            draftRef: this.draftRef,
+            contacts: this.state.contacts
           }
         })}>
           <View style={[optionStyle.entry, {minHeight: 40}]}>
             <Text style={optionStyle.label}>contacts</Text>
-            <Icon style={{right: 22}} name="ios-arrow-forward" size={40} color="#bbb"/>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <View style={[optionStyle.entry, {minHeight: 40}]}>
-            <Text style={optionStyle.label}>facebook friends</Text>
             <Icon style={{right: 22}} name="ios-arrow-forward" size={40} color="#bbb"/>
           </View>
         </TouchableOpacity>

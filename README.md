@@ -46,6 +46,7 @@ More TODOs can be found in the code. This list will grow.
   - [ ] push notifications
   - [ ] feeds
     - [ ] include feeds for likes, replies
+    - [ ] refactor with listView
 
 
 - [ ] Search Tab

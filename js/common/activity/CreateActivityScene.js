@@ -44,9 +44,9 @@ class CreateActivityScene extends Component {
           allFollowers: false,
           allFollowings: false,
           allPrevConnected: false,
+          facebookFriend: false,
           users: {},
           contacts: {},
-          facebookFriend: {}
         }
       })
     } else {
